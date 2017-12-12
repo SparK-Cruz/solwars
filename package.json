@@ -1,0 +1,29 @@
+{
+  "name": "space",
+  "version": "1.0.0",
+  "description": "Star Pilot Blues",
+  "main": " ",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "space",
+    "cowboy",
+    "bebop",
+    "online",
+    "game"
+  ],
+  "author": "Spark Cruz <spark.crz@gmail.com>",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc && npm run build-client && npm run build-assets",
+    "build-client": "browserify dist/client/engine.js > dist/client/client.js",
+    "build-frontend": "browserify dist/client/frontend.js > dist/client/index.js",
+    "build-assets": "npm run build-html && npm run build-img",
+    "build-html": "cp src/client/*.html dist/client/",
+    "build-img": "mkdir -p dist/client/img && cp src/client/img/* dist/client/img/"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0"
+  }
+}

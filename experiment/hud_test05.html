@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>HUD Test 05</title>
+  </head>
+  <body bgcolor="#000000">
+    <div class="wrapper">
+      <canvas id="indicator" class="indicator" width="200" height="200"></canvas>
+      <canvas id="radar" class="indicator" width="200" height="200"></canvas>
+    </div>
+    <script type="text/javascript" src="status_indicator_drawer.js"></script>
+    <script>
+      var player = {
+        alive: true,
+        health: 1000,
+        damage: 0,
+        engineCapacity: 1000,
+        enginePower: 1000,
+        weaponCapacity: 1000,
+        weaponPower: 1000,
+        shieldCapacity: 250,
+        shieldPower: 250,
+
+        energyTankCapacity: 1000,
+        energyTankPower: 1000,
+
+        energyTankPowerRegenRate: 0.3,
+        powerRegenRate: 3,
+
+        getStatus: function() {
+          return {
+            damage: this.damage / this.health * 100,
+            energyTank: this.energyTankPower / this.energyTankCapacity * 100,
+            weapon: this.weaponPower / this.weaponCapacity * 100,
+            shield: this.shieldPower / this.shieldCapacity * 100,
+            engine: this.enginePower / this.engineCapacity * 100
+          };
+        },
+        takeDamage: function(damage) {
+          console.log('Player took '+damage+' damage');
+          var shieldDamage = Math.min(damage, this.shieldPower);
+          var hullDamage = damage - shieldDamage;
+
+          this.shieldPower -= shieldDamage;
+          this.damage += hullDamage;
+
+          if (this.damage >= this.health) {
+            this.alive = false;
+            this.damage = this.health;
+          }
+        },
+        run: function() {
+          if (this.enginePower <= 0)
+            return;
+
+          this.enginePower -= Math.min(20, this.enginePower);
+        },
+        shoot: function() {
+          if (this.weaponPower <= 0)
+            return;
+
+          this.weaponPower -= Math.min(20, this.weaponPower);
+        },
+
+        regenEnergy: function() {
+          if (this.energyTankPower >= this.energyTankCapacity)
+            return;
+
+          this.energyTankPower += this.energyTankPowerRegenRate;
+
+          this.energyTankPower = Math.min(this.energyTankPower, this.energyTankCapacity);
+        },
+
+        regenDevices: function() {
+          var notFull = this.getDevicesUncharged();
+          var step = this.powerRegenRate / notFull.length;
+
+          if (this.energyTankPower <= this.powerRegenRate)
+            return;
+
+          for (var i in notFull) {
+            this.regenDevice(notFull[i], step);
+          }
+        },
+        getDevicesUncharged: function() {
+          var devices = ['shield', 'engine', 'weapon'];
+          var needCharge = [];
+
+          for (var i in devices) {
+            var device = devices[i];
+
+            if (this[device + 'Power'] >= this[device + 'Capacity'])
+              continue;
+
+            needCharge.push(device);
+          }
+
+          return needCharge;
+        },
+        regenDevice: function(name, step) {
+          if (this.energyTankPower <= step)
+            return;
+
+          if (this[name + 'Power'] >= this[name + 'Capacity'])
+            return;
+
+          this.energyTankPower -= step;
+          this[name + 'Power'] += step;
+
+          this[name + 'Power'] = Math.min(this[name + 'Power'], this[name + 'Capacity']);
+        },
+
+        onTick: function() {
+          this.regenDevices();
+          this.regenEnergy();
+        }
+      };
+
+      var controls = {
+        isShooting: false,
+        isRunning: false
+      };
+
+      (function(){
+        var indicator = document.getElementById('indicator');
+        var ctx = indicator.getContext('2d');
+
+        var shipStatusIndicator = new SSI({
+          context: ctx,
+          height: indicator.height,
+          width: indicator.width,
+          player: player,
+          baseColor: '#99ff33'
+        });
+
+        setInterval(function() {
+          shipStatusIndicator.draw(player.getStatus());
+        }, 1000 / 30);
+      })();
+
+      (function(){
+        var radar = document.getElementById('radar');
+        var ctx = radar.getContext('2d');
+
+
+        setInterval(function(){
+          ctx.clearRect(0,0,200,200);
+          ctx.beginPath();
+          ctx.strokeStyle = '#808080';
+          ctx.lineWidth = 2;
+          ctx.arc(100, 100, 73, 0, Math.PI * 2, false);
+          ctx.stroke();
+          ctx.closePath();
+          ctx.clip();
+          ctx.save();
+
+          ctx.fillStyle = '#ffff00';
+          var numBlips = 5 + Math.round(Math.random() * 5);
+
+          for(var i = 0; i < numBlips; i++)
+            ctx.fillRect(
+              Math.random() * 200,
+              Math.random() * 200,
+              3,
+              3);
+        }, 5000);
+      })();
+
+      (function(){
+        var interval;
+        interval = setInterval(function(){
+          if (!player.alive) {
+            clearInterval(interval);
+            return;
+          }
+
+          player.onTick();
+
+          if (controls.isShooting) {
+            player.shoot();
+          }
+          if (controls.isRunning) {
+            player.run();
+          }
+        }, 1000 / 30);
+      })();
+    </script>
+    <input type="text" id="damage-field" />
+    <input type="button" id="damage-button" />
+    <input type="text" id="regen-field" />
+    <input type="button" id="run-button" />
+    <input type="button" id="shoot-button" />
+    <script>
+      (function(){
+        var field = document.getElementById('damage-field');
+        var button = document.getElementById('damage-button');
+
+        button.onclick = function() {
+          var amount = parseInt(field.value);
+          if (isNaN(amount))
+            return;
+
+          player.takeDamage(amount);
+        };
+      })();
+      (function(){
+        var regenField = document.getElementById('regen-field');
+        var runButton = document.getElementById('run-button');
+        var shootButton = document.getElementById('shoot-button');
+
+        runButton.onclick = function() {
+          controls.isRunning = !controls.isRunning;
+        };
+        shootButton.onclick = function() {
+          controls.isShooting = !controls.isShooting;
+        };
+
+        regenField.onchange = function() {
+          var value = parseInt(this.value);
+          if (isNaN(value))
+            return;
+
+          player.energyTankCapacity = value;
+          player.energyTankPower = value;
+        };
+      })();
+    </script>
+  </body>
+</html>
