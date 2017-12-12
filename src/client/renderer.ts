@@ -22,7 +22,7 @@ export class Renderer implements Renderable {
     this.bg = new Background(bgCanvas, camera);
     this.grid = new Grid(gridCanvas, camera, Stage.SECTOR_SIZE, Stage.SUBDIVISIONS);
     this.entityRenderer = new EntityRenderer(fgCanvas, camera, stage);
-    this.indicator = new Indicator(inCanvas, camera);
+    //this.indicator = new Indicator(inCanvas, camera);
 
     this.c = canvas.getContext('2d');
   }
