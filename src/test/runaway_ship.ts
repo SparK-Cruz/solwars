@@ -1,10 +1,11 @@
 import { Ship } from '../space/entities/ship';
+import { Model as ShipModel } from '../space/entities/ships/model';
 import { Stage, TPS } from '../space/stage';
 
 (() => {
 
   let stage = new Stage();
-  let ship = new Ship();
+  let ship = new Ship(ShipModel.Warbird);
 
   stage.add(ship);
 

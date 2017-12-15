@@ -1,5 +1,5 @@
 import { Mapping } from './mapping';
-import { ShipControl } from '../space/entities/ship';
+import { Control as ShipControl } from '../space/entities/ships/control';
 
 export class Input {
   control :ShipControl;

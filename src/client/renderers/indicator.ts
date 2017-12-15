@@ -1,5 +1,5 @@
+import { Camera, MovingPoint } from '../camera';
 import { Renderable } from './renderable';
-import { Camera, MovingPoint } from './camera';
 
 export class Indicator implements Renderable {
   private trackable :MovingPoint;

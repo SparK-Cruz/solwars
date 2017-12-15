@@ -1,5 +1,6 @@
 import { Stage, TPS } from '../space/stage';
 import { Ship } from '../space/entities/ship';
+import { Model as ShipModel } from '../space/entities/ships/model';
 import { Input } from './input';
 import { Camera } from './camera';
 import { Renderer } from './renderer';
@@ -10,8 +11,6 @@ const canvas = <HTMLCanvasElement> document.getElementById('canvas');
 canvas.height = window.innerHeight;
 canvas.width = window.innerWidth;
 
-const ctx = canvas.getContext('2d');
-
 const center = {
   x: canvas.width / 2,
   y: canvas.height / 2
@@ -19,9 +18,8 @@ const center = {
 
 const stage = new Stage();
 
-const ship = new Ship();
-ship.model = 'warbird';
-const secondship = new Ship();
+const ship = new Ship(ShipModel.Warbird);
+const secondship = new Ship(ShipModel.Warbird);
 secondship.x = 150;
 secondship.y = 200;
 secondship.angle = 165;
@@ -38,42 +36,25 @@ setInterval(function(){
   stage.step();
 }, 1000/TPS);
 
-let lastPos = {x: '', y: ''};
+const tracked = camera.getTrackable();
 let lastTick = Date.now();
-let lastFPS :number[] = [];
-let sampleLimit = 120;
+
 setInterval(function() {
-  let camPos = camera.getPosition();
+  let fps = Math.round(1000 / (Date.now() - lastTick));
+  lastTick = Date.now();
 
-  renderer.render();
-
-  // let pos = {
-  //   x: globalPos(camPos.x + center.x),
-  //   y: globalPos(camPos.y + center.y)
-  // };
   let pos = {
-    x: globalPos(ship.x),
-    y: globalPos(ship.y)
+    x: globalPos(tracked.x),
+    y: globalPos(tracked.y)
   };
 
-  //if (pos.x != lastPos.x || pos.y != lastPos.y) {
-    let fps = Math.round((Date.now() - lastTick) * 60 / (1000/60));
-    lastFPS.push(fps);
+  debug.innerHTML = '<pre>SECTOR: ' + pos.x + pos.y + ' ' + fps + '</pre>';
 
-    if (lastFPS.length > sampleLimit) {
-      lastFPS.shift();
-    }
+  if (fps < 55) {
+    return; // frame skipping
+  }
 
-    let sumFPS = 0;
-    lastFPS.forEach(function(value :number) {
-      sumFPS += value;
-    });
-    let mediumFPS = Math.round(sumFPS / Math.min(lastFPS.length, sampleLimit));
-
-    debug.innerHTML = '<pre>SECTOR: ' + pos.x + pos.y + ' ' + mediumFPS + '</pre>';
-    lastTick = Date.now();
-    lastPos = pos;
-  //}
+  renderer.render();
 }, 1000/60);
 
 function globalPos(number :number) {

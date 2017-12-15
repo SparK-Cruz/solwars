@@ -1,5 +1,5 @@
+import { Camera } from '../camera';
 import { Renderable } from './renderable';
-import { Camera } from './camera';
 
 export class Grid implements Renderable {
   private buffer :HTMLCanvasElement = document.createElement('canvas');

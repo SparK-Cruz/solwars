@@ -1,5 +1,5 @@
-import { Renderable } from '../renderable';
 import { Ship } from '../../space/entities/ship';
+import { Renderable } from './renderable';
 import { Assets, Asset, AssetListener } from './assets';
 
 export class ShipRenderer implements Renderable {
@@ -10,25 +10,64 @@ export class ShipRenderer implements Renderable {
     this.canvas = document.createElement('canvas');
     this.ctx = this.canvas.getContext('2d');
 
-    Assets.fetchAll([
-      'img/'+this.ship.model+'.png',
-      'img/'+this.ship.model+'_mask.png',
-      'img/'+this.ship.model+'_decal0.png',
-    ], {target: this, callback: this.draw});
+    const files = [
+      'img/'+this.ship.model.id+'.png',
+      'img/'+this.ship.model.id+'_mask.png'
+    ];
+
+    const colors = [
+      this.ship.color
+    ];
+
+    for (let i = 0; i < this.ship.decals.length; i++) {
+      files.push('img/'+this.ship.model.id+'_'+this.ship.decals[i].name+'.png');
+      colors.push(this.ship.decals[i].color);
+    }
+
+    Assets.fetchAll(files, {target: this, callback: function(sprites :Asset[]) {
+      this.draw(sprites, colors);
+    }});
   }
 
   public render() :HTMLCanvasElement {
     return this.canvas;
   }
 
-  private draw(sprites :Asset[]) {
+  public shouldDrawTrail() :boolean {
+    return this.ship.control.thrust() !== 0;
+  }
+  public getTrailOffset() :{x :number, y :number} {
+    const offset = this.canvas.height / 2;
+
+    return {
+      x: -offset * Math.sin(this.ship.angle * Math.PI / 180),
+      y: offset * Math.cos(this.ship.angle * Math.PI / 180),
+    }
+  }
+  public getTrailDriftSpeed() :{x :number, y :number} {
+    const speed = this.ship.power * this.ship.control.thrust();
+
+    return {
+      x: -speed * Math.sin(this.ship.angle * Math.PI / 180),
+      y: speed * Math.cos(this.ship.angle * Math.PI / 180),
+    }
+  }
+
+  private draw(sprites :Asset[], colors :string[]) {
     const body :HTMLImageElement = sprites[0].content;
     const mask :HTMLImageElement = sprites[1].content;
+
+    const decals = sprites.slice(2);
     const decal :HTMLImageElement = sprites[2].content;
 
     this.drawBody(body);
-    this.paintBaseColor(body, '#aaaaaa', mask);
-    this.paintDecal(body, decal, '#ff5544', mask);
+    this.paintBaseColor(body, colors.shift(), mask);
+
+    while (decals.length > 0) {
+      const decal = decals.shift();
+      const color = colors.shift();
+      this.paintDecal(body, decal.content, color, mask);
+    }
   }
   private drawBody(sprite :HTMLImageElement) {
     this.canvas.width = sprite.width;

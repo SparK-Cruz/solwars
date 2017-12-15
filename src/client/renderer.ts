@@ -1,10 +1,10 @@
-import { Renderable } from './renderable';
-import { Camera } from './camera';
-import { Background } from './background';
-import { Grid } from './grid';
-import { Indicator } from './indicator';
-import { EntityRenderer } from './entity_renderer';
 import { Stage } from '../space/stage';
+import { Camera } from './camera';
+import { Renderable } from './renderers/renderable';
+import { Background } from './renderers/background';
+import { Grid } from './renderers/grid';
+import { EntityRenderer } from './renderers/entity_renderer';
+//import { Indicator } from './renderers/indicator';
 
 export class Renderer implements Renderable {
   private c :CanvasRenderingContext2D;

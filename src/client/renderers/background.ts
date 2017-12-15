@@ -1,6 +1,6 @@
+import { RNG } from '../../space/rng';
+import { Camera } from '../camera';
 import { Renderable } from './renderable';
-import { Camera } from './camera';
-import { RNG } from '../space/rng';
 
 const SIZE = 4096;
 const STAR_COUNT = 2000;
