@@ -101,7 +101,7 @@ export class EntityRenderer implements Renderable {
     this.readEntities(this.stage.fetchEntitiesAround(camPos.x, camPos.y));
 
     for (let memId in this.cache) {
-      if (this.cacheControl.indexOf(memId) < -1) {
+      if (this.cacheControl.indexOf(memId) <= -1) {
         delete this.cache[memId];
         continue;
       }

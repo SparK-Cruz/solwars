@@ -60,7 +60,7 @@ export class TrailRenderer implements Renderable {
 
     let tip = true;
     this.ctx.save();
-    for (let i = nodes.length - 1; i >= 0; i -= 3) {
+    for (let i = nodes.length - 1; i >= 0; i -= 2) {
       if (this.age - nodes[i].age >= maxTrailAge) {
         nodes.splice(i, 1);
         continue;
