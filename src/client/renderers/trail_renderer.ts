@@ -77,6 +77,7 @@ export class TrailRenderer implements Renderable {
         const alpha = 1 - (this.age - nodes[i].age) / maxTrailAge;
 
         this.ctx.lineWidth = 2 + 3 * alpha;
+        this.ctx.lineCap = 'round';
         this.ctx.strokeStyle = 'rgba(51, 153, 255, ' + alpha + ')';
 
         if (nodes[i].draw) {
