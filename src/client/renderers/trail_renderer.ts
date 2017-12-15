@@ -69,19 +69,20 @@ export class TrailRenderer implements Renderable {
       const relativeAge = this.age - nodes[i].age;
 
       const point = {
-        x: nodes[i].x - camPos.x + (relativeAge * 50 * nodes[i].vx),
-        y: nodes[i].y - camPos.y + (relativeAge * 50 * nodes[i].vy)
+        x: nodes[i].x - camPos.x + (relativeAge * nodes[i].vx),
+        y: nodes[i].y - camPos.y + (relativeAge * nodes[i].vy)
       };
 
       if (!tip) {
         const alpha = 1 - (this.age - nodes[i].age) / maxTrailAge;
 
-        this.ctx.lineWidth = 3;
+        this.ctx.lineWidth = 5;
         this.ctx.strokeStyle = 'rgba(51, 153, 255, ' + alpha + ')';
 
-        this.ctx.lineTo(point.x, point.y);
-        if (nodes[i].draw)
+        if (nodes[i].draw) {
+          this.ctx.lineTo(point.x, point.y);
           this.ctx.stroke();
+        }
         this.ctx.closePath();
       }
 
@@ -89,6 +90,9 @@ export class TrailRenderer implements Renderable {
       this.ctx.moveTo(point.x, point.y);
 
       tip = false;
+      if (!nodes[i].draw) {
+        tip = true;
+      }
     }
     this.ctx.restore();
   }

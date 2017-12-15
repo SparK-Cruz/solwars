@@ -57,10 +57,10 @@ export class EntityRenderer implements Renderable {
 
       if (this.cache[this.trailBearers[i]] instanceof ShipRenderer) {
         const shipRenderer = <ShipRenderer>this.cache[this.trailBearers[i]];
-        draw = shipRenderer.shouldDrawTrail();
 
         offset = shipRenderer.getTrailOffset();
         speed = shipRenderer.getTrailDriftSpeed();
+        draw = shipRenderer.shouldDrawTrail();
       }
 
       trailCoords[this.trailBearers[i]] = {
