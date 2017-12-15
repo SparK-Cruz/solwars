@@ -48,8 +48,8 @@ export class ShipRenderer implements Renderable {
     const speed = 25 * this.ship.power * this.ship.control.thrust();
 
     return {
-      x: -speed * Math.sin(this.ship.angle * Math.PI / 180) + this.ship.vx,
-      y: speed * Math.cos(this.ship.angle * Math.PI / 180) + this.ship.vy
+      x: -speed * Math.sin(this.ship.angle * Math.PI / 180),// + this.ship.vx,
+      y: speed * Math.cos(this.ship.angle * Math.PI / 180)// + this.ship.vy
     }
   }
 
