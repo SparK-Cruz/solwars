@@ -23,7 +23,7 @@ export class EntityRenderer implements Renderable {
     this.cache = {};
     this.coords = {};
 
-    this.trailRenderer = new TrailRenderer(this.canvas, this.camera);
+    this.trailRenderer = new TrailRenderer(this.canvas, this.camera, this.stage);
   }
 
   render() :HTMLCanvasElement {

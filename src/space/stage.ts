@@ -17,9 +17,11 @@ export class Stage {
   public static SECTOR_SIZE :number = 4096;
   public static SUBDIVISIONS :number = 8;
 
-  entityMap :any = {};
+  private tick = 0;
+  private entityMap :any = {};
 
-  step() :void {
+  public step() :void {
+    this.tick++;
     for (var sector in this.entityMap) {
       for (var i in this.entityMap[sector].entities) {
         this.entityMap[sector].entities[i].step();
@@ -28,7 +30,7 @@ export class Stage {
     }
   }
 
-  add(entity :Entity) :void {
+  public add(entity :Entity) :void {
     if (!entity.memId) {
       entity.memId = 'E' + (nextEntityId++);
     }
@@ -36,7 +38,7 @@ export class Stage {
     this.addToSector(this.calcSectorCoord(entity.x, entity.y), entity);
   }
 
-  fetchEntitiesAround(x :number, y :number) :Entity[] {
+  public fetchEntitiesAround(x :number, y :number) :Entity[] {
     var sector = this.calcSectorCoord(x, y);
     var result :Entity[] = [];
 
@@ -50,6 +52,10 @@ export class Stage {
     }
 
     return result;
+  }
+
+  public getTick() {
+    return this.tick;
   }
 
   private relocateIfNeeded(sector :Sector, index :number) :void {

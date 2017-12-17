@@ -1,3 +1,4 @@
+import { Stage } from '../../space/stage';
 import { Camera } from '../camera';
 import { Renderable } from './renderable';
 
@@ -21,7 +22,7 @@ export class TrailRenderer implements Renderable {
 
   private ctx :CanvasRenderingContext2D;
 
-  public constructor(private canvas :HTMLCanvasElement, private camera :Camera) {
+  public constructor(private canvas :HTMLCanvasElement, private camera :Camera, private stage :Stage) {
     this.ctx = this.canvas.getContext('2d');
   }
 
@@ -32,7 +33,7 @@ export class TrailRenderer implements Renderable {
   }
 
   public render() :HTMLCanvasElement {
-    this.age++;
+    this.age = this.stage.getTick();
 
     for (let memId in this.trails) {
       this.drawTrail(this.trails[memId]);
@@ -60,7 +61,7 @@ export class TrailRenderer implements Renderable {
 
     let tip = true;
     this.ctx.save();
-    for (let i = nodes.length - 1; i >= 0; i -= 2) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
       if (this.age - nodes[i].age >= maxTrailAge) {
         nodes.splice(i, 1);
         continue;

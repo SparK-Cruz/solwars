@@ -25,6 +25,7 @@ secondship.y = 200;
 secondship.angle = 165;
 
 new Input(ship.control);
+new Input(secondship.control);
 
 stage.add(ship);
 stage.add(secondship);
