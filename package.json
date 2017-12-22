@@ -2,9 +2,15 @@
   "name": "space",
   "version": "1.0.0",
   "description": "Star Pilot Blues",
-  "main": " ",
+  "main": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/start.js",
+    "build": "tsc && npm run build-client && npm run build-assets",
+    "build-client": "browserify dist/client/engine.js > dist/client/client.js",
+    "build-frontend": "browserify dist/client/frontend.js > dist/client/index.js",
+    "build-assets": "npm run build-html && npm run build-img",
+    "build-html": "cp src/client/*.html dist/client/",
+    "build-img": "mkdir -p dist/client/img && cp src/client/img/* dist/client/img/"
   },
   "keywords": [
     "space",
@@ -15,15 +21,15 @@
   ],
   "author": "Spark Cruz <spark.crz@gmail.com>",
   "license": "UNLICENSED",
-  "scripts": {
-    "build": "tsc && npm run build-client && npm run build-assets",
-    "build-client": "browserify dist/client/engine.js > dist/client/client.js",
-    "build-frontend": "browserify dist/client/frontend.js > dist/client/index.js",
-    "build-assets": "npm run build-html && npm run build-img",
-    "build-html": "cp src/client/*.html dist/client/",
-    "build-img": "mkdir -p dist/client/img && cp src/client/img/* dist/client/img/"
-  },
   "devDependencies": {
-    "browserify": "^14.4.0"
+    "@types/express": "^4.11.0",
+    "@types/socket.io": "^1.4.31",
+    "browserify": "^14.4.0",
+    "tsc": "^1.20150623.0",
+    "typescript": "^2.6.2"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4"
   }
 }

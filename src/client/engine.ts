@@ -20,9 +20,9 @@ const stage = new Stage();
 
 const ship = new Ship(ShipModel.Warbird);
 const secondship = new Ship(ShipModel.Warbird);
-secondship.x = 150;
-secondship.y = 200;
-secondship.angle = 165;
+secondship.x = 100;
+secondship.y = 100;
+secondship.angle = 180;
 
 new Input(ship.control);
 new Input(secondship.control);
