@@ -37,7 +37,13 @@ export class ShipRenderer implements Renderable {
     return this.ship.control.thrust() !== 0;
   }
   public getTrailOffset() :{x :number, y :number} {
-    const offset = this.canvas.height / 2 + 3;
+    let offset = 0;
+
+    if (this.ship.control.thrust() > 0)
+      offset = this.canvas.height / 2 + 1;
+
+    if (this.ship.control.thrust() < 0)
+      offset = -this.canvas.height / 4;
 
     return {
       x: -offset * Math.sin(this.ship.angle * Math.PI / 180),

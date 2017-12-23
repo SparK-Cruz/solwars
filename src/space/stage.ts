@@ -22,6 +22,8 @@ export class Stage {
 
   public step() :void {
     this.tick++;
+    this.tick = this.tick % 240;
+
     for (var sector in this.entityMap) {
       for (var i in this.entityMap[sector].entities) {
         this.entityMap[sector].entities[i].step();

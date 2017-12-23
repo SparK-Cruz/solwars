@@ -2,7 +2,9 @@ import { Stage } from '../../space/stage';
 import { Camera } from '../camera';
 import { Renderable } from './renderable';
 
-const maxTrailAge = 30;
+//const maxTrailAge = 635;
+const maxTrailAge = 900;
+const speedBias = 22;
 
 interface EntityCoord {
   x :number;
@@ -33,7 +35,7 @@ export class TrailRenderer implements Renderable {
   }
 
   public render() :HTMLCanvasElement {
-    this.age = this.stage.getTick();
+    this.age = Date.now();
 
     for (let memId in this.trails) {
       this.drawTrail(this.trails[memId]);
@@ -61,25 +63,33 @@ export class TrailRenderer implements Renderable {
 
     let tip = true;
     this.ctx.save();
-    for (let i = nodes.length - 1; i >= 0; i--) {
+    for (let i = 0; i < nodes.length; i++) {
       if (this.age - nodes[i].age >= maxTrailAge) {
-        nodes.splice(i, 1);
+        nodes.splice(i--, 1);
         continue;
       }
 
       const relativeAge = this.age - nodes[i].age;
 
       const point = {
-        x: nodes[i].x - camPos.x + (relativeAge * nodes[i].vx),
-        y: nodes[i].y - camPos.y + (relativeAge * nodes[i].vy)
+        x: nodes[i].x - camPos.x + (relativeAge / speedBias * nodes[i].vx),
+        y: nodes[i].y - camPos.y + (relativeAge / speedBias * nodes[i].vy)
       };
 
       if (!tip) {
-        const alpha = 1 - (this.age - nodes[i].age) / maxTrailAge;
+        let alpha = 1 - (this.age - nodes[i].age) / maxTrailAge;
+
+        alpha = Math.pow(alpha, 8);
+
+        const color = {
+          r: 30 * alpha,
+          g: 96 * alpha,
+          b: 153 * alpha
+        }
 
         this.ctx.lineWidth = 2 + 3 * alpha;
         this.ctx.lineCap = 'round';
-        this.ctx.strokeStyle = 'rgba(51, 153, 255, ' + alpha + ')';
+        this.ctx.strokeStyle = 'rgb(' + color.r + ', ' + color.g + ', ' + color.b + ')';
 
         if (nodes[i].draw) {
           this.ctx.lineTo(point.x, point.y);

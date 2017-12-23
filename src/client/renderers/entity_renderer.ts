@@ -28,8 +28,8 @@ export class EntityRenderer implements Renderable {
 
   render() :HTMLCanvasElement {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.draw(this.ctx);
     this.drawTrails();
+    this.draw();
 
     return this.canvas;
   }
@@ -96,7 +96,7 @@ export class EntityRenderer implements Renderable {
     }
   }
 
-  private draw(ctx :CanvasRenderingContext2D) {
+  private draw() {
     const camPos = this.camera.getPosition();
     this.readEntities(this.stage.fetchEntitiesAround(camPos.x, camPos.y));
 
@@ -118,11 +118,11 @@ export class EntityRenderer implements Renderable {
         h: renderer.height / 2
       };
 
-      ctx.save();
-      ctx.translate(renderCoord.x, renderCoord.y);
-      ctx.rotate(coord.angle * Math.PI / 180);
-      ctx.drawImage(renderer, -center.w, -center.h);
-      ctx.restore();
+      this.ctx.save();
+      this.ctx.translate(renderCoord.x, renderCoord.y);
+      this.ctx.rotate(coord.angle * Math.PI / 180);
+      this.ctx.drawImage(renderer, -center.w, -center.h);
+      this.ctx.restore();
     }
   }
 
