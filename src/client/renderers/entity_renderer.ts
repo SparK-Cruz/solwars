@@ -28,6 +28,10 @@ export class EntityRenderer implements Renderable {
 
   render() :HTMLCanvasElement {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    const camPos = this.camera.getPosition();
+    this.updateEntities(this.stage.fetchEntitiesAround(camPos.x, camPos.y));
+
     this.drawTrails();
     this.draw();
 
@@ -75,7 +79,8 @@ export class EntityRenderer implements Renderable {
 
     return trailCoords;
   }
-  private readEntities(entities :Entity[]) {
+
+  private updateEntities(entities :Entity[]) {
     this.cacheControl = [];
     this.coords = {};
 
@@ -98,7 +103,6 @@ export class EntityRenderer implements Renderable {
 
   private draw() {
     const camPos = this.camera.getPosition();
-    this.readEntities(this.stage.fetchEntitiesAround(camPos.x, camPos.y));
 
     for (let memId in this.cache) {
       if (this.cacheControl.indexOf(memId) <= -1) {

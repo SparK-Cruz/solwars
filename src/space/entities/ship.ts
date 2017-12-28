@@ -8,6 +8,8 @@ function inRads(degrees :number) :number {
   return degrees * Math.PI / 180;
 }
 
+const INERTIAL_DUMP = 0.996;
+
 export class Ship implements entities.Entity {
   type = entities.EntityType.Ship;
   memId :string;
@@ -24,7 +26,7 @@ export class Ship implements entities.Entity {
   ];
 
   vmax = 105;
-  power = 0.08;
+  power = 0.078;
 
   angle = 0;
   vangle = 0;
@@ -68,8 +70,8 @@ export class Ship implements entities.Entity {
     let slide = this.control.slide();
 
     if (!slide) {
-      this.vx *= 0.995;
-      this.vy *= 0.995;
+      this.vx *= INERTIAL_DUMP;
+      this.vy *= INERTIAL_DUMP;
     }
   }
   private readTurn() {

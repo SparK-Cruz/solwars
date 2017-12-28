@@ -25,15 +25,34 @@ secondship.y = 100;
 secondship.angle = 180;
 
 new Input(ship.control);
-new Input(secondship.control);
+//new Input(secondship.control);
 
 stage.add(ship);
 stage.add(secondship);
+
+function follow(target :Ship) {
+  var angle = Math.atan2(this.y - target.y, this.x - target.x) / Math.PI * 180 - 90;
+  if (angle < 0) {
+    angle += 360;
+  }
+
+  var diff = angle - this.angle;
+  if (diff > 180) {
+    diff -= 360;
+  }
+  if (diff < -180) {
+    diff += 360;
+  }
+
+  this.control.thrust(true);
+  this.control.turn(diff < -5, diff > 5);
+}
 
 const camera = new Camera(ship, center);
 const renderer = new Renderer(canvas, camera, stage);
 
 setInterval(function(){
+  follow.call(secondship, ship);
   stage.step();
 }, 1000/TPS);
 

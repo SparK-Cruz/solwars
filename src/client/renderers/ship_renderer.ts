@@ -47,15 +47,15 @@ export class ShipRenderer implements Renderable {
 
     return {
       x: -offset * Math.sin(this.ship.angle * Math.PI / 180),
-      y: offset * Math.cos(this.ship.angle * Math.PI / 180),
+      y: offset * Math.cos(this.ship.angle * Math.PI / 180)
     }
   }
   public getTrailDriftSpeed() :{x :number, y :number} {
     const speed = 25 * this.ship.power * this.ship.control.thrust();
 
     return {
-      x: -speed * Math.sin(this.ship.angle * Math.PI / 180),// + this.ship.vx,
-      y: speed * Math.cos(this.ship.angle * Math.PI / 180)// + this.ship.vy
+      x: -speed * Math.sin(this.ship.angle * Math.PI / 180),
+      y: speed * Math.cos(this.ship.angle * Math.PI / 180)
     }
   }
 

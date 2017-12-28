@@ -3,7 +3,7 @@ import { Camera } from '../camera';
 import { Renderable } from './renderable';
 
 //const maxTrailAge = 635;
-const maxTrailAge = 900;
+const maxTrailAge = 760;
 const speedBias = 22;
 
 interface EntityCoord {
@@ -63,9 +63,9 @@ export class TrailRenderer implements Renderable {
 
     let tip = true;
     this.ctx.save();
-    for (let i = 0; i < nodes.length; i++) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
       if (this.age - nodes[i].age >= maxTrailAge) {
-        nodes.splice(i--, 1);
+        nodes.splice(i, 1);
         continue;
       }
 
@@ -79,7 +79,7 @@ export class TrailRenderer implements Renderable {
       if (!tip) {
         let alpha = 1 - (this.age - nodes[i].age) / maxTrailAge;
 
-        alpha = Math.pow(alpha, 8);
+        alpha = Math.pow(alpha, 6);
 
         const color = {
           r: 30 * alpha,
