@@ -1,4 +1,4 @@
-Space Pilot Blues (SPB Online)
+Star Pilot Blues (SPB Online)
 ==============================
 
 Work in progress, built for firefox for now, later to be ported to electron or node-webkit.
