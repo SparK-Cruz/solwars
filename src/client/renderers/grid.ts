@@ -34,7 +34,7 @@ export class Grid implements Renderable {
 
     const ctx = this.buffer.getContext('2d');
 
-    const color = 'rgba(110, 0, 150, 0.4)';
+    const color = 'rgba(255, 0, 150, 0.9)';
     const dashing = [2, 25];
 
     ctx.setLineDash(dashing);

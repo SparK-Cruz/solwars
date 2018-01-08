@@ -2,9 +2,7 @@ import { Stage } from '../../space/stage';
 import { Camera } from '../camera';
 import { Renderable } from './renderable';
 
-//const maxTrailAge = 635;
-const maxTrailAge = 760;
-const speedBias = 22;
+const maxTrailAge = 500;
 
 interface EntityCoord {
   x :number;
@@ -69,17 +67,20 @@ export class TrailRenderer implements Renderable {
         continue;
       }
 
-      const relativeAge = this.age - nodes[i].age;
-
+      const relativeAge = 1 - (this.age - nodes[i].age) / maxTrailAge;
+      nodes[i].vx *= relativeAge;
+      nodes[i].vy *= relativeAge;
+      nodes[i].x += nodes[i].vx;
+      nodes[i].y += nodes[i].vy;
       const point = {
-        x: nodes[i].x - camPos.x + (relativeAge / speedBias * nodes[i].vx),
-        y: nodes[i].y - camPos.y + (relativeAge / speedBias * nodes[i].vy)
+        x: nodes[i].x - camPos.x,
+        y: nodes[i].y - camPos.y
       };
 
       if (!tip) {
-        let alpha = 1 - (this.age - nodes[i].age) / maxTrailAge;
+        let alpha = 1 - (1.1 * (this.age - nodes[i].age) / maxTrailAge);
 
-        alpha = Math.pow(alpha, 6);
+        alpha = Math.max(alpha, 0);
 
         const color = {
           r: 30 * alpha,

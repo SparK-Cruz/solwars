@@ -19,15 +19,16 @@ export class Stage {
 
   private tick = 0;
   private entityMap :any = {};
+  private entityPool :any = {};
 
   public step() :void {
     this.tick++;
-    this.tick = this.tick % 240;
+    this.tick = this.tick % Number.MAX_SAFE_INTEGER;
 
     for (var sector in this.entityMap) {
-      for (var i in this.entityMap[sector].entities) {
+      for (var i = this.entityMap[sector].entities.length - 1; i >= 0; i--) {
         this.entityMap[sector].entities[i].step();
-        this.relocateIfNeeded(this.entityMap[sector], parseInt(i));
+        this.relocateIfNeeded(this.entityMap[sector], i);
       }
     }
   }
@@ -37,7 +38,51 @@ export class Stage {
       entity.memId = 'E' + (nextEntityId++);
     }
 
-    this.addToSector(this.calcSectorCoord(entity.x, entity.y), entity);
+    let ref :Entity = this.entityPool[entity.memId];
+    if (!ref) {
+      this.entityPool[entity.memId] = entity;
+      ref = entity;
+      this.addToSector(this.calcSectorCoord(ref.x, ref.y), ref);
+    }
+
+    if (ref !== entity) {
+      ref.x = entity.x;
+      ref.y = entity.y;
+      ref.vx = entity.vx;
+      ref.vy = entity.vy;
+      ref.angle = entity.angle;
+      ref.vangle = entity.vangle;
+
+      ref.control.setState(entity.control.getState());
+    }
+  }
+
+  public addAll(entities :Entity[]) :void {
+    for (var i = entities.length - 1; i >= 0; i--) {
+      this.add(entities[i]);
+    }
+  }
+
+  // public fetchEntity(location :{x :number, y :number}, memId :string) :Entity | null {
+  //   const entities = this.fetchEntitiesAround(location.x, location.y);
+  //   for (var i = entities.length - 1; i >= 0; i--) {
+  //     if (entities[i].memId !== memId)
+  //       continue;
+
+  //     return entities[i];
+  //   }
+
+  //   return null;
+  // }
+
+  public fetchAllEntities() :Entity[] {
+    const entities :Entity[] = []
+
+    for (var sector in this.entityMap) {
+      entities.push(...this.entityMap[sector].entities);
+    }
+
+    return entities;
   }
 
   public fetchEntitiesAround(x :number, y :number) :Entity[] {

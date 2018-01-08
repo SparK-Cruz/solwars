@@ -1,11 +1,12 @@
 export class Mapping {
-  static FORWARD = 1;       //0000001
-  static BACKWARD = 2;      //0000010
-  static LEFT = 4;          //0000100
-  static RIGHT = 8;         //0001000
-  static SLIDE = 16;        //0010000
-  static STRIFE_LEFT = 32;  //0100000
-  static STRIFE_RIGHT = 64; //1000000
+  static FORWARD = 1;       //000000001
+  static BACKWARD = 2;      //000000010
+  static LEFT = 4;          //000000100
+  static RIGHT = 8;         //000001000
+  static STRIFE_LEFT = 16;  //000100000
+  static STRIFE_RIGHT = 32; //001000000
+  static SHOOT = 64;        //010000000
+  static RUN = 128;         //100000000
 
   private oldState = 0;
   private state = 0;

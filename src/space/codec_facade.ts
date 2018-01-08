@@ -1,21 +1,36 @@
+import { Entity } from './entities';
 import { Stage } from './stage';
+import { EntityCodec } from './codecs/entity_codec';
 
 export class CodecFacade {
   public constructor(private stage :Stage) {}
 
   readState() :string {
-    // are you sure you wanna read it all?
-    // extract all data from this.stage and encode
-    return 'yay';
+    let stream = '';
+
+    stream += EntityCodec.encodeAll(this.stage.fetchAllEntities());
+
+    return stream;
   }
 
-  readStateFromPoint(point :{x :number, y:number}) :string {
-    // extract data from this.stage and encode
-    return 'yay';
+  readStateFromPoint(point :{x :number, y:number}) :string|Entity[] {
+    // let stream = '';
+
+    // //Only entities for now...
+    // stream += EntityCodec.encodeAll(this.stage.fetchEntitiesAround(point.x, point.y));
+
+    // return stream;
+
+    return this.stage.fetchEntitiesAround(point.x, point.y);
   }
 
-  writeState(state :string) {
-    // mutate this.stage to death
+  // For use on client-side
+  writeState(state :Entity[]) {
+    this.stage.addAll(state);
+  }
+
+  writeControls(entity :Entity, state :number) {
+    entity.control.setState(state);
   }
 }
 

@@ -8,8 +8,12 @@ import { Renderer } from './renderer';
 const debug = <HTMLDivElement> document.getElementById('debug');
 const canvas = <HTMLCanvasElement> document.getElementById('canvas');
 
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
+document.body.style.overflow = 'hidden';
+canvas.style.height = window.innerHeight + 'px';
+canvas.style.width = window.innerWidth + 'px';
+
+const aspect = window.innerWidth / window.innerHeight;
+canvas.width = aspect * canvas.height;
 
 const center = {
   x: canvas.width / 2,
@@ -20,15 +24,29 @@ const stage = new Stage();
 
 const ship = new Ship(ShipModel.Warbird);
 const secondship = new Ship(ShipModel.Warbird);
+const thirdship = new Ship(ShipModel.Warbird);
 secondship.x = 100;
 secondship.y = 100;
 secondship.angle = 180;
+
+secondship.color = '#116600';
+secondship.decals = [
+  {name: 'decal0', color: '#003300'}
+];
+
+thirdship.color = '#3399ff';
+thirdship.decals = [
+  {name: 'decal1', color: '#ffffff'}
+];
 
 new Input(ship.control);
 //new Input(secondship.control);
 
 stage.add(ship);
 stage.add(secondship);
+stage.add(thirdship);
+
+(<any>window).control = thirdship.control;
 
 function follow(target :Ship) {
   var angle = Math.atan2(this.y - target.y, this.x - target.x) / Math.PI * 180 - 90;
@@ -60,6 +78,11 @@ const tracked = camera.getTrackable();
 let lastTick = Date.now();
 
 setInterval(function() {
+  // if (!inFullScreen()){
+  //   debug.innerHTML = '<pre>Please enter fullscreen mode by pressing F11 or cmd+shift+F</pre>';
+  //   return;
+  // }
+
   let fps = Math.round(1000 / (Date.now() - lastTick));
   lastTick = Date.now();
 
@@ -76,6 +99,10 @@ setInterval(function() {
 
   renderer.render();
 }, 1000/60);
+
+// function inFullScreen() {
+//   return 5 > window.outerHeight - window.innerHeight;
+// }
 
 function globalPos(number :number) {
   let signal = (number < 0) ? 'L' : 'H';

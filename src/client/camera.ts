@@ -30,6 +30,8 @@ export class Camera {
 
     let fixedDrawAhead = 4;
     let drawAhead = 6 * scale;
+    // let fixedDrawAhead = 0;
+    // let drawAhead = 0;
 
     return (absValue * sign) * (fixedDrawAhead + drawAhead);
   }

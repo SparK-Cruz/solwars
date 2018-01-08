@@ -1,4 +1,4 @@
-import { Mapping } from './mapping';
+import { Mapping } from '../space/entities/ships/mapping';
 import { Control as ShipControl } from '../space/entities/ships/control';
 
 export class Input {
@@ -12,9 +12,10 @@ export class Input {
     'k40': Mapping.BACKWARD,
     'k37': Mapping.LEFT,
     'k39': Mapping.RIGHT,
-    'k81': Mapping.SLIDE,
     'k65': Mapping.STRIFE_LEFT,
-    'k68': Mapping.STRIFE_RIGHT
+    'k68': Mapping.STRIFE_RIGHT,
+    'k17': Mapping.SHOOT,
+    'k16': Mapping.RUN
   };
 
   constructor(control :ShipControl) {
@@ -45,9 +46,6 @@ export class Input {
   }
 
   updateControl(state :number) {
-    this.control.thrust(!!(state & Mapping.FORWARD), !!(state & Mapping.BACKWARD));
-    this.control.strife(!!(state & Mapping.STRIFE_LEFT), !!(state & Mapping.STRIFE_RIGHT));
-    this.control.turn(!!(state & Mapping.LEFT), !!(state & Mapping.RIGHT));
-    this.control.slide(!!(state & Mapping.SLIDE));
+    this.control.setState(state);
   }
 }

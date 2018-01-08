@@ -25,12 +25,13 @@ export class Renderer implements Renderable {
     //this.indicator = new Indicator(inCanvas, camera);
 
     this.c = canvas.getContext('2d');
+    this.c.imageSmoothingEnabled = false;
   }
 
   render() :HTMLCanvasElement {
     this.c.save();
     this.c.drawImage(this.bg.render(), 0, 0);
-    this.c.drawImage(this.grid.render(), 0, 0);
+    //this.c.drawImage(this.grid.render(), 0, 0);
     this.c.drawImage(this.entityRenderer.render(), 0, 0);
     this.c.restore();
 

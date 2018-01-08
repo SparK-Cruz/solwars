@@ -8,7 +8,7 @@ function inRads(degrees :number) :number {
   return degrees * Math.PI / 180;
 }
 
-const INERTIAL_DUMP = 0.996;
+const INERTIAL_DUMP = 0.9985;
 
 export class Ship implements entities.Entity {
   type = entities.EntityType.Ship;
@@ -25,8 +25,9 @@ export class Ship implements entities.Entity {
     {name: 'decal0', color: '#ff5544'}
   ];
 
-  vmax = 105;
-  power = 0.078;
+  vmax = 5;
+  turnSpeed = 4;
+  power = 0.05;
 
   angle = 0;
   vangle = 0;
@@ -48,7 +49,6 @@ export class Ship implements entities.Entity {
   private readControls() {
     this.readThrust();
     this.readStrife();
-    this.readSlide();
     this.readTurn();
   }
   private readThrust() {
@@ -66,24 +66,15 @@ export class Ship implements entities.Entity {
     this.vx += (strife * power) * Math.sin(inRads(sideAngle));
     this.vy -= (strife * power) * Math.cos(inRads(sideAngle));
   }
-  private readSlide() {
-    let slide = this.control.slide();
-
-    if (!slide) {
-      this.vx *= INERTIAL_DUMP;
-      this.vy *= INERTIAL_DUMP;
-    }
-  }
   private readTurn() {
     let turn = this.control.turn();
-
-    // TODO read from stats
-    let turnSpeed = 5;
-
-    this.vangle = turn * turnSpeed;
+    this.vangle = turn * this.turnSpeed;
   }
 
   private updatePhysics() {
+    this.vx *= INERTIAL_DUMP;
+    this.vy *= INERTIAL_DUMP;
+
     this.x += this.vx;
     this.y += this.vy;
     this.angle += this.vangle;
@@ -95,11 +86,17 @@ export class Ship implements entities.Entity {
   private correctSpeed() {
     let avx = Math.abs(this.vx);
     let avy = Math.abs(this.vy);
-    // let total = avx + avy;
+    let total = avx + avy;
 
-    // if (total > this.vmax) {
-    //   //INFLICT DAMAGE
-    // }
+    let diff = total - this.vmax;
+
+    if (diff > 0) {
+      let xratio = this.vx / total;
+      let yratio = this.vy / total;
+
+      this.vx -= xratio * diff;
+      this.vy -= yratio * diff;
+    }
 
     if (avx < 0.001)
       this.vx = 0;

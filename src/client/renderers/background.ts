@@ -3,11 +3,15 @@ import { Camera } from '../camera';
 import { Renderable } from './renderable';
 
 const SIZE = 4096;
-const STAR_COUNT = 2000;
-const SCROLL_FACTOR = 0.03;
+const STAR_COUNT = [2000, 1700, 1400];
+const SCROLL_FACTOR = [0.03, 0.09, 0.15];
 
 export class Background implements Renderable {
-  private buffer :HTMLCanvasElement = document.createElement('canvas');
+  private buffers :HTMLCanvasElement[] = [
+    document.createElement('canvas'),
+    document.createElement('canvas'),
+    document.createElement('canvas')
+  ];
   private blurBuffer :HTMLCanvasElement = document.createElement('canvas');
   private context :CanvasRenderingContext2D;
 
@@ -21,40 +25,44 @@ export class Background implements Renderable {
     let seed = 9876543210;
     RNG.random(seed);
 
-    this.generate();
+    for (let i = this.buffers.length - 1; i >= 0; i--) {
+      this.generate(this.buffers[i], STAR_COUNT[i]);
+    }
   }
 
   render() :HTMLCanvasElement {
-    let ref = this.camera.getPosition();
-
-    let relative :Point = {
-      x: ref.x * SCROLL_FACTOR,
-      y: ref.y * SCROLL_FACTOR
-    };
-
+    const ref = this.camera.getPosition();
     this.generateBlur();
-    for (let i = 0; i < 9; ++i) {
-      let coords :Point = {
-        x: ((i / 3 | 0) * SIZE - SIZE - (relative.x % SIZE)) + 0.5 | 0,
-        y: ((i % 3) * SIZE - SIZE - (relative.y % SIZE)) + 0.5 | 0
+
+    for (let i = this.buffers.length - 1; i >= 0; i--) {
+      const relative :Point = {
+        x: ref.x * SCROLL_FACTOR[i],
+        y: ref.y * SCROLL_FACTOR[i]
       };
-      this.context.drawImage(this.buffer, coords.x, coords.y);
+
+      for (let j = 0; j < 9; ++j) {
+        let coords :Point = {
+          x: ((j / 3 | 0) * SIZE - SIZE - (relative.x % SIZE)) | 0,
+          y: ((j % 3) * SIZE - SIZE - (relative.y % SIZE)) | 0
+        };
+        this.context.drawImage(this.buffers[i], coords.x, coords.y);
+      }
     }
 
     return this.canvas;
   }
 
-  private generate() :void {
-    this.buffer.width = SIZE;
-    this.buffer.height = SIZE;
+  private generate(buffer :HTMLCanvasElement, starCount :number) :void {
+    buffer.width = SIZE;
+    buffer.height = SIZE;
 
-    let ctx = this.buffer.getContext('2d');
+    const ctx = buffer.getContext('2d');
 
-    for(let i = 0; i < STAR_COUNT; i++) {
+    for(let i = 0; i < starCount; i++) {
       let x = RNG.random() * SIZE | 0;
       let y = RNG.random() * SIZE | 0;
-      let size = RNG.random() * SIZE / (SIZE / 1.8);
-      let shine = (RNG.random() * 100 | 0) / 120;
+      let size = (0.9 + RNG.random() * 2) | 0;
+      let shine = RNG.random() * 100 / 120;
       this.drawStar(ctx, x, y, size, shine);
     }
   }
@@ -78,7 +86,7 @@ export class Background implements Renderable {
     bctx.fillRect(0, 0, this.blurBuffer.width, this.blurBuffer.height);
     bctx.restore();
 
-    this.canvas.getContext('2d').drawImage(this.blurBuffer, 0, 0);
+    this.context.drawImage(this.blurBuffer, 0, 0);
   }
 }
 
