@@ -3,6 +3,7 @@ import { Model } from './ships/model';
 import { Control as ShipControl } from './ships/control';
 import { Decal } from './ships/decal';
 import * as entities from '../entities';
+import { Controllable } from './controllable';
 
 function inRads(degrees :number) :number {
   return degrees * Math.PI / 180;
@@ -10,7 +11,7 @@ function inRads(degrees :number) :number {
 
 const INERTIAL_DUMP = 0.9985;
 
-export class Ship implements entities.Entity {
+export class Ship implements entities.Entity, Controllable {
   type = entities.EntityType.Ship;
   memId :string;
 
@@ -39,6 +40,13 @@ export class Ship implements entities.Entity {
   constructor(public model :Model) {
     // TODO: Read ship stats
     this.control = new ShipControl();
+  }
+
+  getState() {
+    return this.control.getState();
+  }
+  setState(state :number) {
+    this.control.setState(state);
   }
 
   step() :void {
