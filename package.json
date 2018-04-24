@@ -10,7 +10,7 @@
     "build-frontend": "browserify dist/client/frontend.js > dist/client/index.js",
     "build-assets": "npm run build-html && npm run build-img",
     "build-html": "cp src/client/*.html dist/client/",
-    "build-img": "mkdir -p dist/client/img && cp src/client/img/* dist/client/img/"
+    "build-img": "cp -r src/client/img dist/client/img"
   },
   "keywords": [
     "space",

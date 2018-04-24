@@ -1,8 +1,8 @@
 import { Mapping } from '../space/entities/ships/mapping';
-import { Control as ShipControl } from '../space/entities/ships/control';
+import { Controllable } from '../space/entities/controllable';
 
 export class Input {
-  control :ShipControl;
+  control :Controllable;
   mapping :Mapping = new Mapping();
 
   map :any = {
@@ -18,7 +18,7 @@ export class Input {
     'k16': Mapping.RUN
   };
 
-  constructor(control :ShipControl) {
+  constructor(control :Controllable) {
     this.control = control;
 
     window.addEventListener('keydown', (e :KeyboardEvent) => {
@@ -46,6 +46,7 @@ export class Input {
   }
 
   updateControl(state :number) {
+    // This method will change in the future and will send the state through the websocket
     this.control.setState(state);
   }
 }

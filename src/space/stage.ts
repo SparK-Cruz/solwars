@@ -1,4 +1,5 @@
 import { Entity } from './entities';
+import { Controllable } from './entities/controllable';
 
 export const TPS = 60;
 
@@ -45,16 +46,23 @@ export class Stage {
       this.addToSector(this.calcSectorCoord(ref.x, ref.y), ref);
     }
 
-    if (ref !== entity) {
-      ref.x = entity.x;
-      ref.y = entity.y;
-      ref.vx = entity.vx;
-      ref.vy = entity.vy;
-      ref.angle = entity.angle;
-      ref.vangle = entity.vangle;
+    if (ref === entity)
+      return;
 
-      ref.control.setState(entity.control.getState());
-    }
+    ref.x = entity.x;
+    ref.y = entity.y;
+    ref.vx = entity.vx;
+    ref.vy = entity.vy;
+    ref.angle = entity.angle;
+    ref.vangle = entity.vangle;
+
+    const ctrlEntity = this.tryControllableEntity(entity);
+    const ctrlRef = this.tryControllableEntity(ref);
+
+    if (!ctrlEntity || !ctrlRef)
+      return;
+
+    ctrlRef.setState(ctrlEntity.getState());
   }
 
   public addAll(entities :Entity[]) :void {
@@ -103,6 +111,15 @@ export class Stage {
 
   public getTick() {
     return this.tick;
+  }
+
+  private tryControllableEntity(entity :Entity) :Controllable {
+    if (typeof (entity as any).setState === 'undefined'
+      || typeof (entity as any).getState === 'undefined') {
+      return null;
+    }
+
+    return entity as any as Controllable;
   }
 
   private relocateIfNeeded(sector :Sector, index :number) :void {

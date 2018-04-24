@@ -1,6 +1,7 @@
 import { Entity } from './entities';
 import { Stage } from './stage';
 import { EntityCodec } from './codecs/entity_codec';
+import { Controllable } from './entities/controllable';
 
 export class CodecFacade {
   public constructor(private stage :Stage) {}
@@ -29,9 +30,9 @@ export class CodecFacade {
     this.stage.addAll(state);
   }
 
-  writeControls(entity :Entity, state :number) {
-    entity.control.setState(state);
-  }
+  // writeControls(entity :Controllable, state :number) {
+  //   entity.setState(state);
+  // }
 }
 
 /*

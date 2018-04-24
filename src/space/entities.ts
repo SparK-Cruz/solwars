@@ -1,5 +1,3 @@
-import { Controllable } from './entities/controllable';
-
 export interface Entity {
   memId :string;
   type :EntityType;
@@ -13,8 +11,6 @@ export interface Entity {
   damage : number;
 
   step() :void;
-
-  control :Controllable;
 }
 
 export interface EntityType {
