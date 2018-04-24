@@ -11,6 +11,11 @@ export class Beacon implements entities.Entity {
   health :number;
   damage :number;
 
+  control :{
+    getState: () => 0,
+    setState: (x :number) => {}
+  }
+
   constructor(public x :number, public y :number) {
     this.vx = 0;
     this.vy = 0;

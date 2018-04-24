@@ -1,6 +1,5 @@
 // using require because npm sucks with typings
 const express = require('express');
-//import * as socketio from 'socket.io';
 import { Server } from 'http';
 import { Room } from './server/room';
 
