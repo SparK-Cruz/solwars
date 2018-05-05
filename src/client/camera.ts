@@ -1,14 +1,20 @@
 export class Camera {
-  private maxSpeed = 0;
+  private maxSpeed = 50;
 
   constructor(private trackable :MovingPoint, private offset :{x :number, y :number}) {
-    this.maxSpeed = Math.min(this.offset.x, this.offset.y) / 5;
   }
 
   public getPosition() :MovingPoint {
+    let totalSpeed = Math.sqrt(Math.pow(this.trackable.vx, 2) + Math.pow(this.trackable.vy, 2));
+    let angle = Math.atan2(this.trackable.vy, this.trackable.vx) + (Math.PI / 2);
+    let distance = this.easeAxis(totalSpeed, this.maxSpeed);
+
+    while(angle < 0) angle += 2 * Math.PI;
+    while(angle > 2 * Math.PI) angle -= 2 * Math.PI;
+
     let spot = {
-      x: this.easeAxis(this.trackable.vx, this.maxSpeed),
-      y: this.easeAxis(this.trackable.vy, this.maxSpeed)
+      x: distance * Math.sin(angle),
+      y: -distance * Math.cos(angle)
     };
 
     return {
@@ -24,16 +30,12 @@ export class Camera {
   }
 
   private easeAxis(value :number, absMax :number) {
-    let sign = value < 0 ? -1 : 1;
-    let absValue = Math.min(Math.abs(value), absMax);
-    let scale = (absMax - absValue) / absMax;
+    let scale = 500; //max distance in pixels from center;
+    let signal = value < 0 ? -1 : 1;
+    let relative = Math.abs(value) / absMax;
+    let ease = Math.pow(relative - 1, 3) + 1;
 
-    let fixedDrawAhead = 4;
-    let drawAhead = 6 * scale;
-    // let fixedDrawAhead = 0;
-    // let drawAhead = 0;
-
-    return (absValue * sign) * (fixedDrawAhead + drawAhead);
+    return ease * scale * signal;
   }
 }
 export interface MovingPoint {

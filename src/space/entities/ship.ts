@@ -9,7 +9,8 @@ function inRads(degrees :number) :number {
   return degrees * Math.PI / 180;
 }
 
-const INERTIAL_DUMP = 0.9985;
+//const INERTIAL_DUMP = 0.9985;
+const INERTIAL_DUMP = 0.995;
 
 export class Ship implements entities.Entity, Controllable {
   type = entities.EntityType.Ship;
@@ -94,17 +95,6 @@ export class Ship implements entities.Entity, Controllable {
   private correctSpeed() {
     let avx = Math.abs(this.vx);
     let avy = Math.abs(this.vy);
-    let total = avx + avy;
-
-    let diff = total - this.vmax;
-
-    if (diff > 0) {
-      let xratio = this.vx / total;
-      let yratio = this.vy / total;
-
-      this.vx -= xratio * diff;
-      this.vy -= yratio * diff;
-    }
 
     if (avx < 0.001)
       this.vx = 0;

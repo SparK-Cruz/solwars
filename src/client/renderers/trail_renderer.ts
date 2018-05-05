@@ -70,8 +70,6 @@ export class TrailRenderer implements Renderable {
       const relativeAge = 1 - (this.age - nodes[i].age) / maxTrailAge;
       nodes[i].vx *= relativeAge;
       nodes[i].vy *= relativeAge;
-      nodes[i].x += nodes[i].vx;
-      nodes[i].y += nodes[i].vy;
       const point = {
         x: nodes[i].x - camPos.x,
         y: nodes[i].y - camPos.y
@@ -106,6 +104,9 @@ export class TrailRenderer implements Renderable {
       if (!nodes[i].draw) {
         tip = true;
       }
+
+      nodes[i].x += nodes[i].vx;
+      nodes[i].y += nodes[i].vy;
     }
     this.ctx.restore();
   }
