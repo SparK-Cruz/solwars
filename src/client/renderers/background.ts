@@ -32,7 +32,7 @@ export class Background implements Renderable {
 
   render() :HTMLCanvasElement {
     const ref = this.camera.getPosition();
-    this.generateBlur();
+    this.drawBlackCanvas();
 
     for (let i = this.buffers.length - 1; i >= 0; i--) {
       const relative :Point = {
@@ -77,12 +77,12 @@ export class Background implements Renderable {
     ctx.restore();
   }
 
-  private generateBlur() :void {
+  private drawBlackCanvas() :void {
     let bctx = this.blurBuffer.getContext('2d');
     bctx.save();
-    bctx.drawImage(this.canvas, 0, 0);
+    //bctx.drawImage(this.canvas, 0, 0);
     bctx.fillStyle = '#000000';
-    bctx.globalAlpha = 0.3;
+    //bctx.globalAlpha = 0.4;
     bctx.fillRect(0, 0, this.blurBuffer.width, this.blurBuffer.height);
     bctx.restore();
 
