@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node dist/start.js",
     "build": "tsc && npm run build-client && npm run build-assets",
-    "build-client": "browserify dist/client/engine.js > dist/client/client.js",
-    "build-frontend": "browserify dist/client/frontend.js > dist/client/index.js",
+    "build-client": "browserify dist/client/engine.js > dist/client/dist_engine.js",
+    "build-frontend": "browserify dist/client/frontend.js > dist/client/dist_frontend.js",
     "build-assets": "npm run build-html && npm run build-img",
     "build-html": "cp src/client/*.html dist/client/",
     "build-img": "cp -r src/client/img dist/client/img"
