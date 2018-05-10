@@ -32,13 +32,24 @@ const stage = new Stage();
 
 // Player and Controls setup
 const ship = new Ship(ShipModel.Warbird);
+ship.color = 'rgb('
+  + Math.round(Math.random()*255)+','
+  + Math.round(Math.random()*255)+','
+  + Math.round(Math.random()*255)+')';
+
+ship.decals[0].name = 'decal' + Math.round(Math.random());
+ship.decals[0].color = 'rgb('
+  + Math.round(Math.random()*255)+','
+  + Math.round(Math.random()*255)+','
+  + Math.round(Math.random()*255)+')';
+
 new Input(ship.control);
 let name = 'Anon' + (100 + Math.round(Math.random() * 899));
 
 
 // Network setup
 let codec = new CodecFacade(stage);
-let conn = socketio('localhost:27001');
+let conn = socketio(':27001');
 console.log('joining by '+name);
 conn.emit('join', {name: name, ship: ship});
 
