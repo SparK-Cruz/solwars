@@ -1,49 +1,52 @@
-import { Entity } from './entities';
+import { Entity, EntityType } from './entities';
 import { Stage } from './stage';
-import { EntityCodec } from './codecs/entity_codec';
 import { Controllable } from './entities/controllable';
+import { Ship } from './entities/ship';
+import { Control } from './entities/ships/control';
+
+interface SavedState {
+  entities :Entity[]
+}
+interface SavedControl {
+  memId :string
+  state :number
+}
 
 export class CodecFacade {
   public constructor(private stage :Stage) {}
 
-  readState() :string {
-    let stream = '';
+  public readState() :string {
+    let stream = {
+      entities: this.stage.fetchAllEntities().map(entity => {
+        if (entity.type.name == EntityType.Ship.name) {
+          (<any>entity).controlState = (<Ship>entity).getState();
+        }
+      })
+    };
 
-    stream += EntityCodec.encodeAll(this.stage.fetchAllEntities());
-
-    return stream;
+    // TODO PSON
+    return JSON.stringify(stream);
   }
 
-  readStateFromPoint(point :{x :number, y:number}) :string|Entity[] {
-    // let stream = '';
+  public readStateFromPoint(point :{x :number, y :number}) :string {
+    let stream = {
+      entities: this.stage.fetchEntitiesAround(point.x, point.y)
+    };
 
-    // //Only entities for now...
-    // stream += EntityCodec.encodeAll(this.stage.fetchEntitiesAround(point.x, point.y));
-
-    // return stream;
-
-    return this.stage.fetchEntitiesAround(point.x, point.y);
+    // TODO PSON
+    return JSON.stringify(stream);
   }
 
-  // For use on client-side
-  writeState(state :Entity[]) {
-    this.stage.addAll(state);
+  public writeState(state :string) {
+    // TODO PSON
+    let decoded = <SavedState>JSON.parse(state);
+
+    this.stage.addAll(decoded.entities);
   }
 
-  // writeControls(entity :Controllable, state :number) {
-  //   entity.setState(state);
-  // }
+  public writeControls(control :string) {
+    // TODO PSON
+    let decoded = <SavedControl>JSON.parse(control);
+    this.stage.entityPool[decoded.memId].setState(decoded.state);
+  }
 }
-
-/*
-PROTOCOL NOTES (NO TIME FOR RFCs)
-=================================
-
-TAB SEPARATOR (9) FOR LISTS
-
-BEACON - 01 <X> <Y> <VX> <VY>
-SHIP   - 02 <PLAYER_ID> <X> <Y> <VX> <VY> <ANGLE> <INPUT>
-
-ShipCodec, BeaconCodec
-
-*/

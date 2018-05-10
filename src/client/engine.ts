@@ -5,6 +5,10 @@ import { Input } from './input';
 import { Camera } from './camera';
 import { Renderer } from './renderer';
 
+import * as socketio from 'socket.io-client';
+import { CodecFacade } from '../space/codec_facade';
+
+// HTML setup
 const debug = <HTMLDivElement> document.getElementById('debug');
 const canvas = <HTMLCanvasElement> document.getElementById('canvas');
 
@@ -20,20 +24,57 @@ const center = {
   y: canvas.height / 2
 };
 
+// Game setup
 const stage = new Stage();
+// setInterval(function(){
+//   stage.step();
+// }, 1000/TPS);
 
+// Player and Controls setup
 const ship = new Ship(ShipModel.Warbird);
-
 new Input(ship.control);
+let name = 'Anon' + (100 + Math.round(Math.random() * 899));
 
-stage.add(ship);
 
+// Network setup
+let codec = new CodecFacade(stage);
+let conn = socketio('localhost:27001');
+console.log('joining by '+name);
+conn.emit('join', {name: name, ship: ship});
+
+
+conn.on('accepted', (data :any) => {
+  console.log('Accepted with '+data);
+  ship.memId = data;
+  stage.add(ship);
+});
+conn.on('step', (data :any) => {
+  // ignore until we have acceptance confirmation
+  // otherwise we will get two ships for each player
+  // one with and other without memId and then a
+  // memId conflict depending on a race condition
+  // betwen the two events
+  if (!ship.memId) {
+    console.log('Not on yet');
+    return;
+  }
+
+  codec.writeState(data);
+});
+
+let lastInput = 0;
+setInterval(function(){
+  const input = ship.control.getState();
+  if (lastInput === input)
+    return;
+
+  conn.emit('input', input);
+  lastInput = input;
+}, 1000/TPS);
+
+// Graphics setup
 const camera = new Camera(ship, center);
 const renderer = new Renderer(canvas, camera, stage);
-
-setInterval(function(){
-  stage.step();
-}, 1000/TPS);
 
 const tracked = camera.getTrackable();
 let lastTick = Date.now();
@@ -50,7 +91,8 @@ setInterval(function() {
   debug.innerHTML = '<pre>SECTOR: ' + pos.x + pos.y + ' ' + fps + '</pre>';
 
   if (fps < 55) {
-    return; // frame skipping
+    // frame skip
+    return;
   }
 
   renderer.render();

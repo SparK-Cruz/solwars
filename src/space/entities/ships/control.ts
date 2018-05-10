@@ -2,12 +2,12 @@ import { Controllable } from '../controllable';
 import { Mapping } from './mapping';
 
 export class Control implements Controllable {
-  private thrusting :number = 0;
-  private turning :number = 0;
-  private strifing :number = 0;
+  public thrusting :number = 0;
+  public turning :number = 0;
+  public strifing :number = 0;
 
-  private isShooting :boolean = false;
-  private isRunning :boolean = false;
+  public isShooting :boolean = false;
+  public isRunning :boolean = false;
 
   thrust(forward ?:boolean, backward ?:boolean) {
     if (forward == null)

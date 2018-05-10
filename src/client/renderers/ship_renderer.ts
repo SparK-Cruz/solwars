@@ -34,15 +34,15 @@ export class ShipRenderer implements Renderable {
   }
 
   public shouldDrawTrail() :boolean {
-    return this.ship.control.thrust() !== 0;
+    return this.ship.control.thrusting !== 0;
   }
   public getTrailOffset() :{x :number, y :number} {
     let offset = 0;
 
-    if (this.ship.control.thrust() > 0)
+    if (this.ship.control.thrusting > 0)
       offset = this.canvas.height / 2 + 1;
 
-    if (this.ship.control.thrust() < 0)
+    if (this.ship.control.thrusting < 0)
       offset = -this.canvas.height / 4;
 
     return {
@@ -51,7 +51,7 @@ export class ShipRenderer implements Renderable {
     }
   }
   public getTrailDriftSpeed() :{x :number, y :number} {
-    const speed = 80 * this.ship.power * this.ship.control.thrust();
+    const speed = 80 * this.ship.power * this.ship.control.thrusting;
 
     return {
       x: -speed * Math.sin(this.ship.angle * Math.PI / 180) + this.ship.vx,

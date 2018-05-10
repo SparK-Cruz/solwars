@@ -3,8 +3,6 @@ import { Controllable } from './entities/controllable';
 
 export const TPS = 60;
 
-var nextEntityId = 0;
-
 interface SectorCoord {
   x :number;
   y :number;
@@ -18,9 +16,11 @@ export class Stage {
   public static SECTOR_SIZE :number = 4096;
   public static SUBDIVISIONS :number = 8;
 
+  public entityPool :any = {};
+  public entityCount = 0;
+
   private tick = 0;
   private entityMap :any = {};
-  private entityPool :any = {};
 
   public step() :void {
     this.tick++;
@@ -36,7 +36,7 @@ export class Stage {
 
   public add(entity :Entity) :void {
     if (!entity.memId) {
-      entity.memId = 'E' + (nextEntityId++);
+      entity.memId = 'E' + (this.entityCount++);
     }
 
     let ref :Entity = this.entityPool[entity.memId];
@@ -71,26 +71,8 @@ export class Stage {
     }
   }
 
-  // public fetchEntity(location :{x :number, y :number}, memId :string) :Entity | null {
-  //   const entities = this.fetchEntitiesAround(location.x, location.y);
-  //   for (var i = entities.length - 1; i >= 0; i--) {
-  //     if (entities[i].memId !== memId)
-  //       continue;
-
-  //     return entities[i];
-  //   }
-
-  //   return null;
-  // }
-
   public fetchAllEntities() :Entity[] {
-    const entities :Entity[] = []
-
-    for (var sector in this.entityMap) {
-      entities.push(...this.entityMap[sector].entities);
-    }
-
-    return entities;
+    return this.entityPool;
   }
 
   public fetchEntitiesAround(x :number, y :number) :Entity[] {

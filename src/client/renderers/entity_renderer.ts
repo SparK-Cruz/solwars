@@ -131,12 +131,17 @@ export class EntityRenderer implements Renderable {
   }
 
   private buildRenderer(entity :Entity) :Renderable {
-    switch(entity.type) {
-      case EntityType.Ship:
+    switch(entity.type.name) {
+      case EntityType.Ship.name:
         this.trailBearers.push(entity.memId);
         return new ShipRenderer(<Ship>entity);
       default:
         console.log(entity.type);
     }
+
+    return {render: () => {
+      console.log('BOGUS');
+      return null;
+    }};
   }
 }
