@@ -69,6 +69,12 @@ export class Stage {
     for (var i = entities.length - 1; i >= 0; i--) {
       this.add(entities[i]);
     }
+
+    for (var sector in this.entityMap) {
+      for (var i = this.entityMap[sector].entities.length - 1; i >= 0; i--) {
+        this.relocateIfNeeded(this.entityMap[sector], i);
+      }
+    }
   }
 
   public fetchAllEntities() :Entity[] {

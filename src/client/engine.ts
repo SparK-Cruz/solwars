@@ -99,7 +99,16 @@ setInterval(function() {
     y: globalPos(tracked.y)
   };
 
-  debug.innerHTML = '<pre>SECTOR: ' + pos.x + pos.y + ' ' + fps + '</pre>';
+  debug.innerHTML = [
+    '<pre>SECTOR: ',
+    'H',
+    pos.x,
+    'V',
+    pos.y,
+    ' ',
+    fps,
+    '</pre>'
+  ].join('');
 
   if (fps < 55) {
     // frame skip
@@ -110,7 +119,7 @@ setInterval(function() {
 }, 1000/60);
 
 function globalPos(number :number) {
-  let signal = (number < 0) ? 'L' : 'H';
+  let signal = (number < 0) ? 'M' : 'P';
   let hex = padLeft(Math.abs(number / (Stage.SECTOR_SIZE / Stage.SUBDIVISIONS) | 0).toString(16).toUpperCase(), 4);
   return signal + hex;
 }
