@@ -63,9 +63,9 @@ export class Control implements Controllable {
 
   getState() :number {
     let state = 0;
-    state += this.thrusting < 0 ? Mapping.BACKWARD : this.thrusting * Mapping.FORWARD;
-    state += this.turning < 0 ? Mapping.LEFT : this.turning * Mapping.RIGHT;
-    state += this.strifing < 0 ? Mapping.STRIFE_LEFT : this.strifing * Mapping.STRIFE_RIGHT;
+    state += [Mapping.BACKWARD, 0, Mapping.FORWARD][this.thrusting+1];
+    state += [Mapping.LEFT, 0, Mapping.RIGHT][this.turning+1];
+    state += [Mapping.STRIFE_LEFT, 0, Mapping.STRIFE_RIGHT][this.strifing+1];
     state += this.isShooting ? Mapping.SHOOT : 0;
     state += this.isRunning ? Mapping.RUN : 0;
 
