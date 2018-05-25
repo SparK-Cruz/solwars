@@ -2,8 +2,11 @@ import * as socketio from 'socket.io';
 import { Server } from 'http';
 
 import { CodecFacade } from '../space/codec_facade';
-import { Stage, TPS } from '../space/stage';
+import { Stage } from '../space/stage2';
 import { Player } from './player';
+import { Entity } from '../space/entities';
+
+const TPS = 60;
 
 export class Room {
   private server :Server;

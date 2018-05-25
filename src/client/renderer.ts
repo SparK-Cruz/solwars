@@ -1,4 +1,4 @@
-import { Stage } from '../space/stage';
+import { Stage } from '../space/stage2';
 import { Camera } from './camera';
 import { Renderable } from './renderers/renderable';
 import { Background } from './renderers/background';
@@ -20,7 +20,7 @@ export class Renderer implements Renderable {
     let inCanvas = this.copySize(canvas, document.createElement('canvas'));
 
     this.bg = new Background(bgCanvas, camera);
-    this.grid = new Grid(gridCanvas, camera, Stage.SECTOR_SIZE, Stage.SUBDIVISIONS);
+    //this.grid = new Grid(gridCanvas, camera, Stage.SECTOR_SIZE, Stage.SUBDIVISIONS);
     this.entityRenderer = new EntityRenderer(fgCanvas, camera, stage);
     //this.indicator = new Indicator(inCanvas, camera);
 

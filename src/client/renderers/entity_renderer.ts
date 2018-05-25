@@ -1,6 +1,6 @@
 import { Entity, EntityType } from '../../space/entities';
 import { Ship } from '../../space/entities/ship';
-import { Stage } from '../../space/stage';
+import { Stage } from '../../space/stage2';
 import { Camera, MovingPoint } from '../camera';
 import { ShipRenderer } from './ship_renderer';
 import { TrailRenderer } from './trail_renderer';
@@ -9,8 +9,8 @@ import { Renderable } from './renderable';
 export class EntityRenderer implements Renderable {
   private ctx :CanvasRenderingContext2D;
 
-  private cacheControl :string[];
-  private trailBearers :string[];
+  private cacheControl :number[];
+  private trailBearers :number[];
   private cache :any;
   private coords :any;
   private trailRenderer :TrailRenderer;
@@ -23,14 +23,14 @@ export class EntityRenderer implements Renderable {
     this.cache = {};
     this.coords = {};
 
-    this.trailRenderer = new TrailRenderer(this.canvas, this.camera, this.stage);
+    this.trailRenderer = new TrailRenderer(this.canvas, this.camera);
   }
 
   render() :HTMLCanvasElement {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     const camPos = this.camera.getPosition();
-    this.updateEntities(this.stage.fetchEntitiesAround(camPos.x, camPos.y));
+    this.updateEntities(this.stage.entityPool.entities);
 
     this.drawTrails();
     this.draw();
@@ -84,9 +84,9 @@ export class EntityRenderer implements Renderable {
     this.cacheControl = [];
     this.coords = {};
 
-    for (let i = 0; i < entities.length; ++i) {
-      this.cacheControl.push(entities[i].memId);
-      this.coords[entities[i].memId] = {
+    for (let i in entities) {
+      this.cacheControl.push(entities[i].id);
+      this.coords[entities[i].id] = {
         x: entities[i].x,
         y: entities[i].y,
         vx: entities[i].vx,
@@ -94,10 +94,10 @@ export class EntityRenderer implements Renderable {
         angle: entities[i].angle
       };
 
-      if (typeof this.cache[entities[i].memId] !== 'undefined')
+      if (typeof this.cache[entities[i].id] !== 'undefined')
         continue;
 
-      this.cache[entities[i].memId] = this.buildRenderer(entities[i]);
+      this.cache[entities[i].id] = this.buildRenderer(entities[i]);
     }
   }
 
@@ -105,7 +105,7 @@ export class EntityRenderer implements Renderable {
     const camPos = this.camera.getPosition();
 
     for (let memId in this.cache) {
-      if (this.cacheControl.indexOf(memId) <= -1) {
+      if (this.cacheControl.indexOf(parseInt(memId)) <= -1) {
         delete this.cache[memId];
         continue;
       }
@@ -133,7 +133,7 @@ export class EntityRenderer implements Renderable {
   private buildRenderer(entity :Entity) :Renderable {
     switch(entity.type.name) {
       case EntityType.Ship.name:
-        this.trailBearers.push(entity.memId);
+        this.trailBearers.push(entity.id);
         return new ShipRenderer(<Ship>entity);
       default:
         console.log(entity.type);

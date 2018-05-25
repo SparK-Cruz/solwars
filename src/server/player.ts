@@ -38,7 +38,7 @@ export class Player {
     this.ship.control = new Control();
 
     this.room.addPlayerShip(this);
-    this.socket.emit('accepted', this.ship.memId);
+    this.socket.emit('accepted', this.ship.id);
   }
 
   private onInput(data :any) {

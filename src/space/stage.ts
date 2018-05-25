@@ -35,13 +35,13 @@ export class Stage {
   }
 
   public add(entity :Entity) :void {
-    if (!entity.memId) {
-      entity.memId = 'E' + (this.entityCount++);
+    if (!entity.id) {
+      entity.id = ++this.entityCount;
     }
 
-    let ref :Entity = this.entityPool[entity.memId];
+    let ref :Entity = this.entityPool[entity.id];
     if (!ref) {
-      this.entityPool[entity.memId] = entity;
+      this.entityPool[entity.id] = entity;
       ref = entity;
       this.addToSector(this.calcSectorCoord(ref.x, ref.y), ref);
     }
@@ -54,7 +54,6 @@ export class Stage {
     ref.vx = entity.vx;
     ref.vy = entity.vy;
     ref.angle = entity.angle;
-    ref.vangle = entity.vangle;
 
     const ctrlEntity = this.tryControllableEntity(entity);
     const ctrlRef = this.tryControllableEntity(ref);

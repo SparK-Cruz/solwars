@@ -1,4 +1,4 @@
-import { Stage, TPS } from '../space/stage';
+import { Stage } from '../space/stage2';
 import { Ship } from '../space/entities/ship';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Input } from './input';
@@ -25,10 +25,8 @@ const center = {
 };
 
 // Game setup
+const TPS = 60;
 const stage = new Stage();
-// setInterval(function(){
-//   stage.step();
-// }, 1000/TPS);
 
 // Player and Controls setup
 const ship = new Ship(ShipModel.Warbird);
@@ -56,7 +54,7 @@ conn.emit('join', {name: name, ship: ship});
 
 conn.on('accepted', (data :any) => {
   console.log('Accepted with '+data);
-  ship.memId = data;
+  ship.id = data;
   stage.add(ship);
 });
 conn.on('step', (data :any) => {
@@ -65,7 +63,7 @@ conn.on('step', (data :any) => {
   // one with and other without memId and then a
   // memId conflict depending on a race condition
   // betwen the two events
-  if (!ship.memId) {
+  if (!ship.id) {
     console.log('Not on yet');
     return;
   }
@@ -120,7 +118,7 @@ setInterval(function() {
 
 function globalPos(number :number) {
   let signal = (number < 0) ? 'M' : 'P';
-  let hex = padLeft(Math.abs(number / (Stage.SECTOR_SIZE / Stage.SUBDIVISIONS) | 0).toString(16).toUpperCase(), 4);
+  let hex = padLeft(Math.abs(number / 125 | 0).toString(16).toUpperCase(), 4);
   return signal + hex;
 }
 function padLeft(number :string, length :number) :string {

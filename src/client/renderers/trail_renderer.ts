@@ -1,4 +1,3 @@
-import { Stage } from '../../space/stage';
 import { Camera } from '../camera';
 import { Renderable } from './renderable';
 
@@ -22,7 +21,7 @@ export class TrailRenderer implements Renderable {
 
   private ctx :CanvasRenderingContext2D;
 
-  public constructor(private canvas :HTMLCanvasElement, private camera :Camera, private stage :Stage) {
+  public constructor(private canvas :HTMLCanvasElement, private camera :Camera) {
     this.ctx = this.canvas.getContext('2d');
   }
 
