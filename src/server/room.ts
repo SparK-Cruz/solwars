@@ -2,7 +2,7 @@ import * as socketio from 'socket.io';
 import { Server } from 'http';
 
 import { CodecFacade } from '../space/codec_facade';
-import { Stage } from '../space/stage2';
+import { Stage } from '../space/stage';
 import { Player } from './player';
 import { Entity } from '../space/entities';
 
@@ -64,7 +64,7 @@ export class Room {
   private setupEvents() {
     let id = 0;
     this.io.sockets.on('connection', (socket :SocketIO.Socket) => {
-      this.players.push(new Player(id++, socket, this));
+      this.players.push(new Player(++id, socket, this));
     });
   }
 }

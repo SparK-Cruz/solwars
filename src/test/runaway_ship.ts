@@ -1,23 +1,27 @@
 import { Ship } from '../space/entities/ship';
+import { Mapping } from '../space/entities/ships/mapping';
 import { Model as ShipModel } from '../space/entities/ships/model';
-import { Stage, TPS } from '../space/stage';
+import { Stage } from '../space/stage';
 
 (() => {
 
-  let stage = new Stage();
-  let ship = new Ship(ShipModel.Warbird);
+  const stage = new Stage();
+  const ship = new Ship(ShipModel.Warbird);
+  const mapping = new Mapping();
 
   stage.add(ship);
 
   setInterval(() => {
     stage.step();
-  }, 1000 / TPS);
+  }, 1000 / 60);
 
   setTimeout(() => {
-    ship.control.thrust(true);
+    mapping.press(Mapping.FORWARD);
+    ship.control = mapping.state;
   }, 5000);
 
   setTimeout(() => {
-    ship.control.thrust(false, false);
+    mapping.release(Mapping.FORWARD);
+    ship.control = mapping.state;
   }, 5500);
 })();

@@ -1,6 +1,5 @@
-import { TPS } from '../stage';
 import { Model } from './ships/model';
-import { Control as ShipControl } from './ships/control';
+import { Control } from './ships/control';
 import { Decal } from './ships/decal';
 import * as entities from '../entities';
 
@@ -14,6 +13,7 @@ const INERTIAL_DUMP = 0.995;
 export class Ship implements entities.Entity {
   type = entities.EntityType.Ship;
   id :number;
+  model :string;
 
   sectorKey :string;
   collisionPoolKey :string;
@@ -38,18 +38,10 @@ export class Ship implements entities.Entity {
   health = 0;
   damage = 0;
 
-  control :ShipControl;
+  control = 0;
 
-  constructor(public model :Model) {
-    // TODO: Read ship stats
-    this.control = new ShipControl();
-  }
-
-  getState() :number {
-    return this.control.getState();
-  }
-  setState(state :number) :void {
-    this.control.setState(state);
+  constructor(model :Model) {
+    this.model = model.id;
   }
 
   step() :void {
@@ -58,7 +50,7 @@ export class Ship implements entities.Entity {
   }
 
   collide(other :entities.Entity) :void {
-    console.log('should never have been called');
+    console.log('should not have been called yet');
   }
 
   private readControls() {
@@ -67,13 +59,15 @@ export class Ship implements entities.Entity {
     this.readTurn();
   }
   private readThrust() {
-    let thrust = this.control.thrust();
+    let thrust = Control.thrusting(this.control);
 
     this.vx += (thrust * this.power) * Math.sin(inRads(this.angle));
     this.vy -= (thrust * this.power) * Math.cos(inRads(this.angle));
   }
   private readStrife() {
-    let strife = this.control.strife();
+    if (Control.sliding(this.control)) return;
+
+    let strife = Control.strifing(this.control);
 
     let power = this.power * 0.7;
     let sideAngle = this.angle + 90;
@@ -82,13 +76,15 @@ export class Ship implements entities.Entity {
     this.vy -= (strife * power) * Math.cos(inRads(sideAngle));
   }
   private readTurn() {
-    let turn = this.control.turn();
+    let turn = Control.turning(this.control);
     this.vangle = turn * this.turnSpeed;
   }
 
   private updatePhysics() {
-    this.vx *= INERTIAL_DUMP;
-    this.vy *= INERTIAL_DUMP;
+    if (!Control.sliding(this.control)) {
+      this.vx *= INERTIAL_DUMP;
+      this.vy *= INERTIAL_DUMP;
+    }
 
     this.x += this.vx;
     this.y += this.vy;

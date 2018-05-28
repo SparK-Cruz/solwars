@@ -1,6 +1,6 @@
 import { Room } from './room';
 import { Ship } from '../space/entities/ship';
-import { Control } from '../space/entities/ships/control';
+import { Model as ShipModel } from '../space/entities/ships/model';
 
 export class Player {
   public name :string;
@@ -31,18 +31,59 @@ export class Player {
 
   private onJoin(data :any) {
     this.name = data.name;
+    this.fetchPlayerShip(data.name)
+      .then(ship => {
+        this.ship = ship;
+        this.room.addPlayerShip(this);
+        this.socket.emit('accepted', {
+          id: this.id,
+          ship: this.ship
+        });
+      })
+      .error(reason => {
+        console.error(reason);
+      });
+  }
 
-    // Restore ship functions
-    this.ship = new Ship(data.ship.model);
-    Object.assign(this.ship, data.ship);
-    this.ship.control = new Control();
+  private fetchPlayerShip(name :string) {
+    let onSuccess = (ship :Ship) => {};
+    let onError = (reason :string) => {};
 
-    this.room.addPlayerShip(this);
-    this.socket.emit('accepted', this.ship.id);
+    // Will be async in the future, so let's emulate it!
+    // Otherwise there's not enough time to set the callbacks
+    // on the outer scope
+    setTimeout(() => {
+      // It's random for now
+      const ship = new Ship(ShipModel.Warbird);
+      ship.color = 'rgb('
+        + Math.round(Math.random()*255)+','
+        + Math.round(Math.random()*255)+','
+        + Math.round(Math.random()*255)+')';
+
+      ship.decals[0].name = 'decal' + Math.round(Math.random());
+      ship.decals[0].color = 'rgb('
+        + Math.round(Math.random()*255)+','
+        + Math.round(Math.random()*255)+','
+        + Math.round(Math.random()*255)+')';
+
+      onSuccess(ship);
+    }, 0);
+
+    const callbacks = {
+      then: (callback :(ship :Ship) => void) => {
+        onSuccess = callback;
+        return callbacks;
+      },
+      error: (callback :(reason :string) => void) => {
+        onError = callback;
+        return callbacks;
+      }
+    };
+    return callbacks;
   }
 
   private onInput(data :any) {
-    this.ship.control.setState(data);
+    this.ship.control = data;
   }
 
   private onDisconnect() {

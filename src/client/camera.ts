@@ -1,7 +1,7 @@
 export class Camera {
   private maxSpeed = 50;
 
-  constructor(private trackable :MovingPoint, private offset :{x :number, y :number}) {
+  constructor(public trackable :MovingPoint, private offset :{x :number, y :number}) {
   }
 
   public getPosition() :MovingPoint {
@@ -23,10 +23,6 @@ export class Camera {
       vx: 0,
       vy: 0
     }
-  }
-
-  public getTrackable() {
-    return this.trackable;
   }
 
   private easeAxis(value :number, absMax :number) {

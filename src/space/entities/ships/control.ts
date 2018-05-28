@@ -1,74 +1,33 @@
 import { Controllable } from '../controllable';
 import { Mapping } from './mapping';
 
-export class Control implements Controllable {
-  public thrusting :number = 0;
-  public turning :number = 0;
-  public strifing :number = 0;
+export namespace Control {
+    export function thrusting(state :number) :number {
+        if (sliding(state)) return 0;
 
-  public isShooting :boolean = false;
-  public isRunning :boolean = false;
+        let result = 0;
+        result += (state & Mapping.FORWARD) > 0 ? 1 : 0;
+        result -= (state & Mapping.BACKWARD) > 0 ? 1 : 0;
+        return result;
+    }
+    export function strifing(state :number) :number {
+        if (sliding(state)) return 0;
 
-  thrust(forward ?:boolean, backward ?:boolean) {
-    if (forward == null)
-      forward = this.thrusting > 0;
-
-    if (backward == null)
-      backward = this.thrusting < 0;
-
-    return this.thrusting = (forward ? 1 : 0) + (backward ? -1 : 0);
-  }
-
-  turn(left ?:boolean, right ?:boolean) {
-    if (left == null)
-      left = this.turning < 0;
-
-    if (right == null)
-      right = this.turning > 0;
-
-    return this.turning = (left ? -1 : 0) + (right ? 1 : 0);
-  }
-
-  strife(left ?:boolean, right ?:boolean) {
-    if (left == null)
-      left = this.strifing < 0;
-
-    if (right == null)
-      right = this.strifing > 0;
-
-    return this.strifing = (left ? -1 : 0) + (right ? 1 : 0);
-  }
-
-  shoot(isShooting ?:boolean) {
-    if (isShooting == null)
-      isShooting = this.isShooting;
-
-    return this.isShooting = isShooting;
-  }
-
-  run(isRunning ?:boolean) {
-    if (isRunning == null)
-      isRunning = this.isRunning;
-
-    return this.isRunning = isRunning;
-  }
-
-  setState(state :number) {
-    this.thrust((state & Mapping.FORWARD) > 0, (state & Mapping.BACKWARD) > 0);
-    this.turn((state & Mapping.LEFT) > 0, (state & Mapping.RIGHT) > 0);
-    this.strife((state & Mapping.STRIFE_LEFT) > 0, (state & Mapping.STRIFE_RIGHT) > 0);
-    this.shoot((state & Mapping.SHOOT) > 0);
-    this.run((state & Mapping.RUN) > 0);
-  }
-
-  getState() :number {
-    let state = 0;
-    state += [Mapping.BACKWARD, 0, Mapping.FORWARD][this.thrusting+1];
-    state += [Mapping.LEFT, 0, Mapping.RIGHT][this.turning+1];
-    state += [Mapping.STRIFE_LEFT, 0, Mapping.STRIFE_RIGHT][this.strifing+1];
-    state += this.isShooting ? Mapping.SHOOT : 0;
-    state += this.isRunning ? Mapping.RUN : 0;
-
-    return state;
-  }
+        let result = 0;
+        result += (state & Mapping.STRIFE_RIGHT) > 0 ? 1 : 0;
+        result -= (state & Mapping.STRIFE_LEFT) > 0 ? 1 : 0;
+        return result;
+    }
+    export function turning(state :number) :number {
+        let result = 0;
+        result += (state & Mapping.RIGHT) > 0 ? 1 : 0;
+        result -= (state & Mapping.LEFT) > 0 ? 1 : 0;
+        return result;
+    }
+    export function shooting(state :number) :number {
+        return (state & Mapping.SHOOT) > 0 ? 1 : 0;
+    }
+    export function sliding(state :number) :number {
+        return (state & Mapping.SLIDE) > 0 ? 1 : 0;
+    }
 }

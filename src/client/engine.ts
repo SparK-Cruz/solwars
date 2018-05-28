@@ -1,4 +1,4 @@
-import { Stage } from '../space/stage2';
+import { Stage } from '../space/stage';
 import { Ship } from '../space/entities/ship';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Input } from './input';
@@ -27,65 +27,16 @@ const center = {
 // Game setup
 const TPS = 60;
 const stage = new Stage();
+let remoteId :number = null;
 
 // Player and Controls setup
-const ship = new Ship(ShipModel.Warbird);
-ship.color = 'rgb('
-  + Math.round(Math.random()*255)+','
-  + Math.round(Math.random()*255)+','
-  + Math.round(Math.random()*255)+')';
-
-ship.decals[0].name = 'decal' + Math.round(Math.random());
-ship.decals[0].color = 'rgb('
-  + Math.round(Math.random()*255)+','
-  + Math.round(Math.random()*255)+','
-  + Math.round(Math.random()*255)+')';
-
-new Input(ship.control);
+let input = new Input();
 let name = 'Anon' + (100 + Math.round(Math.random() * 899));
 
-
-// Network setup
-let codec = new CodecFacade(stage);
-let conn = socketio(':27001');
-console.log('joining by '+name);
-conn.emit('join', {name: name, ship: ship});
-
-
-conn.on('accepted', (data :any) => {
-  console.log('Accepted with '+data);
-  ship.id = data;
-  stage.add(ship);
-});
-conn.on('step', (data :any) => {
-  // ignore until we have acceptance confirmation
-  // otherwise we will get two ships for each player
-  // one with and other without memId and then a
-  // memId conflict depending on a race condition
-  // betwen the two events
-  if (!ship.id) {
-    console.log('Not on yet');
-    return;
-  }
-
-  codec.writeState(data);
-});
-
-let lastInput = 0;
-setInterval(function(){
-  const input = ship.control.getState();
-  if (lastInput === input)
-    return;
-
-  conn.emit('input', input);
-  lastInput = input;
-}, 1000/TPS);
-
 // Graphics setup
-const camera = new Camera(ship, center);
+const camera = new Camera({x: 0, y: 0, vx: 0, vy: 0}, center);
 const renderer = new Renderer(canvas, camera, stage);
 
-const tracked = camera.getTrackable();
 let lastTick = Date.now();
 
 setInterval(function() {
@@ -93,8 +44,8 @@ setInterval(function() {
   lastTick = Date.now();
 
   let pos = {
-    x: globalPos(tracked.x),
-    y: globalPos(tracked.y)
+    x: globalPos(camera.trackable.x),
+    y: globalPos(camera.trackable.y)
   };
 
   debug.innerHTML = [
@@ -127,3 +78,33 @@ function padLeft(number :string, length :number) :string {
   }
   return number;
 }
+
+// Network setup
+let codec = new CodecFacade(stage);
+let conn = socketio(':27001');
+console.log('joining by '+name);
+conn.emit('join', {name: name});
+
+conn.on('accepted', (data :any) => {
+  console.log('Accepted with '+data.id);
+  remoteId = data.id;
+  stage.add(data.ship);
+  camera.trackable = data.ship;
+  input.change(state => {
+    data.ship.control = state;
+    conn.emit('input', state);
+  });
+});
+conn.on('step', (data :any) => {
+  // ignore until we have acceptance confirmation
+  // otherwise we will get two ships for each player
+  // one with and other without memId and then a
+  // memId conflict depending on a race condition
+  // betwen the two events
+  if (!remoteId) {
+    console.log('Not on yet');
+    return;
+  }
+
+  codec.writeState(data);
+});

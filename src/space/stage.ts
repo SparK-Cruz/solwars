@@ -1,161 +1,72 @@
-import { Entity } from './entities';
-import { Controllable } from './entities/controllable';
-
-export const TPS = 60;
-
-interface SectorCoord {
-  x :number;
-  y :number;
-}
-interface Sector {
-  coord :SectorCoord;
-  entities :Entity[];
-}
+import { Entity, EntityPool, EntityPoolGrid } from './entities';
+import { Ship } from './entities/ship';
+import { Control } from './entities/ships/control';
 
 export class Stage {
-  public static SECTOR_SIZE :number = 4096;
-  public static SUBDIVISIONS :number = 8;
+    public entityPool = new EntityPool();
 
-  public entityPool :any = {};
-  public entityCount = 0;
+    private tick = 0;
+    private sectors = new EntityPoolGrid('sectorKey', 1000);
+    private collisionPools = new EntityPoolGrid('collisionPoolKey', 125);
 
-  private tick = 0;
-  private entityMap :any = {};
-
-  public step() :void {
-    this.tick++;
-    this.tick = this.tick % Number.MAX_SAFE_INTEGER;
-
-    for (var sector in this.entityMap) {
-      for (var i = this.entityMap[sector].entities.length - 1; i >= 0; i--) {
-        this.entityMap[sector].entities[i].step();
-        this.relocateIfNeeded(this.entityMap[sector], i);
-      }
-    }
-  }
-
-  public add(entity :Entity) :void {
-    if (!entity.id) {
-      entity.id = ++this.entityCount;
+    public add(entity :Entity) {
+        this.entityPool.add(entity);
+        this.sectors.add(entity);
+        this.collisionPools.add(entity);
     }
 
-    let ref :Entity = this.entityPool[entity.id];
-    if (!ref) {
-      this.entityPool[entity.id] = entity;
-      ref = entity;
-      this.addToSector(this.calcSectorCoord(ref.x, ref.y), ref);
+    public addAll(entities :Entity[]) {
+        entities.forEach(entity => this.add(entity));
     }
 
-    if (ref === entity)
-      return;
+    public step() :number {
+        this.tick++;
+        this.tick = this.tick % Number.MAX_SAFE_INTEGER;
 
-    ref.x = entity.x;
-    ref.y = entity.y;
-    ref.vx = entity.vx;
-    ref.vy = entity.vy;
-    ref.angle = entity.angle;
+        for(let id in this.entityPool.entities) {
+            const entity = this.entityPool.find(parseInt(id));
+            entity.step();
+            this.updateRegions(entity);
+        }
 
-    const ctrlEntity = this.tryControllableEntity(entity);
-    const ctrlRef = this.tryControllableEntity(ref);
+        this.handleCollisions();
 
-    if (!ctrlEntity || !ctrlRef)
-      return;
-
-    ctrlRef.setState(ctrlEntity.getState());
-  }
-
-  public addAll(entities :Entity[]) :void {
-    for (var i = entities.length - 1; i >= 0; i--) {
-      this.add(entities[i]);
+        return this.tick;
     }
 
-    for (var sector in this.entityMap) {
-      for (var i = this.entityMap[sector].entities.length - 1; i >= 0; i--) {
-        this.relocateIfNeeded(this.entityMap[sector], i);
-      }
-    }
-  }
+    public fetchEntitiesAround(point :{x :number, y :number}) :Entity[] {
+        const scale = this.sectors.scale;
+        const entities :Entity[] = [];
 
-  public fetchAllEntities() :Entity[] {
-    return this.entityPool;
-  }
+        for (let i = 0; i < 9; i++) {
+            const offset = {
+                x: Math.floor(i / 3) - 1,
+                y: (i % 3) - 1
+            };
+            const coord = {
+                x: offset.x * scale + point.x,
+                y: offset.y * scale + point.y
+            };
 
-  public fetchEntitiesAround(x :number, y :number) :Entity[] {
-    var sector = this.calcSectorCoord(x, y);
-    var result :Entity[] = [];
+            const key = this.sectors.localCoordName(coord);
+            const pool = this.sectors.pools[key];
+            if (!pool) continue;
 
-    for (var i = sector.x + 1; i >= sector.x - 1; i--) {
-      for (var j = sector.y + 1; j >= sector.y - 1; j--) {
-        let sectorCoord = {x: i, y: j};
-        let entities = this.fetchSector(sectorCoord, false).entities;
+            for (let i in pool.entities) {
+                const entity = pool.find(i);
+                entities.push(entity);
+            }
+        }
 
-        result = result.concat(entities);
-      }
-    }
-
-    return result;
-  }
-
-  public getTick() {
-    return this.tick;
-  }
-
-  private tryControllableEntity(entity :Entity) :Controllable {
-    if (typeof (entity as any).setState === 'undefined'
-      || typeof (entity as any).getState === 'undefined') {
-      return null;
+        return entities;
     }
 
-    return entity as any as Controllable;
-  }
-
-  private relocateIfNeeded(sector :Sector, index :number) :void {
-    var entity = sector.entities[index];
-
-    var newSector = this.fetchSector({
-      x: Math.floor(entity.x / Stage.SECTOR_SIZE),
-      y: Math.floor(entity.y / Stage.SECTOR_SIZE)
-    });
-
-    if (newSector === sector)
-      return;
-
-    newSector.entities.push(sector.entities.splice(index, 1)[0]);
-    this.deleteSectorIfEmpty(sector);
-  }
-
-  private fetchSector(coord :SectorCoord, create = true) :Sector {
-    let name = coord.x + '_' + coord.y;
-
-    if (!this.entityMap.hasOwnProperty(name)){
-      let newSector :Sector = {coord: coord, entities: []};
-
-      if (!create)
-        return newSector;
-
-      this.entityMap[name] = newSector;
+    private updateRegions(entity :Entity) :void {
+        this.sectors.update(entity);
+        this.collisionPools.update(entity);
     }
 
-    return this.entityMap[name];
-  }
-
-  private deleteSectorIfEmpty(sector :Sector) :void {
-    let name = sector.coord.x + '_' + sector.coord.y;
-
-    if (sector.entities.length > 0)
-      return;
-
-    delete this.entityMap[name];
-  }
-
-  private addToSector(coord :SectorCoord, entity :Entity) :void {
-    this.fetchSector(coord).entities.push(entity);
-  }
-
-  private calcSectorCoord(x :number, y :number) :SectorCoord {
-    return {
-      x: Math.floor(x / Stage.SECTOR_SIZE),
-      y: Math.floor(y / Stage.SECTOR_SIZE)
-    };
-  }
+    private handleCollisions() {
+        // TODO collect collisions and tell the parts involved
+    }
 }

@@ -1,52 +1,52 @@
 import { Mapping } from '../space/entities/ships/mapping';
-import { Controllable } from '../space/entities/controllable';
 
 export class Input {
-  control :Controllable;
-  mapping :Mapping = new Mapping();
+    private onChange = function(state :number) :void{};
+    private mapping :Mapping = new Mapping();
 
-  map :any = {
-    'k87': Mapping.FORWARD,
-    'k83': Mapping.BACKWARD,
-    'k38': Mapping.FORWARD,
-    'k40': Mapping.BACKWARD,
-    'k37': Mapping.LEFT,
-    'k39': Mapping.RIGHT,
-    'k65': Mapping.STRIFE_LEFT,
-    'k68': Mapping.STRIFE_RIGHT,
-    'k17': Mapping.SHOOT,
-    'k16': Mapping.RUN
-  };
+    map :any = {
+        'k87': Mapping.FORWARD, //W
+        'k83': Mapping.BACKWARD, //S
+        'k38': Mapping.FORWARD, //Arrow up
+        'k40': Mapping.BACKWARD, //Arrow down
+        'k37': Mapping.LEFT, //Arrow left
+        'k39': Mapping.RIGHT, //Arrow right
+        'k65': Mapping.STRIFE_LEFT, //A
+        'k68': Mapping.STRIFE_RIGHT, //D
+        'k17': Mapping.SHOOT, //CTRL
+        'k16': Mapping.SLIDE //SHIFT
+    };
 
-  constructor(control :Controllable) {
-    this.control = control;
+    public constructor() {
+        window.addEventListener('keydown', (e :KeyboardEvent) => {
+            this.keydown(e);
+        });
+        window.addEventListener('keyup', (e :KeyboardEvent) => {
+            this.keyup(e);
+        });
+    }
 
-    window.addEventListener('keydown', (e :KeyboardEvent) => {
-      this.keydown(e);
-    });
-    window.addEventListener('keyup', (e :KeyboardEvent) => {
-      this.keyup(e);
-    });
-  }
+    public keydown(e :KeyboardEvent) :void {
+        if (typeof this.map['k'+e.keyCode] == 'undefined')
+            return;
 
-  keydown(e :KeyboardEvent) :void {
-    if (typeof this.map['k'+e.keyCode] == 'undefined')
-      return;
+        if (this.mapping.press(this.map['k'+e.keyCode]))
+            this.updateControl(this.mapping.state);
+    }
 
-    if (this.mapping.press(this.map['k'+e.keyCode]))
-      this.updateControl(this.mapping.getState());
-  }
+    public keyup(e :KeyboardEvent) :void {
+        if (typeof this.map['k'+e.keyCode] == 'undefined')
+            return;
 
-  keyup(e :KeyboardEvent) :void {
-    if (typeof this.map['k'+e.keyCode] == 'undefined')
-      return;
+        if (this.mapping.release(this.map['k'+e.keyCode]))
+            this.updateControl(this.mapping.state);
+    }
 
-    if (this.mapping.release(this.map['k'+e.keyCode]))
-      this.updateControl(this.mapping.getState());
-  }
+    public updateControl(state :number) {
+        this.onChange(state);
+    }
 
-  updateControl(state :number) {
-    // This method will change in the future and will send the state through the websocket
-    this.control.setState(state);
-  }
+    public change(callback :(state :number) => void) {
+        this.onChange = callback;
+    }
 }

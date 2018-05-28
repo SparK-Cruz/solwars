@@ -1,6 +1,6 @@
 import { Entity, EntityType } from '../../space/entities';
 import { Ship } from '../../space/entities/ship';
-import { Stage } from '../../space/stage2';
+import { Stage } from '../../space/stage';
 import { Camera, MovingPoint } from '../camera';
 import { ShipRenderer } from './ship_renderer';
 import { TrailRenderer } from './trail_renderer';
@@ -19,11 +19,8 @@ export class EntityRenderer implements Renderable {
     this.ctx = this.canvas.getContext('2d');
 
     this.cacheControl = [];
-    this.trailBearers = [];
     this.cache = {};
     this.coords = {};
-
-    this.trailRenderer = new TrailRenderer(this.canvas, this.camera);
   }
 
   render() :HTMLCanvasElement {
@@ -32,52 +29,9 @@ export class EntityRenderer implements Renderable {
     const camPos = this.camera.getPosition();
     this.updateEntities(this.stage.entityPool.entities);
 
-    this.drawTrails();
     this.draw();
 
     return this.canvas;
-  }
-
-  private drawTrails() {
-    const trailCoords = this.readCoordsForTrails();
-    this.trailRenderer.appendCoords(trailCoords);
-    this.trailRenderer.render();
-  }
-
-  private readCoordsForTrails() {
-    const trailCoords :any = {};
-
-    for (var i = 0; i < this.trailBearers.length; i++) {
-      if (typeof this.coords[this.trailBearers[i]] === 'undefined') {
-        this.trailBearers.splice(i, 1);
-        continue;
-      }
-
-      const coord = this.coords[this.trailBearers[i]];
-
-      let offset = {x: 0, y: 0};
-      let speed = {x: 0, y: 0};
-      let draw = true;
-
-      if (this.cache[this.trailBearers[i]] instanceof ShipRenderer) {
-        const shipRenderer = <ShipRenderer>this.cache[this.trailBearers[i]];
-
-        offset = shipRenderer.getTrailOffset();
-        speed = shipRenderer.getTrailDriftSpeed();
-        draw = shipRenderer.shouldDrawTrail();
-      }
-
-      trailCoords[this.trailBearers[i]] = {
-        x: coord.x + offset.x,
-        y: coord.y + offset.y,
-        vx: speed.x,
-        vy: speed.y,
-        angle: coord.angle,
-        draw: draw
-      };
-    }
-
-    return trailCoords;
   }
 
   private updateEntities(entities :Entity[]) {
@@ -133,7 +87,6 @@ export class EntityRenderer implements Renderable {
   private buildRenderer(entity :Entity) :Renderable {
     switch(entity.type.name) {
       case EntityType.Ship.name:
-        this.trailBearers.push(entity.id);
         return new ShipRenderer(<Ship>entity);
       default:
         console.log(entity.type);
