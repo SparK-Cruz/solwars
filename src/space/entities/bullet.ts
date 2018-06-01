@@ -5,7 +5,8 @@ class Bullet implements Entity {
     public type = EntityType.Bullet;
 
     public sectorKey :string;
-    public collisionPoolKey :string;
+    public collisionMap = [[0, 0]];
+    public shape :any;
 
     public x :number;
     public y :number;
@@ -16,7 +17,7 @@ class Bullet implements Entity {
     public step() :void {
 
     }
-    public collide(other :Entity) :void {
+    public collide(other :Entity, result :any) :void {
 
     }
 }

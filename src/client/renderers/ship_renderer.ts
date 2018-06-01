@@ -11,7 +11,7 @@ export class ShipRenderer implements Renderable {
   private bdy :CanvasRenderingContext2D;
   private light :HTMLImageElement;
 
-  constructor(private ship :Ship) {
+  constructor(public ship :Ship) {
     this.canvas = document.createElement('canvas');
     this.ctx = this.canvas.getContext('2d');
 
@@ -42,6 +42,7 @@ export class ShipRenderer implements Renderable {
     if (this.body && this.light) {
       this.ctx.drawImage(this.multiplyLight(this.body, this.light, this.ship.angle), 0, 0);
     }
+
     return this.canvas;
   }
 

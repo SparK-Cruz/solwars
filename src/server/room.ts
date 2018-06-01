@@ -9,9 +9,10 @@ import { Entity } from '../space/entities';
 const TPS = 60;
 
 export class Room {
+  public codec :CodecFacade;
+
   private server :Server;
   private io :SocketIO.Server;
-  private codec :CodecFacade;
 
   private port :number;
   private stage :Stage;

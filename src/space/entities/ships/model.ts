@@ -3,6 +3,7 @@ export interface Model {
   name :string;
   make :string;
   description: string;
+  polygon :number[][];
 }
 
 export namespace Model {
@@ -10,55 +11,103 @@ export namespace Model {
     id: 'warbird',
     name: 'HA-46',
     make: 'OConner Domanic',
-    description: 'An agile, light fighter.'
+    description: 'An agile, light fighter.',
+    polygon: [
+      [2, -13],
+        [4, -10],
+          [6, -2],
+            [15, 4],
+              [15, 7],
+                [7, 9],
+                  [6, 14],
+                    [2, 15],
+                      [1, 9],
+                      [0, 9],
+                    [-1, 15],
+                  [-5, 14],
+                [-6, 9],
+              [-14, 7],
+            [-14, 4],
+          [-5, -2],
+        [-3, -10],
+      [-1, -13]
+    ]
   }
 
   export const Javelin :Model = {
     id: 'javelin',
     name: 'FC-12/0',
     make: 'Crummand',
-    description: 'A multi-role, fast defensive fighter.'
+    description: 'A multi-role, fast defensive fighter.',
+    polygon: [
+      [1, -13],
+        [4, -8],
+          [7, -3],
+            [9, 3],
+              [15, 7],
+                [14, 9],
+                  [6, 8],
+                    [9, 13],
+                      [4, 15],
+                        [1, 12],
+                        [0, 12],
+                      [-3, 15],
+                    [-8, 13],
+                  [-5, 8],
+                [-13, 9],
+              [-14, 7],
+            [-8, 3],
+          [-6, -3],
+        [-3, -8],
+      [0, -13],
+    ]
   }
 
   export const Spider :Model = {
     id: 'spider',
     name: 'RSC17',
     make: 'Loakhaed',
-    description: 'The leading edge in cloak technology.'
+    description: 'The leading edge in cloak technology.',
+    polygon: [[-16, 12], [0, -16], [16, 12]]
   }
 
   export const Leviathan :Model = {
     id: 'leviathan',
     name: 'Ut-59',
     make: 'Ivangrad',
-    description: 'A powerful defense bomber.'
+    description: 'A powerful defense bomber.',
+    polygon: [[-16, 12], [0, -16], [16, 12]]
   }
 
   export const Terrier :Model = {
     id: 'terrier',
     name: 'Nu-34',
     make: 'Blight Aerospace',
-    description: 'Heavily armed attack fighter.'
+    description: 'Heavily armed attack fighter.',
+    polygon: [[-16, 12], [0, -16], [16, 12]]
   }
 
   export const Weasel :Model = {
     id: 'weasel',
     name: 'ZnK/0-1',
     make: 'Yamakazi Sholi',
-    description: 'Advanced weapons recon vessel.'
+    description: 'Advanced weapons recon vessel.',
+    polygon: [[-16, 12], [0, -16], [16, 12]]
   }
 
   export const Lancaster :Model = {
     id: 'lancaster',
     name: '4F/2 HMS',
     make: 'Avro',
-    description: 'Experimental bomber/fighter.'
+    description: 'Experimental bomber/fighter.',
+    polygon: [[-16, 12], [0, -16], [16, 12]]
   }
 
   export const Shark :Model = {
     id: 'shark',
     name: 'SY/9',
     make: 'Lezarwerks',
-    description: 'Advanced cloakable fighter with Gravity Drive.'
+    description: 'Advanced cloakable fighter with Gravity Drive.',
+    polygon: [[-16, 12], [0, -16], [16, 12]]
   }
 }

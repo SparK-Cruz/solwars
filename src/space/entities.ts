@@ -2,7 +2,8 @@ export interface Entity {
   type :EntityType;
   id :number;
   sectorKey :string;
-  collisionPoolKey :string;
+  collisionMap :number[][];
+  shape :any;
 
   x :number;
   y :number;
@@ -11,7 +12,7 @@ export interface Entity {
   angle ?:number;
 
   step() :void;
-  collide(entity :Entity) :void;
+  collide(entity :Entity, result :any) :void;
 }
 
 export interface EntityType {
@@ -109,7 +110,7 @@ export class EntityPool {
 
   public constructor(public name ?:string) {}
 
-  public add(entity :Entity) :number {
+  public add(entity :Entity) :boolean {
     if (!entity.id) {
       entity.id = ++this.lastId;
       this.count++;
@@ -117,11 +118,11 @@ export class EntityPool {
 
     if (this.pool.hasOwnProperty(entity.id)) {
       Object.assign(this.pool[entity.id], entity);
-    } else {
-      this.pool[entity.id] = entity;
+      return false;
     }
 
-    return entity.id;
+    this.pool[entity.id] = entity;
+    return true;
   }
 
   public find(id :number) :Entity {

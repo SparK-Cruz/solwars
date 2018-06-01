@@ -16,8 +16,8 @@ export class CodecFacade {
   public constructor(private stage :Stage) {}
 
   public readStateFromPoint(point :{x :number, y :number}) :string {
-    let stream = {
-      entities: this.stage.fetchEntitiesAround(point)
+    const stream = {
+      entities: this.stage.fetchEntitiesAround(point).map(this.encodeEntity)
     };
 
     // TODO PSON
@@ -28,5 +28,11 @@ export class CodecFacade {
     // TODO PSON
     const decoded = <SavedState>JSON.parse(state);
     this.stage.addAll(decoded.entities);
+  }
+
+  public encodeEntity(entity :Entity) {
+    const decorated = Object.assign({}, entity);
+    delete decorated.shape;
+    return decorated;
   }
 }

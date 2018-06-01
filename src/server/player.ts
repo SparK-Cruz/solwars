@@ -1,6 +1,7 @@
 import { Room } from './room';
 import { Ship } from '../space/entities/ship';
 import { Model as ShipModel } from '../space/entities/ships/model';
+import { CodecFacade } from '../space/codec_facade';
 
 export class Player {
   public name :string;
@@ -37,7 +38,7 @@ export class Player {
         this.room.addPlayerShip(this);
         this.socket.emit('accepted', {
           id: this.id,
-          ship: this.ship
+          ship: this.room.codec.encodeEntity(this.ship)
         });
       })
       .error(reason => {
@@ -54,7 +55,7 @@ export class Player {
     // on the outer scope
     setTimeout(() => {
       // It's random for now
-      const ship = new Ship(ShipModel.Warbird);
+      const ship = new Ship([ShipModel.Warbird, ShipModel.Javelin][Math.round(Math.random())]);
       ship.color = 'rgb('
         + Math.round(Math.random()*255)+','
         + Math.round(Math.random()*255)+','

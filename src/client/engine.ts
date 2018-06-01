@@ -11,6 +11,7 @@ import { CodecFacade } from '../space/codec_facade';
 // HTML setup
 const debug = <HTMLDivElement> document.getElementById('debug');
 const canvas = <HTMLCanvasElement> document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 
 document.body.style.overflow = 'hidden';
 canvas.style.height = window.innerHeight + 'px';
@@ -26,7 +27,7 @@ const center = {
 
 // Game setup
 const TPS = 60;
-const stage = new Stage();
+const stage = new Stage(true);
 let remoteId :number = null;
 
 // Player and Controls setup
@@ -39,7 +40,16 @@ const renderer = new Renderer(canvas, camera, stage);
 
 let lastTick = Date.now();
 
-setInterval(function() {
+const debugCollisions = document.createElement('canvas');
+debugCollisions.width = canvas.width;
+debugCollisions.height = canvas.height;
+debugCollisions.style.height = window.innerHeight + 'px';
+debugCollisions.style.width = window.innerWidth + 'px';
+const dbg = debugCollisions.getContext('2d');
+
+document.body.appendChild(debugCollisions);
+
+function renderFrame() {
   let fps = Math.round(1000 / (Date.now() - lastTick));
   lastTick = Date.now();
 
@@ -59,13 +69,26 @@ setInterval(function() {
     '</pre>'
   ].join('');
 
-  if (fps < 55) {
-    // frame skip
-    return;
+  if (fps > 55) {
+    renderer.render();
+
+    if (!stage.dumbMode) {
+      const camPos = camera.getPosition();
+      dbg.clearRect(0, 0, debugCollisions.width, debugCollisions.height);
+      dbg.save();
+      dbg.translate(-camPos.x, -camPos.y);
+      dbg.beginPath();
+      dbg.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+      stage.collisionSystem.draw(dbg);
+      dbg.closePath();
+      dbg.stroke();
+      dbg.restore();
+    }
   }
 
-  renderer.render();
-}, 1000/60);
+  requestAnimationFrame(renderFrame);
+};
+renderFrame();
 
 function globalPos(number :number) {
   let signal = (number < 0) ? 'M' : 'P';

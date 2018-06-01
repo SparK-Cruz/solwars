@@ -26,7 +26,7 @@ export class Camera {
   }
 
   private easeAxis(value :number, absMax :number) {
-    let scale = 500; //max distance in pixels from center;
+    let scale = 100; //max distance in pixels from center;
     let signal = value < 0 ? -1 : 1;
     let relative = Math.abs(value) / absMax;
     let ease = Math.pow(relative - 1, 3) + 1;

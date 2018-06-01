@@ -16,7 +16,9 @@ export class Ship implements entities.Entity {
   model :string;
 
   sectorKey :string;
-  collisionPoolKey :string;
+
+  collisionMap :number[][] = [];
+  shape :any;
 
   x = 0;
   y = 0;
@@ -42,6 +44,7 @@ export class Ship implements entities.Entity {
 
   constructor(model :Model) {
     this.model = model.id;
+    this.collisionMap = model.polygon;
   }
 
   step() :void {
@@ -49,8 +52,11 @@ export class Ship implements entities.Entity {
     this.updatePhysics();
   }
 
-  collide(other :entities.Entity) :void {
-    console.log('should not have been called yet');
+  collide(other :entities.Entity, result :any) :void {
+    this.x -= result.overlap * result.overlap_x;
+    this.y -= result.overlap * result.overlap_y;
+    this.vx -= result.overlap / 2 * result.overlap_x;
+    this.vy -= result.overlap / 2 * result.overlap_y;
   }
 
   private readControls() {
