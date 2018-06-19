@@ -12,8 +12,11 @@ app.get('/', (req :any, res :any) => {
   res.sendFile(__dirname + '/client/index.html');
 });
 
-const room = new Room();
-room.open(27001);
+const STATIC_PORT = 8080;
+const ROOM_PORT = 27001;
 
-server.listen(8080);
-console.log('Serving on port 8080');
+const room = new Room();
+room.open(ROOM_PORT);
+
+server.listen(STATIC_PORT);
+console.log('Serving on port '+STATIC_PORT);
