@@ -37,7 +37,8 @@ export class Ship implements entities.Entity {
 
   angle = 0;
   vangle = 0;
-  health = 0;
+
+  health = 100;
   damage = 0;
 
   control = 0;
@@ -53,10 +54,18 @@ export class Ship implements entities.Entity {
   }
 
   collide(other :entities.Entity, result :any) :void {
-    this.x -= result.overlap * result.overlap_x;
-    this.y -= result.overlap * result.overlap_y;
+    const push = {
+      x: result.overlap * result.overlap_x,
+      y: result.overlap * result.overlap_y
+    };
+    this.x -= push.x;
+    this.y -= push.y;
     this.vx -= result.overlap / 2 * result.overlap_x;
     this.vy -= result.overlap / 2 * result.overlap_y;
+
+    this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) / 15;
+    this.damage += result.overlap * 20;
+    console.log(this.id + ': ' + this.damage);
   }
 
   private readControls() {
@@ -65,6 +74,8 @@ export class Ship implements entities.Entity {
     this.readTurn();
   }
   private readThrust() {
+    if (Control.sliding(this.control)) return;
+
     let thrust = Control.thrusting(this.control);
 
     this.vx += (thrust * this.power) * Math.sin(inRads(this.angle));
@@ -83,13 +94,14 @@ export class Ship implements entities.Entity {
   }
   private readTurn() {
     let turn = Control.turning(this.control);
-    this.vangle = turn * this.turnSpeed;
+    this.vangle += turn * this.turnSpeed;
   }
 
   private updatePhysics() {
     if (!Control.sliding(this.control)) {
       this.vx *= INERTIAL_DUMP;
       this.vy *= INERTIAL_DUMP;
+      this.vangle *= 0.5;
     }
 
     this.x += this.vx;
@@ -116,5 +128,12 @@ export class Ship implements entities.Entity {
     if (this.angle < 0) {
       this.angle += 360;
     }
+  }
+
+  private angleDiff(x1 :number, y1 :number, x2 :number, y2 :number) {
+    const a1 = Math.atan2(y1, x1);
+    const a2 = Math.atan2(y2, x2);
+
+    return (a2 - a1) * 180 / Math.PI;
   }
 }

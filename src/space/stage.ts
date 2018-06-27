@@ -34,6 +34,18 @@ export class Stage {
         shape.angle = entity.angle * Math.PI / 180;
     }
 
+    public remove(id :number) {
+        this.sectors.remove(id);
+        this.entityPool.remove(id);
+
+        if (!this.dumbMode) {
+            const shape = this.shapes[id];
+            delete this.shapes[id];
+            this.collisionSystem.remove(shape);
+            this.collisionSystem.update();
+        }
+    }
+
     public addAll(entities :Entity[]) {
         entities.forEach(entity => this.add(entity));
         if (!this.dumbMode) {
@@ -48,7 +60,7 @@ export class Stage {
         for(let id in this.entityPool.entities) {
             const entity = this.entityPool.find(parseInt(id));
 
-            entity.step();
+            this.stepEntity(entity);
             this.updateRegions(entity);
 
             if (!this.dumbMode) {
@@ -92,6 +104,18 @@ export class Stage {
         }
 
         return entities;
+    }
+
+    private stepEntity(entity :Entity) {
+        if (entity.hasOwnProperty('health')
+            && entity.hasOwnProperty('damage')
+            && entity.hasOwnProperty('control')) {
+            let obj = <any>entity;
+
+            if (obj.damage >= obj.health)
+                obj.control = 0;
+        }
+        entity.step();
     }
 
     private updateRegions(entity :Entity) :void {

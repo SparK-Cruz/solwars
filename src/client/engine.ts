@@ -131,3 +131,7 @@ conn.on('step', (data :any) => {
 
   codec.writeState(data);
 });
+conn.on('removal', (data :any) => {
+  console.log(data);
+  stage.remove(data);
+});

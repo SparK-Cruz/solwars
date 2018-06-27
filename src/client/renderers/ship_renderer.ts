@@ -11,6 +11,8 @@ export class ShipRenderer implements Renderable {
   private bdy :CanvasRenderingContext2D;
   private light :HTMLImageElement;
 
+  private alive :boolean;
+
   constructor(public ship :Ship) {
     this.canvas = document.createElement('canvas');
     this.ctx = this.canvas.getContext('2d');
@@ -36,11 +38,22 @@ export class ShipRenderer implements Renderable {
     Assets.fetch('img/light.png', {target: this, callback: (sprite :Asset) => {
       this.light = sprite.content;
     }});
+
+    this.alive = true;
   }
 
   public render() :HTMLCanvasElement {
-    if (this.body && this.light) {
+    if (this.body && this.light && this.alive) {
       this.ctx.drawImage(this.multiplyLight(this.body, this.light, this.ship.angle), 0, 0);
+    }
+
+    if (this.body && this.ship.damage >= this.ship.health && this.alive) {
+      const {buffer, bfr} = this.prepareBuffer(this.canvas);
+      bfr.fillStyle = 'rgba(0,0,0,0.5)';
+      bfr.fillRect(0, 0, buffer.width, buffer.height);
+
+      this.ctx.drawImage(this.multiplyLight(this.body, buffer, this.ship.angle), 0, 0);
+      this.alive = false;
     }
 
     return this.canvas;

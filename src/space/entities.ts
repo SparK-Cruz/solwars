@@ -88,6 +88,9 @@ export class EntityPoolGrid {
 
   private removeFromOldPoolAndClean(entity :Entity) {
     const oldPool = this.grid[(<any>entity)[this.key]];
+    if (!oldPool)
+      return;
+
     const rest = oldPool.remove(entity.id);
 
     if (!rest) {

@@ -43,7 +43,10 @@ export class Room {
     this.stage.add(player.ship);
   }
   public removePlayer(player :Player) {
+    this.stage.remove(player.ship.id);
     this.players = this.players.filter((member) => member !== player);
+
+    this.broadcastRemoval(player);
   }
 
   private broadcastState() {
@@ -53,6 +56,12 @@ export class Room {
         return;
 
       player.sendState(this.codec.readStateFromPoint(player.ship));
+    });
+  }
+
+  private broadcastRemoval(player :Player) {
+    this.players.forEach((client) => {
+      client.sendRemoval(player.ship.id);
     });
   }
 

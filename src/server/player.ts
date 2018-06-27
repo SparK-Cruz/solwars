@@ -15,6 +15,10 @@ export class Player {
     this.socket.emit('step', state);
   }
 
+  public sendRemoval(id :number) {
+    this.socket.emit('removal', id);
+  }
+
   private setupEvents() {
     this.socket.on('join', (data :any) => {
       console.log('join '+this.id);
