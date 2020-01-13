@@ -31,7 +31,7 @@ export class ShipRenderer implements Renderable {
       colors.push(this.ship.decals[i].color);
     }
 
-    Assets.fetchAll(files, {target: this, callback: function(sprites :Asset[]) {
+    Assets.fetchAll(files, {target: this, callback: (sprites :Asset[]) => {
       this.draw(sprites, colors);
     }});
 

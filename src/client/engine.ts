@@ -72,18 +72,18 @@ function renderFrame() {
   if (fps > 55) {
     renderer.render();
 
-    if (!stage.dumbMode) {
-      const camPos = camera.getPosition();
-      dbg.clearRect(0, 0, debugCollisions.width, debugCollisions.height);
-      dbg.save();
-      dbg.translate(-camPos.x, -camPos.y);
-      dbg.beginPath();
-      dbg.strokeStyle = 'rgba(255, 255, 255, 0.5)';
-      stage.collisionSystem.draw(dbg);
-      dbg.closePath();
-      dbg.stroke();
-      dbg.restore();
-    }
+    // if (!stage.dumbMode) {
+    //   const camPos = camera.getPosition();
+    //   dbg.clearRect(0, 0, debugCollisions.width, debugCollisions.height);
+    //   dbg.save();
+    //   dbg.translate(-camPos.x, -camPos.y);
+    //   dbg.beginPath();
+    //   dbg.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+    //   stage.collisionSystem.draw(dbg);
+    //   dbg.closePath();
+    //   dbg.stroke();
+    //   dbg.restore();
+    // }
   }
 
   requestAnimationFrame(renderFrame);
@@ -108,7 +108,7 @@ let conn = socketio(':27001');
 console.log('joining by '+name);
 conn.emit('join', {name: name});
 
-conn.on('accepted', (data :any) => {
+conn.on('accept', (data :any) => {
   console.log('Accepted with '+data.id);
   remoteId = data.id;
   stage.add(data.ship);

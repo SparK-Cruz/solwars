@@ -27,7 +27,7 @@ export class Room {
     this.stage = new Stage();
     this.codec = new CodecFacade(this.stage);
 
-    this.setupEvents();
+    this.setupListeners();
   }
 
   public open(port :number) {
@@ -43,9 +43,11 @@ export class Room {
     this.stage.add(player.ship);
   }
   public removePlayer(player :Player) {
+    console.log('removing player');
     this.stage.remove(player.ship.id);
     this.players = this.players.filter((member) => member !== player);
 
+    console.log('broadcasting removal');
     this.broadcastRemoval(player);
   }
 
@@ -71,10 +73,13 @@ export class Room {
     //console.log('Room@' + this.port + ': ' + this.stage.getTick());
   }
 
-  private setupEvents() {
+  private setupListeners() {
     let id = 0;
     this.io.sockets.on('connection', (socket :SocketIO.Socket) => {
-      this.players.push(new Player(++id, socket, this));
+      const player = new Player(++id, socket, this);
+      player.on('ship', () => this.addPlayerShip(player));
+      player.on('disconnect', () => this.removePlayer(player));
+      this.players.push(player);
     });
   }
 }

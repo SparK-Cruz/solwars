@@ -25,12 +25,8 @@ export class EntityRenderer implements Renderable {
 
   render() :HTMLCanvasElement {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    const camPos = this.camera.getPosition();
-    this.updateEntities(this.stage.entityPool.entities);
-
+    this.updateEntities(this.stage.fetchAllEntities());
     this.draw();
-
     return this.canvas;
   }
 

@@ -2,13 +2,15 @@ import { Room } from './room';
 import { Ship } from '../space/entities/ship';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { CodecFacade } from '../space/codec_facade';
+const EventEmitter = require('events');
 
-export class Player {
+export class Player extends EventEmitter {
   public name :string;
   public ship :Ship;
 
   public constructor(public id :number, public socket :SocketIO.Socket, public room :Room) {
-    this.setupEvents();
+    super();
+    this.setupListeners();
   }
 
   public sendState(state :string) {
@@ -19,18 +21,19 @@ export class Player {
     this.socket.emit('removal', id);
   }
 
-  private setupEvents() {
+  private setupListeners() {
     this.socket.on('join', (data :any) => {
       console.log('join '+this.id);
       this.onJoin(data);
-    });
-    this.socket.on('input', (data :any) => {
-      // console.log('input '+this.id);
-      this.onInput(data);
-    });
-    this.socket.on('disconnect', () => {
-      console.log('disconnect '+this.id);
-      this.onDisconnect();
+
+      this.socket.on('input', (data :any) => {
+        // console.log('input '+this.id);
+        this.onInput(data);
+      });
+      this.socket.on('disconnect', () => {
+        console.log('disconnect '+this.id);
+        this.emit('disconnect');
+      });
     });
   }
 
@@ -39,8 +42,8 @@ export class Player {
     this.fetchPlayerShip(data.name)
       .then(ship => {
         this.ship = ship;
-        this.room.addPlayerShip(this);
-        this.socket.emit('accepted', {
+        this.emit('ship');
+        this.socket.emit('accept', {
           id: this.id,
           ship: this.room.codec.encodeEntity(this.ship)
         });
@@ -89,9 +92,5 @@ export class Player {
 
   private onInput(data :any) {
     this.ship.control = data;
-  }
-
-  private onDisconnect() {
-    this.room.removePlayer(this);
   }
 }

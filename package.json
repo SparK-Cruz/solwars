@@ -30,7 +30,6 @@
     "typescript": "^2.8.3"
   },
   "dependencies": {
-    "bufferutil": "^3.0.5",
     "express": "^4.16.3",
     "jsonfile": "^4.0.0",
     "socket.io": "^2.1.1",
