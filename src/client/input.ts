@@ -5,16 +5,15 @@ export class Input {
     private mapping :Mapping = new Mapping();
 
     map :any = {
-        'k87': Mapping.FORWARD, //W
-        'k83': Mapping.BACKWARD, //S
         'k38': Mapping.FORWARD, //Arrow up
         'k40': Mapping.BACKWARD, //Arrow down
         'k37': Mapping.LEFT, //Arrow left
         'k39': Mapping.RIGHT, //Arrow right
+        'k69': Mapping.SHOOT, //E
+        'k17': Mapping.SHOOT, //CTRL
+        'k81': Mapping.AFTERBURNER, //Q
         'k65': Mapping.STRIFE_LEFT, //A
         'k68': Mapping.STRIFE_RIGHT, //D
-        'k17': Mapping.SHOOT, //CTRL
-        'k16': Mapping.SLIDE //SHIFT
     };
 
     public constructor() {

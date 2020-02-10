@@ -6,7 +6,7 @@ export class Mapping {
     static STRIFE_LEFT = 16;  //00010000
     static STRIFE_RIGHT = 32; //00100000
     static SHOOT = 64;        //01000000
-    static SLIDE = 128;       //10000000
+    static AFTERBURNER = 128; //10000000
 
     public state = 0;
 

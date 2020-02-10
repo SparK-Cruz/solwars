@@ -4,6 +4,8 @@ export interface Model {
   make :string;
   description: string;
   polygon :number[][];
+  color :string;
+  decals :{name: string, color: string}[]
 }
 
 export namespace Model {
@@ -31,7 +33,12 @@ export namespace Model {
           [-5, -2],
         [-3, -10],
       [-1, -13]
-    ]
+    ],
+    color: 'rgb(175, 175, 175)',
+    decals: [{
+      name: 'decal0',
+      color: 'rgb(213, 50, 36)'
+    }]
   }
 
   export const Javelin :Model = {
@@ -60,7 +67,12 @@ export namespace Model {
           [-6, -3],
         [-3, -8],
       [0, -13],
-    ]
+    ],
+    color: 'rgb(214, 152, 24)',
+    decals: [{
+      name: 'decal0',
+      color: 'rgb(255, 200, 51)'
+    }]
   }
 
   export const Spider :Model = {
@@ -68,7 +80,9 @@ export namespace Model {
     name: 'RSC17',
     make: 'Loakhaed',
     description: 'The leading edge in cloak technology.',
-    polygon: [[-16, 12], [0, -16], [16, 12]]
+    polygon: [[-16, 12], [0, -16], [16, 12]],
+    color: 'rgb(255, 255, 255)',
+    decals: []
   }
 
   export const Leviathan :Model = {
@@ -76,7 +90,9 @@ export namespace Model {
     name: 'Ut-59',
     make: 'Ivangrad',
     description: 'A powerful defense bomber.',
-    polygon: [[-16, 12], [0, -16], [16, 12]]
+    polygon: [[-16, 12], [0, -16], [16, 12]],
+    color: 'rgb(255, 255, 255)',
+    decals: []
   }
 
   export const Terrier :Model = {
@@ -84,7 +100,9 @@ export namespace Model {
     name: 'Nu-34',
     make: 'Blight Aerospace',
     description: 'Heavily armed attack fighter.',
-    polygon: [[-16, 12], [0, -16], [16, 12]]
+    polygon: [[-16, 12], [0, -16], [16, 12]],
+    color: 'rgb(255, 255, 255)',
+    decals: []
   }
 
   export const Weasel :Model = {
@@ -92,7 +110,9 @@ export namespace Model {
     name: 'ZnK/0-1',
     make: 'Yamakazi Sholi',
     description: 'Advanced weapons recon vessel.',
-    polygon: [[-16, 12], [0, -16], [16, 12]]
+    polygon: [[-16, 12], [0, -16], [16, 12]],
+    color: 'rgb(255, 255, 255)',
+    decals: []
   }
 
   export const Lancaster :Model = {
@@ -100,7 +120,9 @@ export namespace Model {
     name: '4F/2 HMS',
     make: 'Avro',
     description: 'Experimental bomber/fighter.',
-    polygon: [[-16, 12], [0, -16], [16, 12]]
+    polygon: [[-16, 12], [0, -16], [16, 12]],
+    color: 'rgb(255, 255, 255)',
+    decals: []
   }
 
   export const Shark :Model = {
@@ -108,6 +130,8 @@ export namespace Model {
     name: 'SY/9',
     make: 'Lezarwerks',
     description: 'Advanced cloakable fighter with Gravity Drive.',
-    polygon: [[-16, 12], [0, -16], [16, 12]]
+    polygon: [[-16, 12], [0, -16], [16, 12]],
+    color: 'rgb(255, 255, 255)',
+    decals: []
   }
 }

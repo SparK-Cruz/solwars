@@ -62,18 +62,12 @@ export class Player extends EventEmitter {
     // on the outer scope
     setTimeout(() => {
       // It's random for now
-      const ship = new Ship([ShipModel.Warbird, ShipModel.Javelin][Math.round(Math.random())]);
-      ship.color = 'rgb('
-        + Math.round(Math.random()*255)+','
-        + Math.round(Math.random()*255)+','
-        + Math.round(Math.random()*255)+')';
+      const models = [ShipModel.Warbird, ShipModel.Javelin];
+      const ship = new Ship(models[Math.round(Math.random())]);
 
-      ship.decals[0].name = 'decal' + Math.round(Math.random());
-      ship.decals[0].color = 'rgb('
-        + Math.round(Math.random()*255)+','
-        + Math.round(Math.random()*255)+','
-        + Math.round(Math.random()*255)+')';
-
+      // Customize ship here
+      // ship.decals[0].name = 'decal1';
+      
       onSuccess(ship);
     }, 0);
 

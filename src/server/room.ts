@@ -4,7 +4,9 @@ import { Server } from 'http';
 import { CodecFacade } from '../space/codec_facade';
 import { Stage } from '../space/stage';
 import { Player } from './player';
-import { Entity } from '../space/entities';
+import { EntityEvent } from '../space/entities';
+
+const Collisions = require('collisions').Collisions;
 
 const TPS = 60;
 
@@ -13,10 +15,7 @@ export class Room {
 
   private server :Server;
   private io :SocketIO.Server;
-
-  private port :number;
   private stage :Stage;
-  private mainLoop :NodeJS.Timer;
 
   private players :Player[] = [];
 
@@ -24,18 +23,17 @@ export class Room {
     this.server = new Server();
     this.io = socketio(this.server);
 
-    this.stage = new Stage();
+    this.stage = new Stage(new Collisions());
     this.codec = new CodecFacade(this.stage);
 
     this.setupListeners();
   }
 
   public open(port :number) {
-    this.mainLoop = setInterval(() => {
+    setInterval(() => {
       this.tick();
     }, 1000/TPS);
 
-    this.port = port;
     this.server.listen(port);
   }
 
@@ -43,12 +41,13 @@ export class Room {
     this.stage.add(player.ship);
   }
   public removePlayer(player :Player) {
-    console.log('removing player');
     this.stage.remove(player.ship.id);
     this.players = this.players.filter((member) => member !== player);
+    this.broadcastRemoval(player.ship.id);
+  }
 
-    console.log('broadcasting removal');
-    this.broadcastRemoval(player);
+  private onEntityDespawn = (id: number) => {
+    this.broadcastRemoval(id);
   }
 
   private broadcastState() {
@@ -61,9 +60,9 @@ export class Room {
     });
   }
 
-  private broadcastRemoval(player :Player) {
+  private broadcastRemoval(entityId :number) {
     this.players.forEach((client) => {
-      client.sendRemoval(player.ship.id);
+      client.sendRemoval(entityId);
     });
   }
 
@@ -74,6 +73,8 @@ export class Room {
   }
 
   private setupListeners() {
+    this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
+
     let id = 0;
     this.io.sockets.on('connection', (socket :SocketIO.Socket) => {
       const player = new Player(++id, socket, this);

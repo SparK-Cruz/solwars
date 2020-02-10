@@ -1,0 +1,116 @@
+{
+    "ships": {
+        "warbird": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "javelin": {
+            "speed": 7,
+            "acceleration": 0.09,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "spider": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "leviathan": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "terrier": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "weasel": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "lancaster": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "shark": {
+            "speed": 5,
+            "acceleration": 0.05,
+            "spin": 4,
+            "energy": 1000,
+            "regeneration": 2,
+            "bullet": 0,
+            "bomb": 0
+        }
+    },
+    "bullets": [
+        {
+            "speed": 7,
+            "energy": 300,
+            "cooldown": 10,
+            "color": "rgb(255, 0, 0)"
+        },
+        {
+            "speed": 6,
+            "energy": 400,
+            "cooldown": 10,
+            "color": "rgb(255, 255, 0)"
+        },
+        {
+            "speed": 6,
+            "energy": 500,
+            "cooldown": 10,
+            "color": "rgb(0, 0, 255)"
+        }
+    ],
+    "bombs": [
+        {
+            "speed": 4,
+            "energy": 600,
+            "cooldown": 30,
+            "color": "rgb(255, 0, 0)"
+        },
+        {
+            "speed": 3,
+            "energy": 700,
+            "cooldown": 30,
+            "color": "rgb(255, 255, 0)"
+        },
+        {
+            "speed": 3,
+            "energy": 800,
+            "cooldown": 30,
+            "color": "rgb(0, 0, 255)"
+        }
+    ]
+}

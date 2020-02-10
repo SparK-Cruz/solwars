@@ -1,10 +1,12 @@
 import { Entity, EntityType } from '../../space/entities';
 import { Ship } from '../../space/entities/ship';
 import { Stage } from '../../space/stage';
-import { Camera, MovingPoint } from '../camera';
+import { Camera } from '../camera';
 import { ShipRenderer } from './ship_renderer';
 import { TrailRenderer } from './trail_renderer';
 import { Renderable } from './renderable';
+import { BulletRenderer } from './bullet_renderer';
+import { Bullet } from '../../space/entities/bullet';
 
 export class EntityRenderer implements Renderable {
   private ctx :CanvasRenderingContext2D;
@@ -54,6 +56,8 @@ export class EntityRenderer implements Renderable {
   private draw() {
     const camPos = this.camera.getPosition();
 
+    // console.log(this.cacheControl);
+
     for (let memId in this.cache) {
       if (this.cacheControl.indexOf(parseInt(memId)) <= -1) {
         delete this.cache[memId];
@@ -84,6 +88,8 @@ export class EntityRenderer implements Renderable {
     switch(entity.type.name) {
       case EntityType.Ship.name:
         return new ShipRenderer(<Ship>entity);
+      case EntityType.Bullet.name:
+        return new BulletRenderer(<Bullet>entity);
       default:
         console.log(entity.type);
     }

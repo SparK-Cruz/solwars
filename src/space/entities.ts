@@ -3,7 +3,6 @@ export interface Entity {
     id :number;
     sectorKey :string;
     collisionMap :number[][];
-    shape :any;
 
     x :number;
     y :number;
@@ -13,6 +12,11 @@ export interface Entity {
 
     step() :void;
     collide(entity :Entity, result :any) :void;
+}
+
+export namespace EntityEvent {
+    export const Spawn = "spawn";
+    export const Despawn = "despawn";
 }
 
 export interface EntityType {
@@ -64,10 +68,9 @@ export class EntityPoolGrid {
             && name != (<any>entity)[this.key]) {
 
             this.removeFromOldGridPart(entity);
+            (<any>entity)[this.key] = name;
+            this.grid[name].add(entity);
         }
-
-        (<any>entity)[this.key] = name;
-        this.grid[name].add(entity);
 
         return this.grid[name];
     }
@@ -78,6 +81,8 @@ export class EntityPoolGrid {
 
     public remove(id :number) {
         const entity = this.pool.find(id);
+        if (!entity) return;
+
         this.pool.remove(id);
         this.removeFromOldGridPart(entity);
     }
@@ -92,17 +97,18 @@ export class EntityPoolGrid {
     public step() {
         for (let id in this.pool.entities) {
             const entity = this.pool.find(parseInt(id));
+
+            if (entity.hasOwnProperty('health')
+              && entity.hasOwnProperty('damage')
+              && entity.hasOwnProperty('control')) {
+              let obj = <any>entity;
+
+              if (obj.damage >= obj.health)
+                obj.control = 0;
+            }
+
             entity.step();
             this.update(entity);
-
-            // if (entity.hasOwnProperty('health')
-            //   && entity.hasOwnProperty('damage')
-            //   && entity.hasOwnProperty('control')) {
-            //   let obj = <any>entity;
-
-            //   if (obj.damage >= obj.health)
-            //     obj.control = 0;
-            // }
         }
     }
 
@@ -140,14 +146,14 @@ export class EntityPool {
     public add(entity :Entity) :boolean {
         if (!entity.id) {
             entity.id = ++this.lastId;
-            this.count++;
         }
 
         if (this.pool.hasOwnProperty(entity.id)) {
             Object.assign(this.pool[entity.id], entity);
             return false;
         }
-
+        
+        this.count++;
         this.pool[entity.id] = entity;
         return true;
     }
@@ -163,6 +169,7 @@ export class EntityPool {
         if (!this.pool.hasOwnProperty(id))
             return;
 
+        this.pool[id] = null;
         delete this.pool[id];
         return --this.count;
     }

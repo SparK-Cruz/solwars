@@ -1,24 +1,24 @@
+import { EventEmitter } from 'events';
 import { Model } from './ships/model';
 import { Control } from './ships/control';
 import { Decal } from './ships/decal';
 import * as entities from '../entities';
+import { Config } from '../config';
 
 function inRads(degrees :number) :number {
   return degrees * Math.PI / 180;
 }
 
-//const INERTIAL_DUMP = 0.9985;
 const INERTIAL_DUMP = 0.995;
 
-export class Ship implements entities.Entity {
+export class Ship extends EventEmitter implements entities.Entity {
   type = entities.EntityType.Ship;
   id :number;
   model :string;
 
-  sectorKey :string;
+  sectorKey :string = "";
 
   collisionMap :number[][] = [];
-  shape :any;
 
   x = 0;
   y = 0;
@@ -39,21 +39,59 @@ export class Ship implements entities.Entity {
   vangle = 0;
 
   health = 100;
+  regen = 1;
   damage = 0;
+  alive = true;
 
   control = 0;
 
+  bullet = 0;
+  bomb = 0;
+  gunsCooldown = 0;
+
+  private afterburnerCost = 6;
+  private shootCost = 150;
+  private shootHeat = 16;
+
   constructor(model :Model) {
+    super();
+
     this.model = model.id;
+    this.color = model.color;
+    this.decals = model.decals;
     this.collisionMap = model.polygon;
+
+    const traits = (<any> Config.ships)[model.id];
+    if (!traits) return;
+
+    this.vmax = traits.speed;
+    this.turnSpeed = traits.spin;
+    this.power = traits.acceleration;
+    this.health = traits.energy;
+    this.regen = traits.regeneration;
+
+    this.bullet = traits.bullet;
+    this.bomb = traits.bomb;
+
+    const bulletTraits = Config.bullets[traits.bullet];
+    if (bulletTraits) {
+      this.shootHeat = bulletTraits.cooldown;
+    }
   }
 
   step() :void {
     this.readControls();
     this.updatePhysics();
+    this.updateHealth();
+    this.updateGuns();
   }
 
   collide(other :entities.Entity, result :any) :void {
+    if (typeof (<any>other).parent !== 'undefined'
+      && (<any>other).parent.id === this.id) {
+      return;
+    }
+
     const push = {
       x: result.overlap * result.overlap_x,
       y: result.overlap * result.overlap_y
@@ -63,27 +101,41 @@ export class Ship implements entities.Entity {
     this.vx -= result.overlap / 2 * result.overlap_x;
     this.vy -= result.overlap / 2 * result.overlap_y;
 
-    this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) / 15;
-    this.damage += result.overlap * 20;
-    console.log(this.id + ': ' + this.damage);
+    this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) / 16;
+    if (typeof (<any>other).damage !== 'undefined') {
+      (<any>other).damage += result.overlap * 140;
+    }
+  }
+
+  private canAfterburn() {
+    return this.damage + this.afterburnerCost < this.health;
+  }
+
+  private canShoot() {
+    return (this.damage + this.shootCost < this.health && !this.gunsCooldown);
   }
 
   private readControls() {
     this.readThrust();
     this.readStrife();
     this.readTurn();
+    this.readShoot();
   }
   private readThrust() {
-    if (Control.sliding(this.control)) return;
+    let power = this.power;
+    const thrust = Control.thrusting(this.control);
 
-    let thrust = Control.thrusting(this.control);
+    if (Control.afterburning(this.control)
+      && thrust
+      && this.canAfterburn()) {
+      power *= 2;
+      this.damage += this.afterburnerCost;
+    }
 
-    this.vx += (thrust * this.power) * Math.sin(inRads(this.angle));
-    this.vy -= (thrust * this.power) * Math.cos(inRads(this.angle));
+    this.vx += (thrust * power) * Math.sin(inRads(this.angle));
+    this.vy -= (thrust * power) * Math.cos(inRads(this.angle));
   }
   private readStrife() {
-    if (Control.sliding(this.control)) return;
-
     let strife = Control.strifing(this.control);
 
     let power = this.power * 0.7;
@@ -96,14 +148,21 @@ export class Ship implements entities.Entity {
     let turn = Control.turning(this.control);
     this.vangle += turn * this.turnSpeed;
   }
+  private readShoot() {
+    if (!Control.shooting(this.control)
+      || !this.canShoot())
+      return;
+    
+    this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this);
+    this.gunsCooldown += this.shootHeat;
+    this.damage += this.shootCost;
+  }
 
   private updatePhysics() {
-    if (!Control.sliding(this.control)) {
-      this.vx *= INERTIAL_DUMP;
-      this.vy *= INERTIAL_DUMP;
-      this.vangle *= 0.5;
-    }
-
+    this.vx *= INERTIAL_DUMP;
+    this.vy *= INERTIAL_DUMP;
+    this.vangle *= 0.5;
+    
     this.x += this.vx;
     this.y += this.vy;
     this.angle += this.vangle;
@@ -113,14 +172,21 @@ export class Ship implements entities.Entity {
   }
 
   private correctSpeed() {
-    let avx = Math.abs(this.vx);
-    let avy = Math.abs(this.vy);
+    const avx = Math.abs(this.vx);
+    const avy = Math.abs(this.vy);
+    const total = Math.sqrt(Math.pow(avx, 2) + Math.pow(avy, 2));
+    const max = this.vmax * (1 + (Control.afterburning(this.control) & <any>(this.canAfterburn())));
 
     if (avx < 0.001)
       this.vx = 0;
 
     if (avy < 0.001)
       this.vy = 0;
+
+    if (total > max) {
+      this.vx -= this.vx / total * this.power;
+      this.vy -= this.vy / total * this.power;
+    }
   }
 
   private correctAngle() {
@@ -135,5 +201,28 @@ export class Ship implements entities.Entity {
     const a2 = Math.atan2(y2, x2);
 
     return (a2 - a1) * 180 / Math.PI;
+  }
+
+  private updateHealth() {
+    this.alive = this.damage < this.health;
+
+    if (this.damage <= 0) {
+      this.damage = 0;
+      return;
+    }
+
+    if (!this.alive)
+      return;
+
+    this.damage -= this.regen;
+  }
+
+  private updateGuns() {
+    if (this.gunsCooldown <= 0) {
+      this.gunsCooldown = 0;
+      return;
+    }
+
+    this.gunsCooldown--;
   }
 }

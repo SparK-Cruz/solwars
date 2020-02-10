@@ -1,56 +1,64 @@
-import { Entity, EntityPool, EntityPoolGrid } from './entities';
-import { Ship } from './entities/ship';
-import { Control } from './entities/ships/control';
-import { Collisions, Polygon } from './collisions';
+import { EventEmitter } from 'events';
+import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
+import { Bullet } from './entities/bullet';
 
-export class Stage {
-    // public entityPool = new EntityPool();
+let lastRemoved = 0;
 
-    // public collisionSystem = new Collisions();
-    // private shapes :any = {};
-    // private collisionResult = this.collisionSystem.createResult();
+export class Stage extends EventEmitter {
+    public static PASSIVE_MODE = "passive_mode";
+    public static ACTIVE_MODE = "active_mode";
+    public tick = 0;
 
-    private tick = 0;
+    private passiveMode = true;
+    private shapes :any = {};
+    private collisionResult :any = null;
+
     private sectors = new EntityPoolGrid('sectorKey', 1000);
 
-    public constructor(public dumbMode = false) {
+    public constructor(public collisionSystem :any = null) {
+        super();
+
+        if (this.collisionSystem) {
+            this.passiveMode = false;
+            this.collisionResult = this.collisionSystem.createResult();
+        }
     }
 
     public add(entity :Entity) {
-        // this.entityPool.add(entity);
         this.sectors.add(entity);
 
-        // let shape = null;
-        // if (!this.shapes.hasOwnProperty(entity.id)) {
-        //     shape = <any>this.collisionSystem.createPolygon(entity.x, entity.y, entity.collisionMap, entity.angle);
-        //     shape.id = entity.id;
-        //     this.shapes[entity.id] = shape;
-        // } else {
-        //     shape = this.shapes[entity.id];
-        // }
+        if (this.passiveMode)
+            return;
 
-        // shape.x = entity.x;
-        // shape.y = entity.y;
-        // shape.angle = entity.angle * Math.PI / 180;
+        const shape = this.addOrFetchCollisionShape(entity);
+        shape.x = entity.x;
+        shape.y = entity.y;
+        shape.angle = entity.angle * Math.PI / 180;
+
+        (<any>entity).on(EntityEvent.Spawn, this.onSpawnChildEntity);
+        (<any>entity).on(EntityEvent.Despawn, this.onDespawnEntity);
     }
 
     public remove(id :number) {
         this.sectors.remove(id);
-        // this.entityPool.remove(id);
 
-        // if (!this.dumbMode) {
-        //     const shape = this.shapes[id];
-        //     delete this.shapes[id];
-        //     this.collisionSystem.remove(shape);
-        //     this.collisionSystem.update();
-        // }
+        if (this.passiveMode)
+            return;
+
+        lastRemoved = id;
+        
+        const shape = this.shapes[id];
+        const entity = shape.entity;
+        this.collisionSystem.remove(shape);
+        this.collisionSystem.update();
+        delete this.shapes[id];
+
+        (<any>entity).off(EntityEvent.Spawn, this.onSpawnChildEntity);
+        (<any>entity).off(EntityEvent.Despawn, this.onDespawnEntity);
     }
 
     public addAll(entities :Entity[]) {
         entities.forEach(entity => this.add(entity));
-        // if (!this.dumbMode) {
-        //     this.collisionSystem.update();
-        // }
     }
 
     public step() :number {
@@ -58,24 +66,18 @@ export class Stage {
         this.tick = this.tick % Number.MAX_SAFE_INTEGER;
         this.sectors.step();
 
-        // for(let id in this.sectors.entities) {
-        //     const entity = this.entityPool.find(parseInt(id));
+        if (this.passiveMode)
+            return this.tick;
 
-            // this.stepEntity(entity);
-            
+        for (let i in this.shapes) {
+            const shape = this.shapes[i];
+            shape.x = shape.entity.x;
+            shape.y = shape.entity.y;
+            shape.angle = shape.entity.angle * Math.PI / 180;
+        }
 
-        //     if (!this.dumbMode) {
-        //         const shape = <Polygon>this.shapes[parseInt(id)];
-        //         shape.x = entity.x;
-        //         shape.y = entity.y;
-        //         shape.angle = entity.angle * Math.PI / 180;
-        //     }
-        // }
-
-        // if (!this.dumbMode) {
-        //     this.collisionSystem.update();
-        //     this.handleCollisions();
-        // }
+        this.collisionSystem.update();
+        this.checkCollisionsBroad();
 
         return this.tick;
     }
@@ -111,24 +113,57 @@ export class Stage {
         return this.sectors.allEntities();
     }
 
-    // private handleCollisions() {
-    //     for(const i in this.shapes) {
-    //         const n = parseInt(i);
-    //         const shape = this.shapes[n];
-    //         const entity = this.entityPool.find(n);
-    //         const potentials = shape.potentials();
-    //         if (potentials.length)
-    //             this.checkCollisions(entity, shape, potentials);
-    //     }
-    // }
+    private addOrFetchCollisionShape(entity: Entity) {
+        if (this.shapes.hasOwnProperty(entity.id)) {
+            return this.shapes[entity.id];
+        }
+        if (!entity.id) {
+            return null;
+        }
 
-    // private checkCollisions(subject :Entity, shape :Polygon, bodies :any[]) {
-    //     for (const body of bodies) {
-    //         const collision = shape.collides(body, this.collisionResult);
-    //         if (!collision)
-    //             continue;
+        const shape = <any>this.collisionSystem.createPolygon(entity.x, entity.y, entity.collisionMap, entity.angle);
+        shape.entity = entity;
+        this.shapes[entity.id] = shape;
 
-    //         subject.collide(this.entityPool.find(body.id), this.collisionResult);
-    //     }
-    // }
+        return shape;
+    }
+
+    private checkCollisionsBroad() {
+        for(let i in this.shapes) {
+            const shape = this.shapes[i];
+            const potentials = shape.potentials();
+            if (!potentials.length)
+                continue;
+            
+            this.checkCollisionsNarrow(shape);
+        }
+    }
+
+    private checkCollisionsNarrow(shape: any) {
+        for (const body of shape.potentials()) {
+            const collision = shape.collides(body, this.collisionResult);
+            if (!collision)
+                continue;
+
+            shape.entity.collide(body.entity, this.collisionResult);
+        }
+    }
+
+    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity) => {
+        let entity: Entity = null;
+        switch(entityType.name) {
+            case EntityType.Bullet.name:
+                entity = new Bullet(entityModel, parent);
+                break;
+            // case EntityType.Ship.name:
+            // ships aren't child entities yet... we still don't have carriers nor turrets...
+        }
+
+        this.add(entity);
+    }
+
+    private onDespawnEntity = (entity: Entity) => {
+        this.emit(EntityEvent.Despawn, entity.id);
+        this.remove(entity.id);
+    }
 }

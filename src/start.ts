@@ -2,6 +2,7 @@
 const express = require('express');
 import { Server } from 'http';
 import { Room } from './server/room';
+import { Config } from './space/config';
 
 const app = express();
 const server = new Server(app);
@@ -14,6 +15,8 @@ app.get('/', (req :any, res :any) => {
 
 const STATIC_PORT = 8080;
 const ROOM_PORT = 27001;
+
+Config.read();
 
 const room = new Room();
 room.open(ROOM_PORT);

@@ -1,0 +1,71 @@
+{
+  "_from": "collisions@^2.0.13",
+  "_id": "collisions@2.0.13",
+  "_inBundle": false,
+  "_integrity": "sha512-KOTVGrIlzTkgmZp/OlYruqVpuAuBGcGTWurLp56n4+9c7NHBYWlF3TtNZc6hTr22GiGPE34+frBugQV4OEmFjQ==",
+  "_location": "/collisions",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "collisions@^2.0.13",
+    "name": "collisions",
+    "escapedName": "collisions",
+    "rawSpec": "^2.0.13",
+    "saveSpec": null,
+    "fetchSpec": "^2.0.13"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/collisions/-/collisions-2.0.13.tgz",
+  "_shasum": "ab3d87022f62cd351fa8cbd676857a402fbc3b19",
+  "_spec": "collisions@^2.0.13",
+  "_where": "/home/spark/Repos/space",
+  "author": {
+    "name": "Samuel Hodge"
+  },
+  "bugs": {
+    "url": "https://github.com/Sinova/Collisions/issues"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Collision detection for circles, polygons, and points",
+  "devDependencies": {
+    "esdoc": "^1.0.4",
+    "esdoc-standard-plugin": "^1.0.0",
+    "html-webpack-plugin": "^2.30.1",
+    "npm": "^5.5.1",
+    "webpack": "^3.9.0"
+  },
+  "homepage": "https://github.com/Sinova/Collisions#readme",
+  "keywords": [
+    "Collision",
+    "Separating Axis Theorem",
+    "Bounding Volume Hierarchy",
+    "SAT",
+    "BVH",
+    "Circle",
+    "Polygon",
+    "Line",
+    "Shape",
+    "Separating",
+    "Axis",
+    "Theorem",
+    "Bounding",
+    "Volume",
+    "Hierarchy"
+  ],
+  "license": "MIT",
+  "main": "src/Collisions.js",
+  "name": "collisions",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sinova/Collisions.git"
+  },
+  "scripts": {
+    "build": "rm -rf ./docs/* && esdoc && webpack"
+  },
+  "version": "2.0.13"
+}

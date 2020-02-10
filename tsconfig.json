@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "allowJs": true,
         "lib": ["es2015", "dom"],
         "outDir": "dist",
         "noImplicitAny": true,
@@ -8,7 +9,7 @@
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "declaration": true
+        "declaration": false
     },
     "include": [
         "src"

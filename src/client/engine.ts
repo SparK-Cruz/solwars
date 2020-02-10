@@ -11,7 +11,6 @@ import { CodecFacade } from '../space/codec_facade';
 // HTML setup
 const debug = <HTMLDivElement> document.getElementById('debug');
 const canvas = <HTMLCanvasElement> document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
 
 document.body.style.overflow = 'hidden';
 canvas.style.height = window.innerHeight + 'px';
@@ -26,8 +25,7 @@ const center = {
 };
 
 // Game setup
-const TPS = 60;
-const stage = new Stage(true);
+const stage = new Stage();
 let remoteId :number = null;
 
 // Player and Controls setup
@@ -39,34 +37,35 @@ const camera = new Camera({x: 0, y: 0, vx: 0, vy: 0}, center);
 const renderer = new Renderer(canvas, camera, stage);
 
 let lastTick = Date.now();
-
-const debugCollisions = document.createElement('canvas');
-debugCollisions.width = canvas.width;
-debugCollisions.height = canvas.height;
-debugCollisions.style.height = window.innerHeight + 'px';
-debugCollisions.style.width = window.innerWidth + 'px';
-const dbg = debugCollisions.getContext('2d');
-
-document.body.appendChild(debugCollisions);
+let shipModel = 'spec';
 
 function renderFrame() {
-  let fps = Math.round(1000 / (Date.now() - lastTick));
+  const fps = Math.round(1000 / (Date.now() - lastTick));
   lastTick = Date.now();
 
-  let pos = {
+  const pos = {
     x: globalPos(camera.trackable.x),
     y: globalPos(camera.trackable.y)
   };
 
+  const speed = Math.sqrt(Math.pow((<Ship>camera.trackable).vx, 2) + Math.pow((<Ship>camera.trackable).vy, 2));
+
   debug.innerHTML = [
-    '<pre>SECTOR: ',
+    'SECTOR: ',
     'H',
     pos.x,
     'V',
     pos.y,
     ' ',
     fps,
-    '</pre>'
+    '<br/>ENERGY: ',
+    (<any>camera.trackable).health - (<any>camera.trackable).damage,
+    "<br/>CONTROL: ",
+    (<any>camera.trackable).control,
+    "<br/>SPEED: ",
+    speed,
+    "<br/>",
+    shipModel
   ].join('');
 
   if (fps > 55) {
@@ -113,6 +112,11 @@ conn.on('accept', (data :any) => {
   remoteId = data.id;
   stage.add(data.ship);
   camera.trackable = data.ship;
+
+  const name = data.ship.model[0].toUpperCase() + data.ship.model.substr(1);
+  const model = (<any>ShipModel)[name];
+  shipModel = model.make + ' ' + model.name;
+
   input.change(state => {
     data.ship.control = state;
     conn.emit('input', state);
