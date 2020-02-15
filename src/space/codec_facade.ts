@@ -1,16 +1,9 @@
 import { Entity, EntityType } from './entities';
 import { Stage } from './stage';
-import { Controllable } from './entities/controllable';
-import { Ship } from './entities/ship';
-import { Control as ShipControl } from './entities/ships/control';
 
 interface SavedState {
   tick: number
   entities :Entity[]
-}
-interface SavedControl {
-  memId :string
-  state :number
 }
 
 let shifted = false;
@@ -28,17 +21,13 @@ export class CodecFacade {
       entities: this.stage.fetchEntitiesAround(point).map(this.encodeEntity)
     };
 
-    // TODO PSON
+    // TODO PSON / binary
     return JSON.stringify(stream);
   }
 
   public writeState(state :string) {
-    // TODO PSON
+    // TODO PSON / binary
     const decoded = <SavedState>JSON.parse(state);
-
-    // if (decoded.entities.length >= 2) {
-    //   console.log(decoded.entities[1]);
-    // }
 
     if (decoded.tick < this.stage.tick
       && decoded.tick + 60 > this.stage.tick)

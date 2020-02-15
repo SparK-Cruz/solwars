@@ -56,8 +56,6 @@ export class EntityRenderer implements Renderable {
   private draw() {
     const camPos = this.camera.getPosition();
 
-    // console.log(this.cacheControl);
-
     for (let memId in this.cache) {
       if (this.cacheControl.indexOf(parseInt(memId)) <= -1) {
         delete this.cache[memId];

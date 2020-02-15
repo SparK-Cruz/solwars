@@ -2,7 +2,6 @@ import { Ship } from '../../space/entities/ship';
 import { Control } from '../../space/entities/ships/control';
 import { Renderable } from './renderable';
 import { Assets, Asset, AssetListener } from './assets';
-import { TrailRenderer } from './trail_renderer';
 
 export class ShipRenderer implements Renderable {
   private canvas :HTMLCanvasElement;

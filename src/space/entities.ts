@@ -129,7 +129,7 @@ export class EntityPoolGrid {
     }
 }
 
-export class EntityPool {
+class EntityPool {
     private pool :any = {};
     private count = 0;
     private lastId = 0;
