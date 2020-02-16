@@ -2,8 +2,6 @@ import { EventEmitter } from 'events';
 import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
 import { Bullet } from './entities/bullet';
 
-let lastRemoved = 0;
-
 export class Stage extends EventEmitter {
     public static PASSIVE_MODE = "passive_mode";
     public static ACTIVE_MODE = "active_mode";
@@ -44,8 +42,6 @@ export class Stage extends EventEmitter {
 
         if (this.passiveMode)
             return;
-
-        lastRemoved = id;
         
         const shape = this.shapes[id];
         const entity = shape.entity;
@@ -63,7 +59,7 @@ export class Stage extends EventEmitter {
 
     public step() :number {
         this.tick++;
-        this.tick = this.tick % Number.MAX_SAFE_INTEGER;
+        this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
         this.sectors.step();
 
         if (this.passiveMode)
@@ -149,7 +145,7 @@ export class Stage extends EventEmitter {
         }
     }
 
-    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity) => {
+    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity, offset: {x: number, y: number} = null) => {
         let entity: Entity = null;
         switch(entityType.name) {
             case EntityType.Bullet.name:
@@ -157,6 +153,11 @@ export class Stage extends EventEmitter {
                 break;
             // case EntityType.Ship.name:
             // ships aren't child entities yet... we still don't have carriers nor turrets...
+        }
+
+        if (offset) {
+            entity.x += offset.x + parent.vx;
+            entity.y += offset.y + parent.vy;
         }
 
         this.add(entity);

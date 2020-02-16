@@ -15,6 +15,7 @@ export class Ship extends EventEmitter implements entities.Entity {
   type = entities.EntityType.Ship;
   id :number;
   model :string;
+  name: string;
 
   sectorKey :string = "";
 
@@ -47,11 +48,12 @@ export class Ship extends EventEmitter implements entities.Entity {
 
   bullet = 0;
   bomb = 0;
+  
   gunsCooldown = 0;
+  shootHeat = 16;
 
   private afterburnerCost = 6;
   private shootCost = 150;
-  private shootHeat = 16;
 
   constructor(model :Model) {
     super();
@@ -87,11 +89,6 @@ export class Ship extends EventEmitter implements entities.Entity {
   }
 
   collide(other :entities.Entity, result :any) :void {
-    if (typeof (<any>other).parent !== 'undefined'
-      && (<any>other).parent.id === this.id) {
-      return;
-    }
-
     const push = {
       x: result.overlap * result.overlap_x,
       y: result.overlap * result.overlap_y
@@ -152,8 +149,14 @@ export class Ship extends EventEmitter implements entities.Entity {
     if (!Control.shooting(this.control)
       || !this.canShoot())
       return;
+
+    const linearOffset = 20;
+    const offset = {
+      x: linearOffset * Math.sin(inRads(this.angle)),
+      y: -linearOffset * Math.cos(inRads(this.angle)),
+    };
     
-    this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this);
+    this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this, offset);
     this.gunsCooldown += this.shootHeat;
     this.damage += this.shootCost;
   }

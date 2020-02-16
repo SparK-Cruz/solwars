@@ -1,4 +1,7 @@
 {
+    "maxPlayers": 10,
+    "clientPort": 80,
+    "serverPort": 27001,
     "ships": {
         "warbird": {
             "speed": 5,

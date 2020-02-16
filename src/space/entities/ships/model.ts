@@ -134,4 +134,21 @@ export namespace Model {
     color: 'rgb(255, 255, 255)',
     decals: []
   }
+
+  export const byId: any = (() => {
+    const obj = {};
+    for(let i in Model) {
+      const current = (<any>Model)[i];
+      (<any>obj)[current.id] = current;
+    }
+    return obj;
+  })();
+
+  export const all: Model[] = (() => {
+    const list = [];
+    for(let i in Model) {
+      list.push((<any>Model)[i]);
+    }
+    return list;
+  })();
 }

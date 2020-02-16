@@ -10,17 +10,18 @@ export class Input {
         'k37': Mapping.LEFT, //Arrow left
         'k39': Mapping.RIGHT, //Arrow right
         'k69': Mapping.SHOOT, //E
+        'k16': Mapping.AFTERBURNER, //SHIFT
         'k17': Mapping.SHOOT, //CTRL
         'k81': Mapping.AFTERBURNER, //Q
         'k65': Mapping.STRIFE_LEFT, //A
         'k68': Mapping.STRIFE_RIGHT, //D
     };
 
-    public constructor() {
-        window.addEventListener('keydown', (e :KeyboardEvent) => {
+    public constructor(emmiter: any) {
+        emmiter.addEventListener('keydown', (e :KeyboardEvent) => {
             this.keydown(e);
         });
-        window.addEventListener('keyup', (e :KeyboardEvent) => {
+        emmiter.addEventListener('keyup', (e :KeyboardEvent) => {
             this.keyup(e);
         });
     }

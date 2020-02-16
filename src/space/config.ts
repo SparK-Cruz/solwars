@@ -28,17 +28,24 @@ interface BulletConfig {
 }
 
 export class Config {
+    public static maxPlayers: number;
+    public static clientPort: number;
+    public static serverPort: number;
     public static ships: ShipsConfig;
     public static bullets: BulletConfig[];
 
-    public static read() {
+    public static read(callback: Function) {
         json
             .readFile('./config.json', (err: any, contents: any) => {
                 if (err) {
                     console.log(err);
                 }
-                this.ships = contents.ships;
-                this.bullets = contents.bullets;
+                for(let i in contents) {
+                    (<any>Config)[i] = contents[i];
+                    console.log(i, (<any>Config)[i]);
+                }
+
+                callback();
             });
     }
 }

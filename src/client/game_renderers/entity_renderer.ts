@@ -66,12 +66,12 @@ export class EntityRenderer implements Renderable {
 
       const coord = this.coords[memId];
       const renderCoord = {
-        x: coord.x - camPos.x,
-        y: coord.y - camPos.y
+        x: coord.x - camPos.x + this.camera.offset.x,
+        y: coord.y - camPos.y + this.camera.offset.y,
       };
       const center = {
         w: renderer.width / 2,
-        h: renderer.height / 2
+        h: renderer.height / 2,
       };
 
       this.ctx.save();

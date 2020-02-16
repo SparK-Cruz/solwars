@@ -43,11 +43,11 @@ export class Bullet extends EventEmitter implements Entity {
     }
 
     public collide(other :Entity, result :any) :void {
-        if (typeof (<any>other).damage !== 'undefined'
-            && other.id !== this.parent.id) {
-            (<any>other).damage += this.energy;
-            this.energy = 0;
+        if (typeof (<any>other).damage !== 'undefined') {
+            (<any>other).damage += this.energy * 2;
         }
+
+        this.energy = 0;
     }
 
     private updatePhysics(): void {
@@ -62,6 +62,6 @@ export class Bullet extends EventEmitter implements Entity {
             return;
         }
 
-        this.energy -= 1;
+        this.energy -= 0.5;
     }
 }

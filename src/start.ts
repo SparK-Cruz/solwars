@@ -13,13 +13,13 @@ app.get('/', (req :any, res :any) => {
   res.sendFile(__dirname + '/client/index.html');
 });
 
-const STATIC_PORT = 8080;
-const ROOM_PORT = 27001;
+Config.read(() => {
+  const STATIC_PORT = Config.clientPort;
+  const ROOM_PORT = Config.serverPort;
 
-Config.read();
+  const room = new Room();
+  room.open(ROOM_PORT);
 
-const room = new Room();
-room.open(ROOM_PORT);
-
-server.listen(STATIC_PORT);
-console.log('Serving on port '+STATIC_PORT);
+  server.listen(STATIC_PORT);
+  console.log('Serving on port '+STATIC_PORT);
+});

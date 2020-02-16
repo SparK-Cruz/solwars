@@ -6,12 +6,6 @@ interface SavedState {
   entities :Entity[]
 }
 
-let shifted = false;
-
-if (typeof document !== 'undefined') {
-  document.onkeydown = function(e){ shifted = e.shiftKey; return true };
-}
-
 export class CodecFacade {
   public constructor(private stage :Stage) {}
 
@@ -33,15 +27,23 @@ export class CodecFacade {
       && decoded.tick + 60 > this.stage.tick)
       return;
 
-    if (shifted) {
-      console.log(decoded.entities);
-      shifted = false;
-    }
-
     this.stage.addAll(decoded.entities);
   }
 
   public encodeEntity(entity :Entity) {
     return entity;
   }
+}
+
+export namespace CodecEvents {
+  // client reads
+  export const ACCEPT = "accept";
+  export const STEP = "step";
+  export const REMOVE_OBJECT = "removal";
+
+  // server reads
+  export const SEND_INPUT = "input";
+  export const JOIN_GAME = "join"
+  export const DISCONNECT = "disconnect";
+  export const CONNECTION = "connection";
 }

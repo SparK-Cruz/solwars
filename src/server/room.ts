@@ -1,10 +1,11 @@
 import * as socketio from 'socket.io';
 import { Server } from 'http';
 
-import { CodecFacade } from '../space/codec_facade';
+import { CodecFacade, CodecEvents } from '../space/codec_facade';
 import { Stage } from '../space/stage';
 import { Player } from './player';
 import { EntityEvent } from '../space/entities';
+import { Config } from '../space/config';
 
 const Collisions = require('collisions').Collisions;
 
@@ -38,6 +39,9 @@ export class Room {
   }
 
   public addPlayerShip(player :Player) {
+    const spawnRadius = 512 * this.players.length;
+    player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
+    player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
     this.stage.add(player.ship);
   }
   public removePlayer(player :Player) {
@@ -52,7 +56,8 @@ export class Room {
 
   private broadcastState() {
     this.players.forEach((player) => {
-      // Player has no ship, didn't join yet
+      
+      // No ship no data...
       if (!player.ship)
         return;
 
@@ -69,14 +74,18 @@ export class Room {
   private tick() {
     this.stage.step();
     this.broadcastState();
-    //console.log('Room@' + this.port + ': ' + this.stage.getTick());
   }
 
   private setupListeners() {
     this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
 
     let id = 0;
-    this.io.sockets.on('connection', (socket :SocketIO.Socket) => {
+    this.io.sockets.on(CodecEvents.CONNECTION, (socket :SocketIO.Socket) => {
+      if (this.players.length > Config.maxPlayers) {
+        socket.disconnect(true);
+        return;
+      }
+
       const player = new Player(++id, socket, this);
       player.on('ship', () => this.addPlayerShip(player));
       player.on('disconnect', () => this.removePlayer(player));

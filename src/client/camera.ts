@@ -1,7 +1,31 @@
 export class Camera {
+  public trackable: MovingPoint = {x: 0, y: 0, vx: 0, vy: 0};
+  
   private maxSpeed = 50;
+  public offset: {x: number, y: number} = {x: 0, y: 0};
 
-  constructor(public trackable :MovingPoint, private offset :{x :number, y :number}) {
+  public setResolution(width: number, height: number): void {
+    this.offset = {
+      x: width / 2,
+      y: height / 2,
+    };
+  }
+
+  public translate(point: {x: number, y: number}) {
+    const pos = this.getPosition();
+    return {
+      x: point.x - pos.x,
+      y: point.y - pos.y,
+    };
+  }
+
+  public addOffset(point: {x: number, y: number}) {
+    const pos = this.getPosition();
+
+    return {
+      x: point.x + (this.trackable.x - pos.x) + this.offset.x,
+      y: point.y + (this.trackable.y - pos.y) + this.offset.y,
+    };
   }
 
   public getPosition() :MovingPoint {
@@ -18,8 +42,8 @@ export class Camera {
     };
 
     return {
-      x: this.trackable.x + spot.x - this.offset.x,
-      y: this.trackable.y + spot.y - this.offset.y,
+      x: this.trackable.x + spot.x,
+      y: this.trackable.y + spot.y,
       vx: 0,
       vy: 0
     }
@@ -34,6 +58,7 @@ export class Camera {
     return ease * scale * signal;
   }
 }
+
 export interface MovingPoint {
   x :number;
   y :number;
