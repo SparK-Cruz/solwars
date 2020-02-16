@@ -3,7 +3,6 @@ import { Ship } from '../../space/entities/ship';
 import { Stage } from '../../space/stage';
 import { Camera } from '../camera';
 import { ShipRenderer } from './ship_renderer';
-import { TrailRenderer } from './trail_renderer';
 import { Renderable } from './renderable';
 import { BulletRenderer } from './bullet_renderer';
 import { Bullet } from '../../space/entities/bullet';
@@ -12,10 +11,8 @@ export class EntityRenderer implements Renderable {
   private ctx :CanvasRenderingContext2D;
 
   private cacheControl :number[];
-  private trailBearers :number[];
   private cache :any;
   private coords :any;
-  private trailRenderer :TrailRenderer;
 
   constructor(private canvas :HTMLCanvasElement, private camera :Camera, private stage :Stage) {
     this.ctx = this.canvas.getContext('2d');

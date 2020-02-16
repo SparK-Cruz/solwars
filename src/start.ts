@@ -8,10 +8,7 @@ const app = express();
 const server = new Server(app);
 
 // Static files
-app.use('/client', express.static(__dirname + '/client'));
-app.get('/', (req :any, res :any) => {
-  res.sendFile(__dirname + '/client/index.html');
-});
+app.use('/', express.static(__dirname + '/client'));
 
 Config.read(() => {
   const STATIC_PORT = Config.clientPort;

@@ -6,7 +6,12 @@ import { HudRenderer } from './hud_renderer';
 
 // Game setup
 const input = new Input(window);
-const name = 'Anon' + (100 + Math.round(Math.random() * 899));
+let name = localStorage.getItem('name');
+name = prompt('Enter a name', name || '');
+if (!name.trim()) {
+    name = 'Anon' + (100 + Math.round(Math.random() * 899));
+}
+localStorage.setItem('name', name);
 
 const client = new Client(name, input);
 
