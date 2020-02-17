@@ -10,18 +10,26 @@ export class GameRenderer implements Renderable {
   private bg :Background;
   private entityRenderer :EntityRenderer;
 
-  constructor(private canvas :HTMLCanvasElement, private camera :Camera, private stage :Stage) {
-    let bgCanvas = this.copySize(canvas, document.createElement('canvas'));
-    let fgCanvas = this.copySize(canvas, document.createElement('canvas'));
+  private bgCanvas: HTMLCanvasElement;
+  private fgCanvas: HTMLCanvasElement;
 
-    this.bg = new Background(bgCanvas, camera);
-    this.entityRenderer = new EntityRenderer(fgCanvas, camera, stage);
+  constructor(private canvas :HTMLCanvasElement, private camera :Camera, private stage :Stage) {
+    this.bgCanvas = this.copySize(canvas, document.createElement('canvas'));
+    this.fgCanvas = this.copySize(canvas, document.createElement('canvas'));
+
+    this.bg = new Background(this.bgCanvas, camera);
+    this.entityRenderer = new EntityRenderer(this.fgCanvas, camera, stage);
 
     this.c = canvas.getContext('2d');
     this.c.imageSmoothingEnabled = false;
   }
 
   render() :HTMLCanvasElement {
+    this.copySize(this.canvas, this.bgCanvas);
+    this.copySize(this.canvas, this.fgCanvas);
+
+    this.c.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
     this.c.save();
     this.c.drawImage(this.bg.render(), 0, 0);
     this.c.drawImage(this.entityRenderer.render(), 0, 0);
