@@ -36,7 +36,7 @@ export class Radar implements Renderable {
     }
 
     private initializeCoord() {
-        const {canvas, ctx} = this.getCoordBuffer();
+        const {canvas} = this.getCoordBuffer();
         canvas.width = 200;
         canvas.height = 20;
     }
@@ -55,7 +55,7 @@ export class Radar implements Renderable {
         ctx.closePath();
         ctx.clip();
         ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.fillRect(0, 30, 200, 200);
+        ctx.fillRect(0, 0, 200, 200);
         ctx.restore();
     }
 
