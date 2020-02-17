@@ -11,7 +11,7 @@ export class Stage extends EventEmitter {
     private shapes :any = {};
     private collisionResult :any = null;
 
-    private sectors = new EntityPoolGrid('sectorKey', 1000);
+    private sectors = new EntityPoolGrid('sectorKey', 2048);
 
     public constructor(public collisionSystem :any = null) {
         super();
