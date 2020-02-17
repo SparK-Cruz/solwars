@@ -12,16 +12,11 @@ export class Background implements Renderable {
     document.createElement('canvas'),
     document.createElement('canvas')
   ];
-  private blurBuffer :HTMLCanvasElement = document.createElement('canvas');
   private context :CanvasRenderingContext2D;
-
-  private seed :number;
 
   constructor(private canvas :HTMLCanvasElement, private camera :Camera) {
     this.context = canvas.getContext('2d');
-    this.blurBuffer.width = canvas.width;
-    this.blurBuffer.height = canvas.height;
-
+    
     let seed = 9876543210;
     RNG.random(seed);
 
@@ -32,7 +27,11 @@ export class Background implements Renderable {
 
   render() :HTMLCanvasElement {
     const ref = this.camera.getPosition();
-    this.drawBlackCanvas();
+    
+    this.context.save();
+    this.context.fillStyle = "#000000";
+    this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.context.restore();
 
     for (let i = this.buffers.length - 1; i >= 0; i--) {
       const relative :Point = {
@@ -75,18 +74,6 @@ export class Background implements Renderable {
     ctx.fill();
     ctx.closePath();
     ctx.restore();
-  }
-
-  private drawBlackCanvas() :void {
-    let bctx = this.blurBuffer.getContext('2d');
-    bctx.save();
-    //bctx.drawImage(this.canvas, 0, 0);
-    bctx.fillStyle = '#000000';
-    //bctx.globalAlpha = 0.4;
-    bctx.fillRect(0, 0, this.blurBuffer.width, this.blurBuffer.height);
-    bctx.restore();
-
-    this.context.drawImage(this.blurBuffer, 0, 0);
   }
 }
 
