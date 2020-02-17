@@ -6,38 +6,113 @@ import { Stage } from "../../space/stage";
 
 export class Radar implements Renderable {
     private ctx: CanvasRenderingContext2D;
-    private buffer: HTMLCanvasElement;
-    private bfr: CanvasRenderingContext2D;
+    
+    private coordBuffer: HTMLCanvasElement;
+    private cbfr: CanvasRenderingContext2D;
+    private frameBuffer: HTMLCanvasElement;
+    private fbfr: CanvasRenderingContext2D;
+    private blipsBuffer: HTMLCanvasElement;
+    private bbfr: CanvasRenderingContext2D;
 
     private info: ClientInfo;
+    private scale = 1/20;
+    private regionScale = 1/512;
+    private pos = {x: -220, y: -250};
 
     public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
-        this.ctx = canvas.getContext('2d');
+        this.ctx = this.canvas.getContext('2d');
+
+        this.initialize();
     }
 
     public update(info: ClientInfo) {
         this.info = info;
     }
 
+    private initialize() {
+        this.initializeCoord();
+        this.initializeFrame();
+        this.initializeBlips();
+    }
+
+    private initializeCoord() {
+        const {canvas, ctx} = this.getCoordBuffer();
+        canvas.width = 200;
+        canvas.height = 20;
+    }
+
+    private initializeFrame() {
+        const {canvas, ctx} = this.getFrameBuffer();
+        canvas.width = 200;
+        canvas.height = 200;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(51, 159, 255, 1)";
+        ctx.lineWidth = 2;
+        this.drawArc(ctx);
+        ctx.stroke();
+        ctx.closePath();
+        ctx.clip();
+        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+        ctx.fillRect(0, 30, 200, 200);
+        ctx.restore();
+    }
+
+    private initializeBlips() {
+        const {canvas, ctx} = this.getBlipsBuffer();
+        canvas.width = 200;
+        canvas.height = 200;
+
+        ctx.beginPath();
+        this.drawArc(ctx);
+        ctx.closePath();
+        ctx.clip();
+    }
+
+    private drawArc(ctx: CanvasRenderingContext2D) {
+        ctx.arc(
+            100, 100,
+            99,
+            0, Math.PI * 2,
+            false
+        );
+    }
+
     public render() {
         if (!this.info)
             return;
 
-        const scale = 1/20;
-        const regionScale = 1/512;
+        const pos = {
+            x: this.canvas.width + this.pos.x,
+            y: this.canvas.height + this.pos.y,
+        };
 
+        this.ctx.save();
+        
+        this.ctx.drawImage(this.drawCoordinates(), pos.x, pos.y);
+        pos.y += 30;
+        
+        this.ctx.drawImage(this.getFrameBuffer().canvas, pos.x, pos.y);
+        this.ctx.drawImage(this.drawBlips(), pos.x, pos.y);
+
+        this.ctx.restore();
+
+        return this.canvas;
+    }
+
+    private drawCoordinates() {
         const positionText = [
             'H: ',
-            Math.floor(this.info.position.x * regionScale),
+            Math.floor(this.info.position.x * this.regionScale),
             ' ',
             'V: ',
-            Math.floor(this.info.position.y * regionScale)
+            Math.floor(this.info.position.y * this.regionScale)
         ].join('');
 
-        const {canvas, ctx} = this.getBuffer();
+        const {canvas, ctx} = this.getCoordBuffer();
 
-        canvas.width = 200;
-        canvas.height = 230;
+        ctx.clearRect(0, 0, 200, 20);
 
         ctx.save();
         ctx.fillStyle = "#3399ff";
@@ -46,27 +121,16 @@ export class Radar implements Renderable {
         ctx.fillText(positionText, canvas.width / 2 - text.width / 2, 20);
         ctx.restore();
 
-        ctx.save();
-        ctx.beginPath();
-        ctx.strokeStyle = "rgba(51, 159, 255, 1)";
-        ctx.lineWidth = 2;
-        ctx.arc(
-            100,
-            130,
-            99,
-            0,
-            Math.PI * 2,
-            false
-        );
-        ctx.stroke();
-        ctx.closePath();
-        ctx.clip();
-        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.fillRect(0, 30, 200, 200);
-        ctx.restore();
+        return canvas;
+    }
+
+    private drawBlips() {
+        const {canvas, ctx} = this.getBlipsBuffer();
+
+        ctx.clearRect(0, 0, 200, 200);
 
         ctx.save();
-        ctx.translate(100, 130);
+        ctx.translate(100, 100);
 
         const entities = this.stage.fetchAllEntities();
         for(let i in entities) {
@@ -82,54 +146,41 @@ export class Radar implements Renderable {
             }
 
             const pos = this.camera.translate(entity);
-            ctx.fillRect(pos.x * scale - size / 2, pos.y * scale - size / 2, size, size);
-
-            if (typeof (<any>entity).name != 'undefined') {
-                let name = (<any>entity).name;
-
-                if (typeof (<any>entity).alive != 'undefined'
-                    && !(<any>entity).alive) {
-                    name = '(Dead) ' + name;
-                }
-
-                this.ctx.save();
-                this.ctx.fillStyle = "#3399ff";
-                this.ctx.font = "12px monospace";
-
-                const textInfo = this.ctx.measureText(name);
-                let textPos = {
-                    x: pos.x - textInfo.width / 2 + this.camera.offset.x,
-                    y: pos.y + 40 + this.camera.offset.y,
-                };
-
-                if (entity.id == this.info.id) {
-                    textPos = {
-                        x: 20,
-                        y: 20,
-                    };
-                }
-
-                this.ctx.fillText(name, textPos.x, textPos.y);
-                this.ctx.restore();
-            }
+            ctx.fillRect(pos.x * this.scale - size / 2, pos.y * this.scale - size / 2, size, size);
         }
 
         ctx.restore();
 
-        this.ctx.save();
-        this.ctx.drawImage(canvas, this.canvas.width - 220, this.canvas.height - 250);
-        this.ctx.restore();
-
-        return this.canvas;
+        return canvas;
     }
 
-    private getBuffer() {
-        this.buffer = this.buffer || document.createElement('canvas');
-        this.bfr = this.bfr || this.buffer.getContext('2d');
+    private getCoordBuffer() {
+        this.coordBuffer = this.coordBuffer || document.createElement('canvas');
+        this.cbfr = this.cbfr || this.coordBuffer.getContext('2d');
 
         return {
-            canvas: this.buffer,
-            ctx: this.bfr
+            canvas: this.coordBuffer,
+            ctx: this.cbfr
+        };
+    }
+
+    private getFrameBuffer() {
+        this.frameBuffer = this.frameBuffer || document.createElement('canvas');
+        this.fbfr = this.fbfr || this.frameBuffer.getContext('2d');
+
+        return {
+            canvas: this.frameBuffer,
+            ctx: this.fbfr
+        };
+    }
+
+    private getBlipsBuffer() {
+        this.blipsBuffer = this.blipsBuffer || document.createElement('canvas');
+        this.bbfr = this.bbfr || this.blipsBuffer.getContext('2d');
+
+        return {
+            canvas: this.blipsBuffer,
+            ctx: this.bbfr
         };
     }
 }
