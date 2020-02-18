@@ -1,7 +1,7 @@
-Star Pilot Blues (SPB Online)
-==============================
+Sol Wars
+========
 
-Work in progress, built for firefox for now, later to be ported to electron or node-webkit.
+Work in progress
 
 TODO
 ----
@@ -10,8 +10,9 @@ V1
 [X] Make server
 [X] Connect to server
 [X] Collisions
-[ ] Show names
-[ ] Shooting
+[X] Show names
+[X] Shooting
+[X] HUD
 [ ] Chat?
 [ ] Ship designs
 [ ] Ship customization with vinyl and colors

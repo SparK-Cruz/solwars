@@ -9,7 +9,9 @@ import { Config } from '../space/config';
 
 const Collisions = require('collisions').Collisions;
 
-const TPS = 60;
+// TODO implement delta time to step functions
+// TODO make separate stage for client and server
+const TPS = 64;
 
 export class Room {
   public codec :CodecFacade;
