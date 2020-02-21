@@ -51,7 +51,6 @@ export class Client extends EventEmitter {
         }
 
         this.socket.open();
-        this.socket.emit(CodecEvents.JOIN_GAME, {name});
     }
 
     public disconnect() {
@@ -65,6 +64,10 @@ export class Client extends EventEmitter {
     }
 
     private bindEvents(socket: SocketIOClient.Socket) {
+        socket.on(CodecEvents.CONNECT, () => {
+            this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
+        });
+
         socket.on(CodecEvents.ACCEPT, (data: any) => {
             this.onConnect(data);
         });

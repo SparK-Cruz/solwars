@@ -75,7 +75,10 @@
             }
             localStorage.setItem('name', name);
 
-            engine.start(name);
+            engine.start(name, data => {
+                if (data.error)
+                    alert(data.error);
+            });
             return false;
         });
 

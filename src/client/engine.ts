@@ -28,18 +28,30 @@ export class Engine {
         return this.client.connected;
     }
 
-    public start(name: string) {
-        window.onresize = () => this.adjustCanvas();
+    public start(name: string, callback: Function = null) {
+        const timeout = setTimeout(() => {
+            callback && callback({error: 'Connection Timeout'});
+        }, 2000);
 
-        this.input.enable();
+        const once = (data: any) => {
+            clearTimeout(timeout);
+
+            window.onresize = () => this.adjustCanvas();
+            this.input.enable();
+
+            lastTick = Date.now();
+            this.adjustCanvas();
+            this.renderFrame();
+
+            callback && callback(data);
+        };
+
+        this.client.once(ClientEvents.SHIP, once);
         this.client.connect(name);
-
-        lastTick = Date.now();
-        this.adjustCanvas();
-        this.renderFrame();
     }
 
     public stop() {
+        window.onresize = () => true;
         this.input.disable();
         this.client.disconnect();
         this.hideCanvas();

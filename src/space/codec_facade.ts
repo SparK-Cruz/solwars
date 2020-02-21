@@ -32,6 +32,7 @@ export class CodecFacade {
 
 export namespace CodecEvents {
   // client reads
+  export const CONNECT = "connect";
   export const ACCEPT = "accept";
   export const STEP = "step";
   export const REMOVE_OBJECT = "removal";
