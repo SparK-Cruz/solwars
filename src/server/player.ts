@@ -122,6 +122,10 @@ export class Player extends EventEmitter {
       death.killer = (<Bullet>killer).parent;
     }
 
+    setTimeout(() => {
+        this.socket.emit(CodecEvents.DEATH);
+    }, 5000);
+
     this.emit(PlayerEvents.Die, death);
   }
 }

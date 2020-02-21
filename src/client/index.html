@@ -14,16 +14,26 @@
 
       .btn {
         display: inline-block;
+
         padding: 15px 20px;
+
         border: 2px solid black;
         border-top-color: white;
         border-left-color: white;
         border-radius: 5px;
+
+        color: black;
         background-color: lightgray;
+
+        font-family: sans-serif;
+        text-align: center;
+        text-decoration: none;
         text-transform: uppercase;
       }
 
       #join-btn {
+        display: block;
+        width: 150px;
         margin: 100px auto;
       }
 
@@ -51,29 +61,32 @@
     <canvas id='hud' width="1366" height="768"></canvas>
     <script src="dist_engine.js"></script>
     <script>
-      const game = document.getElementById('game');
-      const hud = document.getElementById('hud');
-      const engine = new Engine(game, hud);
+        const game = document.getElementById('game');
+        const hud = document.getElementById('hud');
+        const engine = new Engine(game, hud);
 
-      document.getElementById('join-btn').addEventListener('click', e => {
-        e.preventDefault();
+        document.getElementById('join-btn').addEventListener('click', e => {
+            e.preventDefault();
 
-        let name = localStorage.getItem('name');
-        name = prompt('Enter a name', name || '');
-        if (!name.trim()) {
-            name = 'Anon' + (100 + Math.round(Math.random() * 899));
-        }
-        localStorage.setItem('name', name);
+            let name = localStorage.getItem('name');
+            name = prompt('Enter a name', name || '');
+            if (!name.trim()) {
+                name = 'Anon' + (100 + Math.round(Math.random() * 899));
+            }
+            localStorage.setItem('name', name);
 
-        engine.start(name);
-        return false;
-      });
+            engine.start(name);
+            return false;
+        });
 
-      window.addEventListener('keydown', e => {
-        if (engine.running && e.keyCode == 27 && confirm('Leave game?')) {
-          engine.stop();
-        }
-      });
+        window.addEventListener('keydown', e => {
+            if (!engine.running
+                || e.keyCode != 27
+                || !confirm('Leave Game?'))
+                return;
+
+            engine.stop();
+        });
     </script>
   </body>
 </html>

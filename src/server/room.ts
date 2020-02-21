@@ -64,7 +64,7 @@ export class Room {
       killer.ship.name = killer.name + ' (' + killer.bounty + ')';
     }
 
-    player.bounty = 0;
+    player.bounty = 1;
 
     // broadcast message to chat area saying whom killed who by what
   }

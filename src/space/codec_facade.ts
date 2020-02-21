@@ -35,6 +35,7 @@ export namespace CodecEvents {
   export const ACCEPT = "accept";
   export const STEP = "step";
   export const REMOVE_OBJECT = "removal";
+  export const DEATH = "death";
 
   // server reads
   export const SEND_INPUT = "input";

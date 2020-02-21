@@ -9,6 +9,7 @@ import { Model as ShipModel } from '../space/entities/ships/model';
 
 export class Client extends EventEmitter {
     private remoteId: number = null;
+    private name: string = null;
     private stage: Stage = null;
     private codec: CodecFacade = null;
     private ship: Ship = null;
@@ -42,14 +43,19 @@ export class Client extends EventEmitter {
     }
 
     public connect(name: string) {
-        this.socket = this.socket || socketio(':27001', {autoConnect: false});
-        this.socket.open();
-        this.bindEvents(this.socket);
+        this.name = name;
 
+        if (!this.socket) {
+            this.socket = socketio(':27001', {autoConnect: false});
+            this.bindEvents(this.socket);
+        }
+
+        this.socket.open();
         this.socket.emit(CodecEvents.JOIN_GAME, {name});
     }
 
     public disconnect() {
+        this.remoteId = null;
         this.stage.clear();
         this.socket.disconnect();
     }
@@ -72,6 +78,10 @@ export class Client extends EventEmitter {
 
         socket.on(CodecEvents.REMOVE_OBJECT, (data: any) => {
             this.onServerRemoveObject(data);
+        });
+
+        socket.on(CodecEvents.DEATH, () => {
+            this.onDeath();
         });
 
         this.input.change((state: number) => {
@@ -107,6 +117,11 @@ export class Client extends EventEmitter {
 
     private onServerRemoveObject(data: any) {
         this.stage.remove(data);
+    }
+
+    private onDeath() {
+        this.disconnect();
+        this.connect(this.name);
     }
 
     private cacheStaticInfo(data: any) {
