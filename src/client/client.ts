@@ -12,6 +12,9 @@ export class Client extends EventEmitter {
     private stage: Stage = null;
     private codec: CodecFacade = null;
     private ship: Ship = null;
+    private ranking: {name: string, bounty: number}[] = [];
+
+    private socket: SocketIOClient.Socket;
 
     private staticInfo: StaticInfo = {
         id: 0,
@@ -27,18 +30,28 @@ export class Client extends EventEmitter {
     };
 
     // TODO implement logger and debugger
-    public constructor(private name: string, private input: Input) {
+    public constructor(private input: Input) {
         super();
 
         this.stage = new Stage();
-        this.codec = new CodecFacade(this.stage);
+        this.codec = new CodecFacade();
     }
 
-    public connect() {
-        const socket = socketio(':27001');
-        this.bindEvents(socket);
+    public get connected() {
+        return this.socket && this.socket.connected;
+    }
 
-        socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
+    public connect(name: string) {
+        this.socket = this.socket || socketio(':27001', {autoConnect: false});
+        this.socket.open();
+        this.bindEvents(this.socket);
+
+        this.socket.emit(CodecEvents.JOIN_GAME, {name});
+    }
+
+    public disconnect() {
+        this.stage.clear();
+        this.socket.disconnect();
     }
 
     public getStage() {
@@ -77,7 +90,18 @@ export class Client extends EventEmitter {
     }
 
     private onServerUpdate(data: any) {
-        this.codec.writeState(data);
+        const decoded = this.codec.decode(data);
+
+        if (decoded.tick < this.stage.tick
+            && decoded.tick + 60 > this.stage.tick)
+            return;
+
+        if (data.tick % 300 == 0)
+            this.stage.clear();
+
+        this.stage.addAll(decoded.entities);
+        this.ranking = decoded.ranking;
+
         this.emit(ClientEvents.INFO, this.fetchInfo());
     }
 
@@ -113,6 +137,7 @@ export class Client extends EventEmitter {
                 y: this.ship.y,
             },
             control: this.ship.control,
+            ranking: this.ranking,
         });
     }
 }
@@ -144,4 +169,5 @@ export interface ClientInfo extends StaticInfo {
     speed: { x: number, y: number };
     position: { x: number, y: number };
     control: number;
+    ranking: {name: string, bounty: number}[];
 }

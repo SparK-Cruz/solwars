@@ -17,7 +17,7 @@ export class EnergyIndicator implements Renderable {
     public render() {
         if (!this.info)
             return;
-        
+
         const perc = Math.max(this.info.energy / this.info.maxEnergy, 0);
         let color = "#3399ff";
         if (perc < 0.4) {

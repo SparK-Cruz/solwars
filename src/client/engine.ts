@@ -1,70 +1,91 @@
-import { Client, ClientEvents, ClientInfo } from './client';
-import { Input } from './input';
-import { Camera } from './camera';
-import { GameRenderer } from './game_renderer';
-import { HudRenderer } from './hud_renderer';
+import { Client, ClientEvents, ClientInfo } from "./client";
+import { Input } from "./input";
+import { Camera } from "./camera";
+import { GameRenderer } from "./game_renderer";
+import { HudRenderer } from "./hud_renderer";
 
-// Game setup
-const input = new Input(window);
-let name = localStorage.getItem('name');
-name = prompt('Enter a name', name || '');
-if (!name.trim()) {
-    name = 'Anon' + (100 + Math.round(Math.random() * 899));
-}
-localStorage.setItem('name', name);
+const FRAMESKIP_THRESHOLD: number = 55;
+let lastTick: number = null;
 
-const client = new Client(name, input);
+export class Engine {
+    private input: Input;
+    private client: Client;
+    private camera: Camera;
+    private gameRenderer: GameRenderer;
+    private hudRenderer: HudRenderer;
 
-// HTML setup
-const game = <HTMLCanvasElement> document.getElementById('canvas');
-const hud = <HTMLCanvasElement> document.getElementById('hud');
-function adjustCanvas(canvas: HTMLCanvasElement) {
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
+    public constructor(private game: HTMLCanvasElement, private hud: HTMLCanvasElement) {
+        this.input = new Input(window);
+        this.client = new Client(this.input);
+        this.camera = new Camera();
+        this.gameRenderer = new GameRenderer(game, this.camera, this.client.getStage());
+        this.hudRenderer = new HudRenderer(hud, this.camera, this.client.getStage());
 
-    const aspect = window.innerWidth / window.innerHeight;
-    canvas.width = aspect * canvas.height;
-}
-
-// Rendering Game setup
-const camera = new Camera();
-const gameRenderer = new GameRenderer(game, camera, client.getStage());
-
-client.on(ClientEvents.SHIP, (ship: any) => {
-    camera.trackable = ship;
-});
-
-// Rendering HUD setup
-const hudRenderer = new HudRenderer(hud, camera, client.getStage());
-
-client.on(ClientEvents.INFO, (info: ClientInfo) => {
-    hudRenderer.update(info);
-});
-
-// Rendering setup
-const FRAMESKIP_THRESHOLD = 55;
-let lastTick = Date.now();
-
-window.onresize = () => {
-    adjustCanvas(game);
-    adjustCanvas(hud);
-};
-
-function renderFrame() {
-    const fps = Math.round(1000 / (Date.now() - lastTick));
-    lastTick = Date.now();
-
-    if (fps > FRAMESKIP_THRESHOLD) {
-        camera.setResolution(game.width, game.height);
-        gameRenderer.render();
-        hudRenderer.render();
+        this.listenClient(this.client);
     }
 
-    requestAnimationFrame(renderFrame);
+    public get running() {
+        return this.client.connected;
+    }
+
+    public start(name: string) {
+        window.onresize = () => this.adjustCanvas();
+
+        this.input.enable();
+        this.client.connect(name);
+
+        lastTick = Date.now();
+        this.adjustCanvas();
+        this.renderFrame();
+    }
+
+    public stop() {
+        this.input.disable();
+        this.client.disconnect();
+        this.hideCanvas();
+    }
+
+    private listenClient(client: Client) {
+        client.on(ClientEvents.SHIP, (ship: any) => {
+            this.camera.trackable = ship;
+        });
+
+        client.on(ClientEvents.INFO, (info: ClientInfo) => {
+            this.hudRenderer.update(info);
+        });
+    }
+
+    private renderFrame() {
+        const fps = Math.round(1000 / (Date.now() - lastTick));
+        lastTick = Date.now();
+
+        if (fps > FRAMESKIP_THRESHOLD) {
+            this.camera.setResolution(this.game.width, this.game.height);
+            this.gameRenderer.render();
+            this.hudRenderer.render();
+        }
+
+        requestAnimationFrame(() => this.renderFrame());
+    }
+
+    private adjustCanvas() {
+        this.adjustToWindow(this.game);
+        this.adjustToWindow(this.hud);
+    }
+    private hideCanvas() {
+        this.game.style.display = 'none';
+        this.hud.style.display = 'none';
+    }
+
+    private adjustToWindow(canvas: HTMLCanvasElement) {
+        canvas.style.display = 'block';
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+
+        const aspect = window.innerWidth / window.innerHeight;
+        canvas.width = aspect * canvas.height;
+    }
 }
 
-// Fire it up
-client.connect();
-adjustCanvas(game);
-adjustCanvas(hud);
-renderFrame();
+// Global export
+(<any>window).Engine = Engine;

@@ -16,7 +16,7 @@ export class Background implements Renderable {
 
   constructor(private canvas :HTMLCanvasElement, private camera :Camera) {
     this.context = canvas.getContext('2d');
-    
+
     let seed = 9876543210;
     RNG.random(seed);
 
@@ -27,7 +27,7 @@ export class Background implements Renderable {
 
   render() :HTMLCanvasElement {
     const ref = this.camera.getPosition();
-    
+
     this.context.save();
     this.context.fillStyle = "#000000";
     this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);

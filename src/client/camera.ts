@@ -1,6 +1,6 @@
 export class Camera {
   public trackable: MovingPoint = {x: 0, y: 0, vx: 0, vy: 0};
-  
+
   private maxSpeed = 50;
   public offset: {x: number, y: number} = {x: 0, y: 0};
 

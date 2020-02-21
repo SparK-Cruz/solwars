@@ -3,9 +3,10 @@ import { Server } from 'http';
 
 import { CodecFacade, CodecEvents } from '../space/codec_facade';
 import { Stage } from '../space/stage';
-import { Player } from './player';
+import { Player, PlayerEvents, PlayerDeath } from './player';
 import { EntityEvent } from '../space/entities';
 import { Config } from '../space/config';
+import { Ship } from '../space/entities/ship';
 
 const Collisions = require('collisions').Collisions;
 
@@ -21,13 +22,14 @@ export class Room {
   private stage :Stage;
 
   private players :Player[] = [];
+  private ranking :Player[] = null;
 
   public constructor() {
     this.server = new Server();
     this.io = socketio(this.server);
 
     this.stage = new Stage(new Collisions());
-    this.codec = new CodecFacade(this.stage);
+    this.codec = new CodecFacade();
 
     this.setupListeners();
   }
@@ -40,30 +42,52 @@ export class Room {
     this.server.listen(port);
   }
 
-  public addPlayerShip(player :Player) {
+  private onEntityDespawn = (id: number) => {
+    this.broadcastRemoval(id);
+  }
+
+  private onPlayerShip(player :Player, ship: Ship) {
+    console.log(player.name + ' has joined the game');
+    ship.name = player.name;
+    player.ship = ship;
+
     const spawnRadius = 512 * this.players.length;
     player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
     player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
     this.stage.add(player.ship);
   }
-  public removePlayer(player :Player) {
+  private onPlayerDie(player :Player, death: PlayerDeath) {
+    const killer: Player = this.players.find(p => p.ship && p.ship.id == death.killer.id);
+
+    if (typeof killer != 'undefined') {
+      killer.bounty += player.bounty;
+      killer.ship.name = killer.name + ' (' + killer.bounty + ')';
+    }
+
+    player.bounty = 0;
+
+    // broadcast message to chat area saying whom killed who by what
+  }
+  private onPlayerDisconnect(player :Player) {
     this.stage.remove(player.ship.id);
     this.players = this.players.filter((member) => member !== player);
     this.broadcastRemoval(player.ship.id);
   }
 
-  private onEntityDespawn = (id: number) => {
-    this.broadcastRemoval(id);
-  }
-
   private broadcastState() {
+    const ranking = this.topPlayers();
+
     this.players.forEach((player) => {
-      
+
       // No ship no data...
       if (!player.ship)
         return;
 
-      player.sendState(this.codec.readStateFromPoint(player.ship));
+      player.sendState(this.codec.encode({
+        tick: this.stage.tick,
+        entities: this.stage.fetchEntitiesAround(player.ship),
+        ranking: ranking,
+      }));
     });
   }
 
@@ -78,6 +102,10 @@ export class Room {
     this.broadcastState();
   }
 
+  private topPlayers() {
+    return this.ranking = this.ranking || this.players.filter(p => p.ship && p.bounty).sort((a, b) => b.bounty - a.bounty).slice(0, 10);
+  }
+
   private setupListeners() {
     this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
 
@@ -88,9 +116,21 @@ export class Room {
         return;
       }
 
+      this.players = this.players.filter(p => p.socket.connected);
+
       const player = new Player(++id, socket, this);
-      player.on('ship', () => this.addPlayerShip(player));
-      player.on('disconnect', () => this.removePlayer(player));
+      player.on(PlayerEvents.Ship, (ship: Ship) => {
+        this.onPlayerShip(player, ship);
+        this.ranking = null;
+      });
+      player.on(PlayerEvents.Die, (death: PlayerDeath) => {
+        this.onPlayerDie(player, death);
+        this.ranking = null;
+      });
+      player.on(PlayerEvents.Disconnect, () => {
+        this.onPlayerDisconnect(player);
+        this.ranking = null;
+      });
       this.players.push(player);
     });
   }

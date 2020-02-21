@@ -36,13 +36,13 @@ export class SpeedIndicator implements Renderable {
         }
 
         let {canvas, ctx} = this.getBuffer();
-        
+
         const half = 16;
         canvas.width = half * 2;
         canvas.height = half * 2;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
+
         ctx.save();
         ctx.translate(half, half);
         ctx.rotate(angle);

@@ -7,6 +7,7 @@ import { EnergyIndicator } from "./hud_renderers/energy_indicator";
 import { GunIndicator } from "./hud_renderers/gun_indicator";
 import { Radar } from "./hud_renderers/radar";
 import { NameRenderer } from "./hud_renderers/name_renderer";
+import { RankingRenderer } from "./hud_renderers/ranking_renderer";
 
 export class HudRenderer implements Renderable {
     private ctx: CanvasRenderingContext2D = null;
@@ -16,6 +17,7 @@ export class HudRenderer implements Renderable {
     private gunIndicator: GunIndicator;
     private radar: Radar;
     private nameRenderer: NameRenderer;
+    private rankingRenderer: RankingRenderer;
 
     private alive = true;
 
@@ -27,6 +29,7 @@ export class HudRenderer implements Renderable {
         this.gunIndicator = new GunIndicator(canvas, camera);
         this.radar = new Radar(canvas, camera, stage);
         this.nameRenderer = new NameRenderer(canvas, camera, stage);
+        this.rankingRenderer = new RankingRenderer(canvas);
     }
 
     public update(info: ClientInfo) {
@@ -35,6 +38,7 @@ export class HudRenderer implements Renderable {
         this.gunIndicator.update(info);
         this.radar.update(info);
         this.nameRenderer.update(info);
+        this.rankingRenderer.update(info.ranking);
 
         this.alive = info.alive;
     }
@@ -42,13 +46,15 @@ export class HudRenderer implements Renderable {
     public render() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        if (!this.alive) return;
+        if (!this.alive)
+            return;
 
         this.energyIndicator.render();
         this.speedIndicator.render();
         this.gunIndicator.render();
         this.radar.render();
         this.nameRenderer.render();
+        this.rankingRenderer.render();
 
         return this.canvas;
     }

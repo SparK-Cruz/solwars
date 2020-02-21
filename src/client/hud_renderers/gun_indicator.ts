@@ -24,7 +24,7 @@ export class GunIndicator implements Renderable {
 
         const bullets = Math.floor(this.info.energy / 150);
         const len = bullets * 4;
-        
+
         canvas.height = Math.max(len, 1);
         canvas.width = 3;
 

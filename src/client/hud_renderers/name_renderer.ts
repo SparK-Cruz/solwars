@@ -29,7 +29,7 @@ export class NameRenderer implements Renderable {
 
             if (typeof (<any>entity).name == 'undefined')
                 return;
-            
+
             const pos = this.camera.translate(entity);
 
             let name = (<any>entity).name;
@@ -52,8 +52,9 @@ export class NameRenderer implements Renderable {
             if (entity.id == this.info.id) {
                 textPos = {
                     x: 20,
-                    y: 20,
+                    y: 34,
                 };
+                this.ctx.font = "14px monospace";
                 this.ctx.fillStyle = "#3399ff";
             }
 

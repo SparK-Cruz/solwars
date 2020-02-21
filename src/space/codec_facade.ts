@@ -1,33 +1,28 @@
-import { Entity, EntityType } from './entities';
-import { Stage } from './stage';
+import { Entity } from './entities';
 
 interface SavedState {
-  tick: number
-  entities :Entity[]
+  tick: number,
+  entities: Entity[],
+  ranking: {name: string, bounty: number}[],
 }
 
 export class CodecFacade {
-  public constructor(private stage :Stage) {}
+  public constructor() {}
 
-  public readStateFromPoint(point :{x :number, y :number}) :string {
+  public encode(state: SavedState): string {
     const stream = {
-      tick: this.stage.tick,
-      entities: this.stage.fetchEntitiesAround(point).map(this.encodeEntity)
+      tick: state.tick,
+      ranking: state.ranking.map(p => {return {name: p.name, bounty: p.bounty}}),
+      entities: state.entities.map(this.encodeEntity)
     };
 
     // TODO PSON / binary
     return JSON.stringify(stream);
   }
 
-  public writeState(state :string) {
+  public decode(state :string): SavedState {
     // TODO PSON / binary
-    const decoded = <SavedState>JSON.parse(state);
-
-    if (decoded.tick < this.stage.tick
-      && decoded.tick + 60 > this.stage.tick)
-      return;
-
-    this.stage.addAll(decoded.entities);
+    return <SavedState>JSON.parse(state);
   }
 
   public encodeEntity(entity :Entity) {

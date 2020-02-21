@@ -6,7 +6,7 @@ import { Stage } from "../../space/stage";
 
 export class Radar implements Renderable {
     private ctx: CanvasRenderingContext2D;
-    
+
     private coordBuffer: HTMLCanvasElement;
     private cbfr: CanvasRenderingContext2D;
     private frameBuffer: HTMLCanvasElement;
@@ -89,10 +89,10 @@ export class Radar implements Renderable {
         };
 
         this.ctx.save();
-        
+
         this.ctx.drawImage(this.drawCoordinates(), pos.x, pos.y);
         pos.y += 30;
-        
+
         this.ctx.drawImage(this.getFrameBuffer().canvas, pos.x, pos.y);
         this.ctx.drawImage(this.drawBlips(), pos.x, pos.y);
 

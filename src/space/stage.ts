@@ -42,7 +42,7 @@ export class Stage extends EventEmitter {
 
         if (this.passiveMode)
             return;
-        
+
         const shape = this.shapes[id];
         const entity = shape.entity;
         this.collisionSystem.remove(shape);
@@ -55,6 +55,12 @@ export class Stage extends EventEmitter {
 
     public addAll(entities :Entity[]) {
         entities.forEach(entity => this.add(entity));
+    }
+
+    public clear() {
+        for(let id in this.sectors.allEntities()) {
+            this.remove(parseInt(id));
+        }
     }
 
     public step() :number {
@@ -130,7 +136,7 @@ export class Stage extends EventEmitter {
             const potentials = shape.potentials();
             if (!potentials.length)
                 continue;
-            
+
             this.checkCollisionsNarrow(shape);
         }
     }

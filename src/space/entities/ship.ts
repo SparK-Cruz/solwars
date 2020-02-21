@@ -48,7 +48,7 @@ export class Ship extends EventEmitter implements entities.Entity {
 
   bullet = 0;
   bomb = 0;
-  
+
   gunsCooldown = 0;
   shootHeat = 16;
 
@@ -99,8 +99,19 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.vy -= result.overlap / 2 * result.overlap_y;
 
     this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) / 16;
-    if (typeof (<any>other).damage !== 'undefined') {
-      (<any>other).damage += result.overlap * 140;
+    if (typeof (<any>other).addDamage !== 'undefined') {
+      (<any>other).addDamage(result.overlap * 140, this);
+    }
+  }
+
+  addDamage(damage: number, origin: entities.Entity = null) {
+    const wasAlive = this.alive;
+
+    this.damage += damage;
+    this.updateHealth();
+
+    if (wasAlive && !this.alive) {
+      this.emit(entities.EntityEvent.Die, origin);
     }
   }
 
@@ -155,7 +166,7 @@ export class Ship extends EventEmitter implements entities.Entity {
       x: linearOffset * Math.sin(inRads(this.angle)),
       y: -linearOffset * Math.cos(inRads(this.angle)),
     };
-    
+
     this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this, offset);
     this.gunsCooldown += this.shootHeat;
     this.damage += this.shootCost;
@@ -165,7 +176,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.vx *= INERTIAL_DUMP;
     this.vy *= INERTIAL_DUMP;
     this.vangle *= 0.5;
-    
+
     this.x += this.vx;
     this.y += this.vy;
     this.angle += this.vangle;

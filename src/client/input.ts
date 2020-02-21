@@ -4,6 +4,9 @@ export class Input {
     private onChange = function(state :number) :void{};
     private mapping :Mapping = new Mapping();
 
+    private enabler: Function;
+    private disabler: Function;
+
     map :any = {
         'k38': Mapping.FORWARD, //Arrow up
         'k40': Mapping.BACKWARD, //Arrow down
@@ -18,12 +21,36 @@ export class Input {
     };
 
     public constructor(emmiter: any) {
-        emmiter.addEventListener('keydown', (e :KeyboardEvent) => {
+        const keydown = (e :KeyboardEvent) => {
             this.keydown(e);
-        });
-        emmiter.addEventListener('keyup', (e :KeyboardEvent) => {
+        };
+        const keyup = (e :KeyboardEvent) => {
             this.keyup(e);
-        });
+        };
+
+        this.enabler = () => {
+            if (this.disabler)
+                return;
+
+            emmiter.addEventListener('keydown', keydown);
+            emmiter.addEventListener('keyup', keyup);
+
+            this.disabler = () => {
+                emmiter.removeEventListener('keydown', keydown);
+                emmiter.removeEventListener('keyup', keyup);
+                this.disabler = null;
+            };
+        };
+
+        this.enable();
+    }
+
+    public enable() {
+        this.enabler && this.enabler();
+    }
+
+    public disable() {
+        this.disabler && this.disabler();
     }
 
     public keydown(e :KeyboardEvent) :void {

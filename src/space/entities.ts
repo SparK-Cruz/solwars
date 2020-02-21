@@ -17,6 +17,7 @@ export interface Entity {
 export namespace EntityEvent {
     export const Spawn = "spawn";
     export const Despawn = "despawn";
+    export const Die = "die";
 }
 
 export interface EntityType {
@@ -152,7 +153,7 @@ class EntityPool {
             Object.assign(this.pool[entity.id], entity);
             return false;
         }
-        
+
         this.count++;
         this.pool[entity.id] = entity;
         return true;

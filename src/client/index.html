@@ -4,29 +4,76 @@
     <meta charset="utf-8" />
     <title>Sol Wars</title>
     <style>
-      div {
-        display: block;
-        width: 49%;
-        float: left;
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #front-end {
+        padding: 20px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 15px 20px;
+        border: 2px solid black;
+        border-top-color: white;
+        border-left-color: white;
+        border-radius: 5px;
+        background-color: lightgray;
+        text-transform: uppercase;
+      }
+
+      #join-btn {
+        margin: 100px auto;
+      }
+
+      canvas {
+        position: absolute;
+        display: none;
+        top: 0px;
+        left: 0px;
+        z-index: 100;
+        margin: 0px;
+        padding: 0px;
       }
     </style>
   </head>
   <body>
-    <div>
-      <p>Le landing page will be here</p>
-      <p>With a nice menu, game news and authentication</p>
-      <p>Profile customization and all sorts of stuff</p>
-      <a href="/engine.html">Join random test</a>
-    </div>
-    <div>
-      <p>Hud tests</p>
-      <ol>
-        <li><a href="file:///home/spark/Repos/space/experiment/hud_test01.html">hud_test01</a></li>
-        <li><a href="file:///home/spark/Repos/space/experiment/hud_test02.html">hud_test02</a></li>
-        <li><a href="file:///home/spark/Repos/space/experiment/hud_test03.html">hud_test03</a></li>
-        <li><a href="file:///home/spark/Repos/space/experiment/hud_test04.html">hud_test04</a></li>
-        <li><a href="file:///home/spark/Repos/space/experiment/hud_test05.html">hud_test05</a></li>
-      </ol>
-    </div>
+    <!-- FRONT END -->
+    <section id="front-end">
+      <div>
+        <a href="JoinGame:" id="join-btn" class="btn">Join Game</a>
+      </div>
+    </section>
+
+    <!-- GAME ENGINE -->
+    <canvas id="game" width="1366" height="768"></canvas>
+    <canvas id='hud' width="1366" height="768"></canvas>
+    <script src="dist_engine.js"></script>
+    <script>
+      const game = document.getElementById('game');
+      const hud = document.getElementById('hud');
+      const engine = new Engine(game, hud);
+
+      document.getElementById('join-btn').addEventListener('click', e => {
+        e.preventDefault();
+
+        let name = localStorage.getItem('name');
+        name = prompt('Enter a name', name || '');
+        if (!name.trim()) {
+            name = 'Anon' + (100 + Math.round(Math.random() * 899));
+        }
+        localStorage.setItem('name', name);
+
+        engine.start(name);
+        return false;
+      });
+
+      window.addEventListener('keydown', e => {
+        if (engine.running && e.keyCode == 27 && confirm('Leave game?')) {
+          engine.stop();
+        }
+      });
+    </script>
   </body>
 </html>

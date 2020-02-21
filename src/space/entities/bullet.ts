@@ -43,8 +43,8 @@ export class Bullet extends EventEmitter implements Entity {
     }
 
     public collide(other :Entity, result :any) :void {
-        if (typeof (<any>other).damage !== 'undefined') {
-            (<any>other).damage += this.energy * 2;
+        if (typeof (<any>other).addDamage !== 'undefined') {
+            (<any>other).addDamage(this.energy * 2, this);
         }
 
         this.energy = 0;
