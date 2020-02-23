@@ -10,128 +10,133 @@ import { Ship } from '../space/entities/ship';
 
 const Collisions = require('collisions').Collisions;
 
-// TODO implement delta time to step functions
-// TODO make separate stage for client and server
-const TPS = 64;
+const TPS_TARGET = 64;
+let TPS = 64;
 
 export class Room {
-  public codec :CodecFacade;
+    public codec :CodecFacade;
 
-  private server :Server;
-  private io :SocketIO.Server;
-  private stage :Stage;
+    private server :Server;
+    private io :SocketIO.Server;
+    private stage :Stage;
 
-  private players :Player[] = [];
-  private ranking :Player[] = null;
+    private players :Player[] = [];
+    private ranking :Player[] = null;
 
-  public constructor() {
-    this.server = new Server();
-    this.io = socketio(this.server);
+    private deltaTick: number = 1;
 
-    this.stage = new Stage(new Collisions());
-    this.codec = new CodecFacade();
+    public constructor() {
+        this.server = new Server();
+        this.io = socketio(this.server);
 
-    this.setupListeners();
-  }
+        this.stage = new Stage(new Collisions());
+        this.codec = new CodecFacade();
 
-  public open(port :number) {
-    setInterval(() => {
-      this.tick();
-    }, 1000/TPS);
+        TPS = Config.TPS;
+        this.deltaTick = TPS_TARGET/TPS;
 
-    this.server.listen(port);
-  }
-
-  private onEntityDespawn = (id: number) => {
-    this.broadcastRemoval(id);
-  }
-
-  private onPlayerShip(player :Player, ship: Ship) {
-    console.log(player.name + ' has joined the game');
-    ship.name = player.name;
-    player.ship = ship;
-
-    const spawnRadius = 512 * this.players.length;
-    player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
-    player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
-    this.stage.add(player.ship);
-  }
-  private onPlayerDie(player :Player, death: PlayerDeath) {
-    const killer: Player = this.players.find(p => p.ship && p.ship.id == death.killer.id);
-
-    if (typeof killer != 'undefined') {
-      killer.bounty += player.bounty;
-      killer.ship.name = killer.name + ' (' + killer.bounty + ')';
+        this.setupListeners();
     }
 
-    player.bounty = 1;
+    public open(port :number) {
+        setInterval(() => {
+            this.tick();
+        }, 1000/TPS);
 
-    // broadcast message to chat area saying whom killed who by what
-  }
-  private onPlayerDisconnect(player :Player) {
-    this.stage.remove(player.ship.id);
-    this.players = this.players.filter((member) => member !== player);
-    this.broadcastRemoval(player.ship.id);
-  }
+        this.server.listen(port);
+    }
 
-  private broadcastState() {
-    const ranking = this.topPlayers();
+    private onEntityDespawn = (id: number) => {
+        this.broadcastRemoval(id);
+    }
 
-    this.players.forEach((player) => {
+    private onPlayerShip(player :Player, ship: Ship) {
+        console.log(player.name + ' has joined the game');
+        ship.name = player.name + ' (' + player.bounty + ')';
+        player.ship = ship;
 
-      // No ship no data...
-      if (!player.ship)
-        return;
+        const spawnRadius = 512 * this.players.length;
+        player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
+        player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
+        this.stage.add(player.ship);
+    }
+    private onPlayerDie(player :Player, death: PlayerDeath) {
+        const killer: Player = this.players.find(p => p.ship && p.ship.id == death.killer.id);
 
-      player.sendState(this.codec.encode({
-        tick: this.stage.tick,
-        entities: this.stage.fetchEntitiesAround(player.ship),
-        ranking: ranking,
-      }));
-    });
-  }
+        if (typeof killer != 'undefined') {
+            killer.bounty += player.bounty;
+            killer.ship.name = killer.name + ' (' + killer.bounty + ')';
+        }
 
-  private broadcastRemoval(entityId :number) {
-    this.players.forEach((client) => {
-      client.sendRemoval(entityId);
-    });
-  }
+        player.bounty = 1;
 
-  private tick() {
-    this.stage.step();
-    this.broadcastState();
-  }
+        // broadcast message to chat area saying whom killed who by what
+    }
+    private onPlayerDisconnect(player :Player) {
+        console.log(player.name + ' has left the game');
+        this.stage.remove(player.ship.id);
+        this.players = this.players.filter((member) => member.id !== player.id);
+        this.broadcastRemoval(player.ship.id);
+    }
 
-  private topPlayers() {
-    return this.ranking = this.ranking || this.players.filter(p => p.ship && p.bounty).sort((a, b) => b.bounty - a.bounty).slice(0, 10);
-  }
+    private broadcastState() {
+        const ranking = this.topPlayers();
 
-  private setupListeners() {
-    this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
+        this.players.forEach((player) => {
 
-    let id = 0;
-    this.io.sockets.on(CodecEvents.CONNECTION, (socket :SocketIO.Socket) => {
-      if (this.players.length > Config.maxPlayers) {
-        socket.disconnect(true);
-        return;
-      }
+            // No ship no data...
+            if (!player.ship)
+                return;
 
-      this.players = this.players.filter(p => p.socket.connected);
+            player.sendState(this.codec.encode({
+                tick: this.stage.tick,
+                entities: this.stage.fetchEntitiesAround(player.ship),
+                ranking: ranking,
+            }));
+        });
+    }
 
-      const player = new Player(++id, socket, this);
-      player.on(PlayerEvents.Ship, (ship: Ship) => {
-        this.onPlayerShip(player, ship);
-        this.ranking = null;
-      });
-      player.on(PlayerEvents.Die, (death: PlayerDeath) => {
-        this.onPlayerDie(player, death);
-        this.ranking = null;
-      });
-      player.on(PlayerEvents.Disconnect, () => {
-        this.onPlayerDisconnect(player);
-        this.ranking = null;
-      });
-      this.players.push(player);
-    });
-  }
+    private broadcastRemoval(entityId :number) {
+        this.players.forEach((client) => {
+            client.sendRemoval(entityId);
+        });
+    }
+
+    private tick() {
+        this.stage.step(this.deltaTick);
+        this.broadcastState();
+    }
+
+    private topPlayers() {
+        return this.ranking = this.ranking || this.players.filter(p => p.ship && p.bounty).sort((a, b) => b.bounty - a.bounty).slice(0, 10);
+    }
+
+    private setupListeners() {
+        this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
+
+        let id = 0;
+        this.io.sockets.on(CodecEvents.CONNECTION, (socket :SocketIO.Socket) => {
+            if (this.players.length > Config.maxPlayers) {
+                socket.disconnect(true);
+                return;
+            }
+
+            this.players = this.players.filter(p => p.socket.connected);
+
+            const player = new Player(++id, socket, this);
+            player.on(PlayerEvents.Ship, (ship: Ship) => {
+                this.onPlayerShip(player, ship);
+                this.ranking = null;
+            });
+            player.on(PlayerEvents.Die, (death: PlayerDeath) => {
+                this.onPlayerDie(player, death);
+                this.ranking = null;
+            });
+            player.on(PlayerEvents.Disconnect, () => {
+                this.onPlayerDisconnect(player);
+                this.ranking = null;
+            });
+            this.players.push(player);
+        });
+    }
 }

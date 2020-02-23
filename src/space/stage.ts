@@ -44,6 +44,10 @@ export class Stage extends EventEmitter {
             return;
 
         const shape = this.shapes[id];
+
+        if (!shape)
+            return;
+
         const entity = shape.entity;
         this.collisionSystem.remove(shape);
         this.collisionSystem.update();
@@ -63,10 +67,10 @@ export class Stage extends EventEmitter {
         }
     }
 
-    public step() :number {
+    public step(delta: number) :number {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
-        this.sectors.step();
+        this.sectors.step(delta);
 
         if (this.passiveMode)
             return this.tick;
@@ -162,8 +166,8 @@ export class Stage extends EventEmitter {
         }
 
         if (offset) {
-            entity.x += offset.x + parent.vx;
-            entity.y += offset.y + parent.vy;
+            entity.x += offset.x;
+            entity.y += offset.y;
         }
 
         this.add(entity);

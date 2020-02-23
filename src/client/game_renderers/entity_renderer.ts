@@ -34,6 +34,8 @@ export class EntityRenderer implements Renderable {
     this.coords = {};
 
     for (let i in entities) {
+      console.log((<any>entities[i]).alive);
+
       this.cacheControl.push(entities[i].id);
       this.coords[entities[i].id] = {
         x: entities[i].x,

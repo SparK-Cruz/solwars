@@ -28,6 +28,7 @@ interface BulletConfig {
 }
 
 export class Config {
+    public static TPS: number;
     public static maxPlayers: number;
     public static clientPort: number;
     public static serverPort: number;
@@ -42,7 +43,6 @@ export class Config {
                 }
                 for(let i in contents) {
                     (<any>Config)[i] = contents[i];
-                    console.log(i, (<any>Config)[i]);
                 }
 
                 callback();

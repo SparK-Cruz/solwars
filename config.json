@@ -1,12 +1,13 @@
 {
+    "TPS": 128,
     "maxPlayers": 10,
     "clientPort": 80,
     "serverPort": 27001,
     "ships": {
         "warbird": {
-            "speed": 5,
-            "acceleration": 0.05,
-            "spin": 4,
+            "speed": 6,
+            "acceleration": 0.08,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -15,7 +16,7 @@
         "javelin": {
             "speed": 7,
             "acceleration": 0.09,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -24,7 +25,7 @@
         "spider": {
             "speed": 5,
             "acceleration": 0.05,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -33,7 +34,7 @@
         "leviathan": {
             "speed": 5,
             "acceleration": 0.05,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -42,7 +43,7 @@
         "terrier": {
             "speed": 5,
             "acceleration": 0.05,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -51,7 +52,7 @@
         "weasel": {
             "speed": 5,
             "acceleration": 0.05,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -60,7 +61,7 @@
         "lancaster": {
             "speed": 5,
             "acceleration": 0.05,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,
@@ -69,7 +70,7 @@
         "shark": {
             "speed": 5,
             "acceleration": 0.05,
-            "spin": 4,
+            "spin": 3.8,
             "energy": 1000,
             "regeneration": 2,
             "bullet": 0,

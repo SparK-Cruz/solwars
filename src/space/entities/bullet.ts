@@ -37,9 +37,9 @@ export class Bullet extends EventEmitter implements Entity {
         this.vy -= trait.speed * Math.cos(this.angle * Math.PI / 180);
     }
 
-    public step() :void {
-        this.updatePhysics();
-        this.updateEnergy();
+    public step(delta: number) :void {
+        this.updatePhysics(delta);
+        this.updateEnergy(delta);
     }
 
     public collide(other :Entity, result :any) :void {
@@ -50,18 +50,18 @@ export class Bullet extends EventEmitter implements Entity {
         this.energy = 0;
     }
 
-    private updatePhysics(): void {
-        this.x += this.vx;
-        this.y += this.vy;
+    private updatePhysics(delta: number): void {
+        this.x += this.vx * delta;
+        this.y += this.vy * delta;
     }
 
-    private updateEnergy(): void {
+    private updateEnergy(delta: number): void {
         if (this.energy <= 0) {
             this.energy = 0;
             this.emit(EntityEvent.Despawn, this);
             return;
         }
 
-        this.energy -= 0.5;
+        this.energy -= 0.5 * delta;
     }
 }

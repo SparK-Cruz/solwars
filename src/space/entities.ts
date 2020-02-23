@@ -10,7 +10,7 @@ export interface Entity {
     vy ?:number;
     angle ?:number;
 
-    step() :void;
+    step(delta: number) :void;
     collide(entity :Entity, result :any) :void;
 }
 
@@ -95,7 +95,7 @@ export class EntityPoolGrid {
         ].join('_');
     }
 
-    public step() {
+    public step(delta: number) {
         for (let id in this.pool.entities) {
             const entity = this.pool.find(parseInt(id));
 
@@ -108,7 +108,7 @@ export class EntityPoolGrid {
                 obj.control = 0;
             }
 
-            entity.step();
+            entity.step(delta);
             this.update(entity);
         }
     }

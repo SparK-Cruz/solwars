@@ -12,8 +12,8 @@ import { Stage } from '../space/stage';
   stage.add(ship);
 
   setInterval(() => {
-    stage.step();
-  }, 1000 / 60);
+    stage.step(1);
+  }, 1000 / 64);
 
   setTimeout(() => {
     mapping.press(Mapping.FORWARD);

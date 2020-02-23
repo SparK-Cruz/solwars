@@ -28,6 +28,7 @@ export class Client extends EventEmitter {
         maxSpeed: 0,
         acceleration: 0,
         turnSpeed: 0,
+        tickRate: 64,
     };
 
     // TODO implement logger and debugger
@@ -94,6 +95,7 @@ export class Client extends EventEmitter {
 
     private onConnect(data: any) {
         this.remoteId = data.id;
+        this.stage.clear();
         this.stage.add(data.ship);
 
         this.emit(ClientEvents.SHIP, data.ship);
@@ -123,8 +125,7 @@ export class Client extends EventEmitter {
     }
 
     private onDeath() {
-        this.disconnect();
-        this.connect(this.name);
+        this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
     }
 
     private cacheStaticInfo(data: any) {
@@ -137,6 +138,7 @@ export class Client extends EventEmitter {
         this.staticInfo.turnSpeed = data.ship.turnSpeed;
         this.staticInfo.maxEnergy = data.ship.health;
         this.staticInfo.maxSpeed = data.ship.vmax;
+        this.staticInfo.tickRate = data.tps;
     }
 
     private fetchInfo(): ClientInfo {
@@ -167,6 +169,7 @@ export namespace ClientEvents {
 
 interface StaticInfo {
     id: number,
+    tickRate: number,
     ship: {
         id: string,
         make: string,

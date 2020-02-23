@@ -9,7 +9,12 @@ function inRads(degrees :number) :number {
   return degrees * Math.PI / 180;
 }
 
-const INERTIAL_DUMP = 0.995;
+const INERTIAL_DUMP = 0.005;
+
+// the more delta aproaches zero
+// the more we correct the dump
+// this rate is maximum correction
+const DUMP_CORRECTION = 0.0127;
 
 export class Ship extends EventEmitter implements entities.Entity {
   type = entities.EntityType.Ship;
@@ -33,7 +38,7 @@ export class Ship extends EventEmitter implements entities.Entity {
   ];
 
   vmax = 5;
-  turnSpeed = 4;
+  turnSpeed = 3.8;
   power = 0.05;
 
   angle = 0;
@@ -60,7 +65,7 @@ export class Ship extends EventEmitter implements entities.Entity {
 
     this.model = model.id;
     this.color = model.color;
-    this.decals = model.decals;
+    this.decals = JSON.parse(JSON.stringify(model.decals));
     this.collisionMap = model.polygon;
 
     const traits = (<any> Config.ships)[model.id];
@@ -81,11 +86,11 @@ export class Ship extends EventEmitter implements entities.Entity {
     }
   }
 
-  step() :void {
-    this.readControls();
-    this.updatePhysics();
-    this.updateHealth();
-    this.updateGuns();
+  step(delta: number) :void {
+    this.readControls(delta);
+    this.updatePhysics(delta);
+    this.updateHealth(delta);
+    this.updateGuns(delta);
   }
 
   collide(other :entities.Entity, result :any) :void {
@@ -108,7 +113,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     const wasAlive = this.alive;
 
     this.damage += damage;
-    this.updateHealth();
+    this.updateHealth(0);
 
     if (wasAlive && !this.alive) {
       this.emit(entities.EntityEvent.Die, origin);
@@ -123,13 +128,13 @@ export class Ship extends EventEmitter implements entities.Entity {
     return (this.damage + this.shootCost < this.health && !this.gunsCooldown);
   }
 
-  private readControls() {
-    this.readThrust();
-    this.readStrife();
-    this.readTurn();
+  private readControls(delta: number) {
+    this.readThrust(delta);
+    this.readStrife(delta);
+    this.readTurn(delta);
     this.readShoot();
   }
-  private readThrust() {
+  private readThrust(delta: number) {
     let power = this.power;
     const thrust = Control.thrusting(this.control);
 
@@ -137,31 +142,31 @@ export class Ship extends EventEmitter implements entities.Entity {
       && thrust
       && this.canAfterburn()) {
       power *= 2;
-      this.damage += this.afterburnerCost;
+      this.damage += this.afterburnerCost * delta;
     }
 
-    this.vx += (thrust * power) * Math.sin(inRads(this.angle));
-    this.vy -= (thrust * power) * Math.cos(inRads(this.angle));
+    this.vx += (thrust * power) * Math.sin(inRads(this.angle)) * delta;
+    this.vy -= (thrust * power) * Math.cos(inRads(this.angle)) * delta;
   }
-  private readStrife() {
+  private readStrife(delta: number) {
     let strife = Control.strifing(this.control);
 
     let power = this.power * 0.7;
     let sideAngle = this.angle + 90;
 
-    this.vx += (strife * power) * Math.sin(inRads(sideAngle));
-    this.vy -= (strife * power) * Math.cos(inRads(sideAngle));
+    this.vx += (strife * power) * Math.sin(inRads(sideAngle)) * delta;
+    this.vy -= (strife * power) * Math.cos(inRads(sideAngle)) * delta;
   }
-  private readTurn() {
+  private readTurn(delta: number) {
     let turn = Control.turning(this.control);
-    this.vangle += turn * this.turnSpeed;
+    this.vangle = turn * this.turnSpeed;
   }
   private readShoot() {
     if (!Control.shooting(this.control)
       || !this.canShoot())
       return;
 
-    const linearOffset = 20;
+    const linearOffset = 32;
     const offset = {
       x: linearOffset * Math.sin(inRads(this.angle)),
       y: -linearOffset * Math.cos(inRads(this.angle)),
@@ -172,20 +177,20 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.damage += this.shootCost;
   }
 
-  private updatePhysics() {
-    this.vx *= INERTIAL_DUMP;
-    this.vy *= INERTIAL_DUMP;
-    this.vangle *= 0.5;
+  private updatePhysics(delta: number) {
+    this.vx -= this.vx * INERTIAL_DUMP * (delta + (DUMP_CORRECTION * (1 - delta)));
+    this.vy -= this.vy * INERTIAL_DUMP * (delta + (DUMP_CORRECTION * (1 - delta)));
 
-    this.x += this.vx;
-    this.y += this.vy;
-    this.angle += this.vangle;
+    this.x += this.vx * delta;
+    this.y += this.vy * delta;
+    this.angle += this.vangle * delta;
+    this.vangle = 0;
 
-    this.correctSpeed();
+    this.correctSpeed(delta);
     this.correctAngle();
   }
 
-  private correctSpeed() {
+  private correctSpeed(delta: number) {
     const avx = Math.abs(this.vx);
     const avy = Math.abs(this.vy);
     const total = Math.sqrt(Math.pow(avx, 2) + Math.pow(avy, 2));
@@ -198,8 +203,8 @@ export class Ship extends EventEmitter implements entities.Entity {
       this.vy = 0;
 
     if (total > max) {
-      this.vx -= this.vx / total * this.power;
-      this.vy -= this.vy / total * this.power;
+      this.vx -= (this.vx / total * this.power) * delta;
+      this.vy -= (this.vy / total * this.power) * delta;
     }
   }
 
@@ -217,7 +222,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     return (a2 - a1) * 180 / Math.PI;
   }
 
-  private updateHealth() {
+  private updateHealth(delta: number) {
     this.alive = this.damage < this.health;
 
     if (this.damage <= 0) {
@@ -228,15 +233,15 @@ export class Ship extends EventEmitter implements entities.Entity {
     if (!this.alive)
       return;
 
-    this.damage -= this.regen;
+    this.damage -= this.regen * delta;
   }
 
-  private updateGuns() {
+  private updateGuns(delta: number) {
     if (this.gunsCooldown <= 0) {
       this.gunsCooldown = 0;
       return;
     }
 
-    this.gunsCooldown--;
+    this.gunsCooldown -= 1 * delta;
   }
 }
