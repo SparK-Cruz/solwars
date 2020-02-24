@@ -47,7 +47,7 @@ export class Client extends EventEmitter {
         this.name = name;
 
         if (!this.socket) {
-            this.socket = socketio(':27001', {autoConnect: false});
+            this.socket = socketio('', {autoConnect: false});
             this.bindEvents(this.socket);
         }
 

@@ -77,6 +77,9 @@ export class Engine {
             this.hudRenderer.render();
         }
 
+        if (!this.running)
+            return;
+
         requestAnimationFrame(() => this.renderFrame());
     }
 

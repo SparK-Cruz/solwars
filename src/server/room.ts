@@ -16,7 +16,6 @@ let TPS = 64;
 export class Room {
     public codec :CodecFacade;
 
-    private server :Server;
     private io :SocketIO.Server;
     private stage :Stage;
 
@@ -25,8 +24,7 @@ export class Room {
 
     private deltaTick: number = 1;
 
-    public constructor() {
-        this.server = new Server();
+    public constructor(private server: Server) {
         this.io = socketio(this.server);
 
         this.stage = new Stage(new Collisions());
@@ -38,12 +36,10 @@ export class Room {
         this.setupListeners();
     }
 
-    public open(port :number) {
+    public open() {
         setInterval(() => {
             this.tick();
         }, 1000/TPS);
-
-        this.server.listen(port);
     }
 
     private onEntityDespawn = (id: number) => {
