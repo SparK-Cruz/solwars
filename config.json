@@ -1,5 +1,5 @@
 {
-    "TPS": 128,
+    "TPS": 64,
     "maxPlayers": 10,
     "clientPort": 80,
     "serverPort": 27001,
