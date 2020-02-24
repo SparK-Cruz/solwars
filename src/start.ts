@@ -12,11 +12,12 @@ app.use('/', express.static(__dirname + '/client'));
 
 Config.read(() => {
   const STATIC_PORT = Config.clientPort;
-//   const ROOM_PORT = Config.serverPort;
+
+  const port = process.env.PORT || STATIC_PORT;
 
   const room = new Room(server);
-  server.listen(STATIC_PORT);
+  server.listen(port);
   room.open();
 
-  console.log('Serving on port '+STATIC_PORT);
+  console.log('Serving on port '+port);
 });
