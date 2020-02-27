@@ -101,6 +101,3 @@ export class Engine {
         canvas.width = aspect * canvas.height;
     }
 }
-
-// Global export
-(<any>window).Engine = Engine;

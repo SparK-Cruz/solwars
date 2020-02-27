@@ -49,6 +49,15 @@ export class Camera {
     }
   }
 
+  public getOffsetPosition(): {x: number, y: number} {
+    const pos = this.getPosition();
+
+    return {
+      x: pos.x - this.offset.x,
+      y: pos.y - this.offset.y,
+    };
+  }
+
   private easeAxis(value :number, absMax :number) {
     let scale = 100; //max distance in pixels from center;
     let signal = value < 0 ? -1 : 1;
