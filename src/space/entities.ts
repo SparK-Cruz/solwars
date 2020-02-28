@@ -85,7 +85,12 @@ export class EntityPoolGrid {
         if (!entity) return;
 
         this.pool.remove(id);
-        this.removeFromOldGridPart(entity);
+        for (const coord in this.grid) {
+            if (!this.grid.hasOwnProperty(coord))
+                continue;
+
+            this.grid[coord].remove(id);
+        }
     }
 
     public localCoordName(point :{x :number, y :number}) {
