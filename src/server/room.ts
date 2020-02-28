@@ -69,8 +69,10 @@ export class Room {
     }
     private onPlayerDisconnect(player :Player) {
         console.log(player.name + ' has left the game');
-        this.stage.remove(player.ship.id);
         this.players = this.players.filter((member) => member.id !== player.id);
+
+        if (!player.ship) return;
+        this.stage.remove(player.ship.id);
         this.broadcastRemoval(player.ship.id);
     }
 
