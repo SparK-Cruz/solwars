@@ -25,7 +25,7 @@ export class SpeedIndicator implements Renderable {
 
         const indicatorSize = 6;
         const speed = Math.sqrt(Math.pow(this.info.speed.x, 2) + Math.pow(this.info.speed.y, 2));
-        const speedScale = 6;
+        const speedScale = 10;
         const alpha = speed / (this.info.maxSpeed * 2);
         const angleOffset = 90 * Math.PI / 180;
         const angle = Math.atan2(this.info.speed.y, this.info.speed.x) + angleOffset;

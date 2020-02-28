@@ -1,7 +1,7 @@
 {
     "TPS": 64,
     "maxPlayers": 10,
-    "bots": 5,
+    "bots": 4,
     "serverPort": 80,
     "ships": {
         "warbird": {
@@ -14,11 +14,11 @@
             "bomb": 0
         },
         "javelin": {
-            "speed": 7,
-            "acceleration": 0.09,
-            "spin": 3.8,
-            "energy": 1000,
-            "regeneration": 2,
+            "speed": 4,
+            "acceleration": 0.082,
+            "spin": 2.7,
+            "energy": 950,
+            "regeneration": 1.8,
             "bullet": 0,
             "bomb": 0
         },

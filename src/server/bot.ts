@@ -46,9 +46,9 @@ const botNames = [
     'Yuri',
 ].sort((a, b) => Math.round(Math.random() * 2 - 1));
 
-const MIN_DISTANCE = 200;
-const MAX_DISTANCE = 600;
-const DISTANCE_BAND = 100;
+const MIN_DISTANCE = 180;
+const MAX_DISTANCE = 450;
+const DISTANCE_BAND = 70;
 const IDEAL_BULLET_SPEED = 7;
 const ANGLE_TOLERANCE = 2;
 const ENERGY_RESERVE = 0.65;
