@@ -220,7 +220,7 @@ export class Bot extends Input {
     private static setupLoops() {
         this.mainLoop = setInterval(() => {
             this.pool.forEach((bot: Bot) => bot.step());
-        }, 1000/32);
+        }, 1000/16);
 
         this.trackLoop = setInterval(() => {
             this.pool.forEach((bot: Bot) => {
@@ -259,7 +259,7 @@ export class Bot extends Input {
                     bot.die();
                 }
             });
-        }, 3000);
+        }, 5000);
     }
 
     private static disableLoops() {
