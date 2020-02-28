@@ -53,6 +53,8 @@ const IDEAL_BULLET_SPEED = 7;
 const ANGLE_TOLERANCE = 2;
 const ENERGY_RESERVE = 0.65;
 
+const ONE_MINUTE = 60000;
+
 export class Bot extends Input {
     private static pool: Bot[] = [];
 
@@ -92,6 +94,8 @@ export class Bot extends Input {
     private entity: Ship = null;
     private target: Ship = null;
 
+    public lastSeen: number = null;
+
     public get enabled(): boolean {
         return this.running;
     }
@@ -120,6 +124,9 @@ export class Bot extends Input {
     }
 
     public track(entity: Ship) {
+        if (entity)
+            this.lastSeen = Date.now();
+
         this.target = entity;
     }
 
@@ -143,6 +150,10 @@ export class Bot extends Input {
         this.stepShoot(energy, distance, angleDiff);
 
         this.updateControl(this.mapping.state);
+    }
+
+    public die() {
+        this.entity.addDamage(this.entity.health + 1, this.entity);
     }
 
     private stepTurn(angleDiff: number) {
@@ -236,12 +247,11 @@ export class Bot extends Input {
                     distance = cursor;
                 }
 
-                if (!closest) {
-                    bot.track(null);
-                    return;
-                };
-
                 bot.track(closest);
+
+                if (ONE_MINUTE < Date.now() - bot.lastSeen) {
+                    bot.die();
+                }
             });
         }, 3000);
     }
