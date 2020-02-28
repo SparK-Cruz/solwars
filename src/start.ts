@@ -3,7 +3,6 @@ const express = require('express');
 import { Server } from 'http';
 import { Room } from './server/room';
 import { Config } from './space/config';
-import { Bot } from './server/bot';
 
 const app = express();
 const server = new Server(app);
@@ -21,6 +20,4 @@ Config.read(() => {
   room.open();
 
   console.log('Serving on port '+port);
-
-  Bot.set(Config.bots);
 });
