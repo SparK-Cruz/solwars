@@ -108,6 +108,10 @@ export class Bot extends Input {
         this.client.on(ClientEvents.SHIP, (ship: Ship) => {
             this.setReference(ship);
         });
+        this.connect();
+    }
+
+    public connect() {
         this.client.connect('BOT ' + this.name);
     }
 
@@ -153,7 +157,8 @@ export class Bot extends Input {
     }
 
     public die() {
-        this.entity.addDamage(this.entity.health + 1, this.entity);
+        this.disconnect();
+        this.connect();
     }
 
     private stepTurn(angleDiff: number) {
