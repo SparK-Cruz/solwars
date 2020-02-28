@@ -30,10 +30,10 @@ interface BulletConfig {
 export class Config {
     public static TPS: number;
     public static maxPlayers: number;
-    public static clientPort: number;
     public static serverPort: number;
     public static ships: ShipsConfig;
     public static bullets: BulletConfig[];
+    public static bots: number;
 
     public static read(callback: Function) {
         json

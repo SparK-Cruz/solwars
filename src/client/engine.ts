@@ -61,7 +61,6 @@ export class Engine {
         client.on(ClientEvents.SHIP, (ship: any) => {
             this.camera.trackable = ship;
         });
-
         client.on(ClientEvents.INFO, (info: ClientInfo) => {
             this.hudRenderer.update(info);
         });

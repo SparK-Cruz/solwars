@@ -18,6 +18,7 @@ nameField.select();
 form.addEventListener('submit', e => {
     e.preventDefault();
 
+    button.blur();
     nameField.blur();
     (<HTMLFieldSetElement>form.firstElementChild).disabled = true;
 

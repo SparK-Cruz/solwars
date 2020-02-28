@@ -6,6 +6,7 @@ import { Ship } from '../space/entities/ship';
 import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
+import { Config } from '../space/config';
 
 export class Client extends EventEmitter {
     private remoteId: number = null;
@@ -47,7 +48,12 @@ export class Client extends EventEmitter {
         this.name = name;
 
         if (!this.socket) {
-            this.socket = socketio('', {autoConnect: false});
+            let address = '';
+            if (!(<any>process).browser) {
+                address = 'http://127.0.0.1:'+(process.env.PORT || Config.serverPort);
+            }
+            this.socket = socketio(address, {autoConnect: false});
+
             this.bindEvents(this.socket);
         }
 

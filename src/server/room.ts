@@ -47,7 +47,6 @@ export class Room {
     }
 
     private onPlayerShip(player :Player, ship: Ship) {
-        console.log(player.name + ' has joined the game');
         ship.name = player.name + ' (' + player.bounty + ')';
         player.ship = ship;
 
@@ -120,6 +119,9 @@ export class Room {
             this.players = this.players.filter(p => p.socket.connected);
 
             const player = new Player(++id, socket, this);
+            player.once(PlayerEvents.Ship, (ship: Ship) => {
+                console.log(player.name + ' has joined the game');
+            });
             player.on(PlayerEvents.Ship, (ship: Ship) => {
                 this.onPlayerShip(player, ship);
                 this.ranking = null;

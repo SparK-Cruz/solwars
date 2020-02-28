@@ -2,7 +2,7 @@ import { Mapping } from '../space/entities/ships/mapping';
 
 export class Input {
     private onChange = function(state :number) :void{};
-    private mapping :Mapping = new Mapping();
+    protected mapping :Mapping = new Mapping();
 
     private enabler: Function;
     private disabler: Function;
