@@ -94,7 +94,7 @@ export class Bot extends Input {
     private entity: Ship = null;
     private target: Ship = null;
 
-    public lastSeen: number = null;
+    public lastSeen: number;
 
     public get enabled(): boolean {
         return this.running;
@@ -113,6 +113,7 @@ export class Bot extends Input {
 
     public connect() {
         this.client.connect('BOT ' + this.name);
+        this.lastSeen = Date.now();
     }
 
     public disconnect() {
@@ -254,7 +255,7 @@ export class Bot extends Input {
 
                 bot.track(closest);
 
-                if (ONE_MINUTE < Date.now() - bot.lastSeen) {
+                if (bot.lastSeen && ONE_MINUTE < Date.now() - bot.lastSeen) {
                     bot.die();
                 }
             });
