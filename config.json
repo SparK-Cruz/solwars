@@ -16,7 +16,7 @@
         "javelin": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.7,
+            "spin": 2.4,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,

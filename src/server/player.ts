@@ -46,16 +46,15 @@ export class Player extends EventEmitter {
     private setupListeners() {
         this.socket.on(CodecEvents.JOIN_GAME, (data :any) => {
             this.onJoin(data);
-
-            this.socket.on(CodecEvents.SEND_INPUT, (data :any) => {
-                this.onInput(data);
-            });
-            this.socket.on(CodecEvents.DISCONNECT, () => {
-                this.emit(PlayerEvents.Disconnect);
-            });
-            this.socket.on('error', () => {
-                this.emit(PlayerEvents.Disconnect);
-            });
+        });
+        this.socket.on(CodecEvents.SEND_INPUT, (data :any) => {
+            this.onInput(data);
+        });
+        this.socket.once(CodecEvents.DISCONNECT, () => {
+            this.emit(PlayerEvents.Disconnect);
+        });
+        this.socket.once('error', () => {
+            this.socket.disconnect(true);
         });
     }
 
@@ -64,7 +63,7 @@ export class Player extends EventEmitter {
         this.fetchPlayerShip(data.name, this.ship)
             .then(ship => {
                 this.emit(PlayerEvents.Ship, ship);
-                ship.on(EntityEvent.Die, (killer: Entity) => this.onDie(killer))
+                ship.once(EntityEvent.Die, (killer: Entity) => this.onDie(killer))
                 this.socket.emit(CodecEvents.ACCEPT, {
                     id: this.id,
                     ship: this.room.codec.encodeEntity(ship),
@@ -117,6 +116,8 @@ export class Player extends EventEmitter {
     }
 
     private onInput(data :any) {
+        if (!this.ship) return;
+
         this.ship.control = data;
     }
 

@@ -2,12 +2,10 @@ import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { Stage } from "../../space/stage";
 import { ClientInfo } from "../client";
+import { EntityType } from "../../space/entities";
 
 export class NameRenderer implements Renderable {
     private ctx: CanvasRenderingContext2D;
-
-    private buffer: HTMLCanvasElement;
-    private bfr: CanvasRenderingContext2D;
 
     private info: ClientInfo;
 
@@ -27,12 +25,12 @@ export class NameRenderer implements Renderable {
         for(let i in entities) {
             const entity = entities[i];
 
-            if (typeof (<any>entity).name == 'undefined')
+            if (entity.type.name !== EntityType.Ship.name)
                 return;
 
-            const pos = this.camera.translate(entity);
+            let name = (<any>entity).name || 'BUG: PLEASE TAKE A SCREENSHOT';
 
-            let name = (<any>entity).name;
+            const pos = this.camera.translate(entity);
 
             if (typeof (<any>entity).alive != 'undefined'
                 && !(<any>entity).alive) {
