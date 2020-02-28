@@ -26,7 +26,7 @@ export class NameRenderer implements Renderable {
             const entity = entities[i];
 
             if (entity.type.name !== EntityType.Ship.name)
-                return;
+                continue;
 
             let name = (<any>entity).name || 'BUG: PLEASE TAKE A SCREENSHOT';
 
