@@ -1,7 +1,7 @@
 {
     "TPS": 64,
-    "maxPlayers": 10,
-    "bots": 2,
+    "maxPlayers": 100,
+    "bots": 3,
     "serverPort": 80,
     "ships": {
         "warbird": {
