@@ -1,5 +1,5 @@
 {
-    "TPS": 32,
+    "TPS": 54,
     "maxPlayers": 100,
     "bots": 5,
     "serverPort": 80,
