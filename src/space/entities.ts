@@ -152,11 +152,13 @@ class EntityPool {
         return this.pool[id];
     }
 
-    public remove(id :number) {
+    public remove(id :number): number {
         if (!this.pool.hasOwnProperty(id))
             return;
 
         this.pool[id] = null;
         delete this.pool[id];
+
+        return this.count;
     }
 }
