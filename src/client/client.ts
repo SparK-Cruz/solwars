@@ -18,6 +18,7 @@ export class Client extends EventEmitter {
     private ranking: {name: string, bounty: number}[] = [];
 
     private socket: SocketIOClient.Socket;
+    private compensator: NodeJS.Timeout;
 
     private staticInfo: StaticInfo = {
         id: 0,
@@ -39,10 +40,6 @@ export class Client extends EventEmitter {
 
         this.stage = new Stage();
         this.codec = new CodecFacade();
-
-        setInterval(() => {
-            this.stage.step();
-        }, 1000/64);
     }
 
     public get connected() {
@@ -62,17 +59,36 @@ export class Client extends EventEmitter {
             this.bindEvents(this.socket);
         }
 
+        this.startCompensatingLag();
         this.socket.open();
     }
 
     public disconnect() {
         this.remoteId = null;
+        this.stopCompensatingLag();
         this.stage.clear();
         this.socket.disconnect();
     }
 
     public getStage() {
         return this.stage;
+    }
+
+    private startCompensatingLag() {
+        if (this.compensator)
+            return;
+
+        this.compensator = setInterval(() => {
+            this.stage.step();
+        }, 1000/64);
+    }
+
+    private stopCompensatingLag() {
+        if (!this.compensator)
+            return;
+
+        clearInterval(this.compensator);
+        this.compensator = null;
     }
 
     private bindEvents(socket: SocketIOClient.Socket) {
