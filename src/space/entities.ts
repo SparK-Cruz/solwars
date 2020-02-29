@@ -55,7 +55,7 @@ export class EntityPoolGrid {
             for (const id in this.grid[key].entities) {
                 const entity = this.grid[key].entities[id];
                 entity.step(delta);
-                setTimeout(() => this.store(entity), 0);
+                this.store(entity);
             }
         }
     }
@@ -108,10 +108,7 @@ export class EntityPoolGrid {
         if (entity.sectorKey
             && name !== entity.sectorKey) {
 
-            if (!this.grid[entity.sectorKey].remove(entity.id)) {
-                this.grid[entity.sectorKey] = null;
-                delete this.grid[entity.sectorKey];
-            }
+            this.grid[entity.sectorKey].remove(entity.id);
             entity.sectorKey = null;
         }
 
