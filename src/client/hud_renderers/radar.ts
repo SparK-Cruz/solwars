@@ -2,7 +2,7 @@ import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { ClientInfo } from "../client";
 import { EntityType } from "../../space/entities";
-import { Stage } from "../../space/stage";
+import { Stage } from ".././stage";
 
 export class Radar implements Renderable {
     private ctx: CanvasRenderingContext2D;

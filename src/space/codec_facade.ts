@@ -1,4 +1,6 @@
 import { Entity } from './entities';
+import { Ship } from './entities/ship';
+import { Model } from './entities/ships/model';
 
 interface SavedState {
   tick: number,
@@ -27,6 +29,12 @@ export class CodecFacade {
 
   public encodeEntity(entity :Entity) {
     return entity;
+  }
+
+  public decodeShip(data: Ship) {
+    const ship = new Ship(Model.byId[data.model]);
+    Object.assign(ship, data);
+    return ship;
   }
 }
 

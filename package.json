@@ -4,7 +4,8 @@
   "description": "Star Pilot Blues",
   "main": "",
   "scripts": {
-    "start": "node dist/start.js & node dist/bot_start.js && fg",
+    "start-no-bots": "node dist/start.js",
+    "start": "node dist/start.js & node dist/bot_start.js",
     "build": "tsc && npm run build-frontend && npm run build-assets",
     "build-frontend": "browserify dist/client/frontend.js > dist/client/dist_frontend.js",
     "build-assets": "npm run build-html && npm run build-img",

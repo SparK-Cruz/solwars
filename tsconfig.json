@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "allowJs": true,
-        "lib": ["es2015", "dom"],
+        "lib": ["es2017", "dom"],
         "outDir": "dist",
         "noImplicitAny": true,
         "module": "commonjs",

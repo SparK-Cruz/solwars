@@ -1,7 +1,7 @@
 import { Renderable } from "./game_renderers/renderable";
 import { ClientInfo } from "./client";
 import { Camera } from "./camera";
-import { Stage } from "../space/stage";
+import { Stage } from "./stage";
 import { SpeedIndicator } from "./hud_renderers/speed_indicator";
 import { EnergyIndicator } from "./hud_renderers/energy_indicator";
 import { GunIndicator } from "./hud_renderers/gun_indicator";

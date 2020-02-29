@@ -1,12 +1,13 @@
 import * as socketio from 'socket.io-client';
 
-import { Stage } from '../space/stage';
+import { Stage } from './stage';
 import { CodecFacade, CodecEvents } from '../space/codec_facade';
 import { Ship } from '../space/entities/ship';
 import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Config } from '../space/config';
+import { EntityType } from '../space/entities';
 
 export class Client extends EventEmitter {
     private remoteId: number = null;
@@ -38,6 +39,10 @@ export class Client extends EventEmitter {
 
         this.stage = new Stage();
         this.codec = new CodecFacade();
+
+        setInterval(() => {
+            this.stage.step();
+        }, 1000/64);
     }
 
     public get connected() {
@@ -96,31 +101,30 @@ export class Client extends EventEmitter {
 
         this.input.change((state: number) => {
             socket.emit(CodecEvents.SEND_INPUT, state);
+            if (this.ship)
+                this.ship.control = state;
         });
     }
 
     private onConnect(data: any) {
+
         this.remoteId = data.id;
+        this.ship = this.codec.decodeShip(data.ship);
         this.stage.clear();
-        this.stage.add(data.ship);
+        this.stage.add(this.ship);
 
-        this.emit(ClientEvents.SHIP, data.ship);
-        this.ship = data.ship;
-
+        this.emit(ClientEvents.SHIP, this.ship);
         this.cacheStaticInfo(data);
     }
 
     private onServerUpdate(data: any) {
         const decoded = this.codec.decode(data);
 
-        if (decoded.tick < this.stage.tick
-            && decoded.tick + 60 > this.stage.tick)
-            return;
-
-        if (data.tick % 300 == 0)
-            this.stage.clear();
-
-        this.stage.addAll(decoded.entities);
+        this.stage.addAll(decoded.entities.map(e => {
+            return e.type.name == EntityType.Ship.name
+                ? this.codec.decodeShip(<Ship>e)
+                : e;
+        }));
         this.ranking = decoded.ranking;
 
         this.emit(ClientEvents.INFO, this.fetchInfo());
@@ -131,6 +135,7 @@ export class Client extends EventEmitter {
     }
 
     private onDeath() {
+        // Get a new ship
         this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
     }
 

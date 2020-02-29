@@ -4,8 +4,10 @@ import { Model as ShipModel } from '../space/entities/ships/model';
 import { Stage } from '../space/stage';
 import { Config } from '../space/config';
 
+const Collisions = require('collisions').Collisions;
+
 Config.read(() => {
-  const stage = new Stage();
+  const stage = new Stage(new Collisions());
   const ship = new Ship(ShipModel.Warbird);
   const mapping = new Mapping();
 
@@ -13,7 +15,7 @@ Config.read(() => {
 
   const interval = setInterval(() => {
     stage.step(1);
-  }, 1000 / 64);
+  }, 0);
 
   setTimeout(() => {
     mapping.press(Mapping.FORWARD);

@@ -53,7 +53,7 @@ const IDEAL_BULLET_SPEED = 7;
 const ANGLE_TOLERANCE = 2;
 const ENERGY_RESERVE = 0.65;
 
-const ONE_MINUTE = 60000;
+const ONE_MINUTE = 3600000;
 
 export class Bot extends Input {
     private static pool: Bot[] = [];
@@ -62,7 +62,7 @@ export class Bot extends Input {
     private static trackLoop: NodeJS.Timeout;
 
     public static set(bots: number) {
-        bots = Math.abs(bots);
+        bots = Math.min(Math.abs(bots), botNames.length);
 
         console.log(`SPAWNING ${bots} BOTS!`);
 

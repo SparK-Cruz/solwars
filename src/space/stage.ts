@@ -3,30 +3,20 @@ import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
 import { Bullet } from './entities/bullet';
 
 export class Stage extends EventEmitter {
-    public static PASSIVE_MODE = "passive_mode";
-    public static ACTIVE_MODE = "active_mode";
     public tick = 0;
 
-    private passiveMode = true;
     private shapes :any = {};
     private collisionResult :any = null;
 
-    private sectors = new EntityPoolGrid('sectorKey', 2048);
+    private sectors = new EntityPoolGrid();
 
-    public constructor(public collisionSystem :any = null) {
+    public constructor(public collisionSystem :any) {
         super();
-
-        if (this.collisionSystem) {
-            this.passiveMode = false;
-            this.collisionResult = this.collisionSystem.createResult();
-        }
+        this.collisionResult = this.collisionSystem.createResult();
     }
 
     public add(entity :Entity) {
         this.sectors.add(entity);
-
-        if (this.passiveMode)
-            return;
 
         const shape = this.addOrFetchCollisionShape(entity);
         shape.x = entity.x;
@@ -39,9 +29,6 @@ export class Stage extends EventEmitter {
 
     public remove(id :number) {
         this.sectors.remove(id);
-
-        if (this.passiveMode)
-            return;
 
         const shape = this.shapes[id];
 
@@ -61,19 +48,10 @@ export class Stage extends EventEmitter {
         entities.forEach(entity => this.add(entity));
     }
 
-    public clear() {
-        for(let id in this.sectors.allEntities()) {
-            this.remove(parseInt(id));
-        }
-    }
-
     public step(delta: number) :number {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
         this.sectors.step(delta);
-
-        if (this.passiveMode)
-            return this.tick;
 
         for (let i in this.shapes) {
             const shape = this.shapes[i];
@@ -89,34 +67,7 @@ export class Stage extends EventEmitter {
     }
 
     public fetchEntitiesAround(point :{x :number, y :number}) :Entity[] {
-        const scale = this.sectors.scale;
-        const entities :Entity[] = [];
-
-        for (let i = 0; i < 9; i++) {
-            const offset = {
-                x: Math.floor(i / 3) - 1,
-                y: (i % 3) - 1
-            };
-            const coord = {
-                x: offset.x * scale + point.x,
-                y: offset.y * scale + point.y
-            };
-
-            const key = this.sectors.localCoordName(coord);
-            const pool = this.sectors.pools[key];
-            if (!pool) continue;
-
-            for (let i in pool.entities) {
-                const entity = pool.find(i);
-                entities.push(entity);
-            }
-        }
-
-        return entities;
-    }
-
-    public fetchAllEntities() :Entity[] {
-        return this.sectors.allEntities();
+        return this.sectors.fetchAroundCoord(point);
     }
 
     private addOrFetchCollisionShape(entity: Entity) {

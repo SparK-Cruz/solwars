@@ -1,6 +1,6 @@
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
-import { Stage } from "../../space/stage";
+import { Stage } from ".././stage";
 import { ClientInfo } from "../client";
 import { EntityType } from "../../space/entities";
 

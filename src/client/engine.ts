@@ -31,7 +31,7 @@ export class Engine {
     public start(name: string, callback: Function = null) {
         const timeout = setTimeout(() => {
             callback && callback({error: 'Connection Timeout'});
-        }, 2000);
+        }, 10000);
 
         const once = (data: any) => {
             clearTimeout(timeout);

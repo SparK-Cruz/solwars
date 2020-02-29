@@ -68,6 +68,8 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.decals = JSON.parse(JSON.stringify(model.decals));
     this.collisionMap = model.polygon;
 
+    if (!Config.ships) return;
+
     const traits = (<any> Config.ships)[model.id];
     if (!traits) return;
 
@@ -87,6 +89,9 @@ export class Ship extends EventEmitter implements entities.Entity {
   }
 
   step(delta: number) :void {
+    if (!this.alive)
+        return;
+
     this.readControls(delta);
     this.updatePhysics(delta);
     this.updateHealth(delta);

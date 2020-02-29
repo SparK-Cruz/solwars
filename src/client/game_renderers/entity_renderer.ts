@@ -1,6 +1,6 @@
 import { Renderable } from "./renderable";
 import { Camera } from "../camera";
-import { Stage } from "../../space/stage";
+import { Stage } from ".././stage";
 import { Entity, EntityType } from "../../space/entities";
 import { ShipRenderer } from "./ship_renderer";
 import { Ship } from "../../space/entities/ship";
@@ -20,9 +20,6 @@ export class EntityRenderer implements Renderable {
         const offset = this.camera.getOffsetPosition();
 
         for (const i in entities) {
-            if (!entities.hasOwnProperty(i))
-                continue;
-
             const entity = entities[i];
 
             const renderer = this.fetchRenderer(entity);

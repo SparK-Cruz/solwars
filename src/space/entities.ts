@@ -29,108 +29,91 @@ export namespace EntityType {
     export const Bullet = {name: 'bullet'};
 }
 
+const SCALE = 2048;
+
 export class EntityPoolGrid {
-    private _scale = 1;
     private grid :any = {};
-    private pool = new EntityPool();
+    private lastId = 0;
 
-    public get scale() {
-        return this._scale;
-    }
-
-    public get pools() {
-        return this.grid;
-    }
-
-    public constructor(private key :string, scale :number) {
-        this._scale = scale;
-    }
+    public constructor() {}
 
     public add(entity :Entity) {
-        this.pool.add(entity);
-        return this.update(entity);
-    }
+        if (!entity.id)
+            entity.id = ++this.lastId;
 
-    public addFromPool(pool :EntityPool) {
-        for (let i in pool.entities) {
-            this.add(pool.find(parseInt(i)));
-        }
-    }
-
-    public update(entity :Entity) :EntityPool {
-        if (!entity) console.log('entity is null!');
-
-        const name = this.localCoordName(entity);
-        if (!this.grid.hasOwnProperty(name)) {
-            this.grid[name] = new EntityPool(name);
-        }
-
-        if (entity.hasOwnProperty(this.key)
-            && name != (<any>entity)[this.key]) {
-
-            this.removeFromOldGridPart(entity);
-            (<any>entity)[this.key] = name;
-            this.grid[name].add(entity);
-        }
-
-        return this.grid[name];
-    }
-
-    public find(id :number) :Entity {
-        return this.pool.find(id);
+        return this.store(entity);
     }
 
     public remove(id :number) {
-        const entity = this.pool.find(id);
-        if (!entity) return;
-
-        this.pool.remove(id);
         for (const coord in this.grid) {
-            if (!this.grid.hasOwnProperty(coord))
-                continue;
-
             this.grid[coord].remove(id);
         }
     }
 
-    public localCoordName(point :{x :number, y :number}) {
-        return [
-            Math.floor(point.x / this.scale),
-            Math.floor(point.y / this.scale)
-        ].join('_');
-    }
-
     public step(delta: number) {
-        for (let id in this.pool.entities) {
-            const entity = this.pool.find(parseInt(id));
-
-            if (entity.hasOwnProperty('health')
-              && entity.hasOwnProperty('damage')
-              && entity.hasOwnProperty('control')) {
-              let obj = <any>entity;
-
-              if (obj.damage >= obj.health)
-                obj.control = 0;
-            }
-
-            entity.step(delta);
-            this.update(entity);
-        }
+        Object.values(this.grid).forEach((cell: EntityPool) => {
+            Object.values(cell.entities).forEach((entity: Entity) => {
+                entity.step(delta);
+                this.store(entity);
+            });
+        });
     }
 
     public allEntities() :Entity[] {
-        return this.pool.entities;
+        const entities: Entity[] = [];
+        Object.values(this.grid).forEach((cell: EntityPool) => {
+            [].push.apply(entities, Object.values(cell.entities));
+        });
+        return entities;
     }
 
-    private removeFromOldGridPart(entity :Entity) {
-        const gridPool = this.grid[(<any>entity)[this.key]];
-        if (!gridPool)
-            return;
+    public fetchAroundCoord(point: {x: number, y: number}): Entity[] {
+        const entities: Entity[] = [];
+        const scaled = this.localCell(point);
+        for (let i = 0; i < 9; i++) {
+            const offset = {
+                x: (i % 3) - 1,
+                y: Math.floor(i / 3) - 1,
+            };
 
-        const entitiesLeft = gridPool.remove(entity.id);
+            const cellKey = this.localCellKey({x: scaled.x + offset.x, y: scaled.y + offset.y});
+            const cell = this.grid[cellKey];
 
-        if (!entitiesLeft) {
-            delete this.grid[gridPool.name];
+            if (!cell) continue;
+
+            [].push.apply(entities, Object.values(cell.entities));
+        }
+        return entities;
+    }
+
+    private localCell(point: {x: number, y: number}): {x: number, y: number} {
+        return {
+            x: Math.floor(point.x / SCALE),
+            y: Math.floor(point.y / SCALE),
+        };
+    }
+
+    private localCellKey(point :{x :number, y :number}) {
+        return Object.values(point).join('_');
+    }
+
+    private store(entity :Entity) {
+        const name = this.localCellKey(this.localCell(entity));
+
+        if (!this.grid.hasOwnProperty(name)) {
+            this.grid[name] = new EntityPool(name);
+        }
+
+        if (entity.sectorKey
+            && name !== entity.sectorKey) {
+
+            this.grid[entity.sectorKey].remove(entity.id);
+            entity.sectorKey = null;
+        }
+
+        if (!entity.sectorKey) {
+            this.grid[name].add(entity);
+            entity.sectorKey = name;
         }
     }
 }
@@ -138,7 +121,6 @@ export class EntityPoolGrid {
 class EntityPool {
     private pool :any = {};
     private count = 0;
-    private lastId = 0;
 
     public get length() {
         return this.count;
@@ -149,19 +131,15 @@ class EntityPool {
 
     public constructor(public name ?:string) {}
 
-    public add(entity :Entity) :boolean {
+    public add(entity :Entity) {
         if (!entity.id) {
-            entity.id = ++this.lastId;
+            return;
         }
 
-        if (this.pool.hasOwnProperty(entity.id)) {
-            Object.assign(this.pool[entity.id], entity);
-            return false;
-        }
+        if (!this.pool.hasOwnProperty(entity.id))
+            this.count++;
 
-        this.count++;
         this.pool[entity.id] = entity;
-        return true;
     }
 
     public find(id :number) :Entity {
@@ -171,12 +149,11 @@ class EntityPool {
         return this.pool[id];
     }
 
-    public remove(id :number) :number {
+    public remove(id :number) {
         if (!this.pool.hasOwnProperty(id))
             return;
 
         this.pool[id] = null;
         delete this.pool[id];
-        return --this.count;
     }
 }

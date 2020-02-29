@@ -1,4 +1,4 @@
-import { Stage } from '../space/stage';
+import { Stage } from './stage';
 import { Camera } from './camera';
 import { Renderable } from './game_renderers/renderable';
 import { Background } from './game_renderers/background';
