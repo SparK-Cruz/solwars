@@ -107,7 +107,10 @@ export class EntityPoolGrid {
         if (entity.sectorKey
             && name !== entity.sectorKey) {
 
-            this.grid[entity.sectorKey].remove(entity.id);
+            if (!this.grid[entity.sectorKey].remove(entity.id)) {
+                this.grid[entity.sectorKey] = null;
+                delete this.grid[entity.sectorKey];
+            }
             entity.sectorKey = null;
         }
 
