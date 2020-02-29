@@ -51,12 +51,13 @@ export class EntityPoolGrid {
     }
 
     public step(delta: number) {
-        Object.values(this.grid).forEach((cell: EntityPool) => {
-            Object.values(cell.entities).forEach((entity: Entity) => {
+        for (const key in this.grid) {
+            for (const id in this.grid[key].entities) {
+                const entity = this.grid[key].entities[id];
                 entity.step(delta);
-                this.store(entity);
-            });
-        });
+                setTimeout(() => this.store(entity), 0);
+            }
+        }
     }
 
     public allEntities() :Entity[] {

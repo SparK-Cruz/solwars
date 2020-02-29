@@ -125,19 +125,19 @@ export class Ship extends EventEmitter implements entities.Entity {
     }
   }
 
-  private canAfterburn() {
-    return this.damage + this.afterburnerCost < this.health;
+  private canAfterburn(delta: number) {
+    return this.damage + this.afterburnerCost * delta < this.health;
   }
 
-  private canShoot() {
-    return (this.damage + this.shootCost < this.health && !this.gunsCooldown);
+  private canShoot(delta: number) {
+    return (this.damage + this.shootCost * delta < this.health && !this.gunsCooldown);
   }
 
   private readControls(delta: number) {
     this.readThrust(delta);
     this.readStrife(delta);
-    this.readTurn(delta);
-    this.readShoot();
+    this.readTurn();
+    this.readShoot(delta);
   }
   private readThrust(delta: number) {
     let power = this.power;
@@ -145,7 +145,7 @@ export class Ship extends EventEmitter implements entities.Entity {
 
     if (Control.afterburning(this.control)
       && thrust
-      && this.canAfterburn()) {
+      && this.canAfterburn(delta)) {
       power *= 2;
       this.damage += this.afterburnerCost * delta;
     }
@@ -162,13 +162,13 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.vx += (strife * power) * Math.sin(inRads(sideAngle)) * delta;
     this.vy -= (strife * power) * Math.cos(inRads(sideAngle)) * delta;
   }
-  private readTurn(delta: number) {
+  private readTurn() {
     let turn = Control.turning(this.control);
     this.vangle = turn * this.turnSpeed;
   }
-  private readShoot() {
+  private readShoot(delta: number) {
     if (!Control.shooting(this.control)
-      || !this.canShoot())
+      || !this.canShoot(delta))
       return;
 
     const linearOffset = 32;
@@ -199,7 +199,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     const avx = Math.abs(this.vx);
     const avy = Math.abs(this.vy);
     const total = Math.sqrt(Math.pow(avx, 2) + Math.pow(avy, 2));
-    const max = this.vmax * (1 + (Control.afterburning(this.control) & <any>(this.canAfterburn())));
+    const max = this.vmax * (1 + (Control.afterburning(this.control) & <any>(this.canAfterburn(delta))));
 
     if (avx < 0.001)
       this.vx = 0;
