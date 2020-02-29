@@ -72,7 +72,7 @@ export class Room {
         this.players = this.players.filter((member) => member.id !== player.id);
 
         if (!player.ship) return;
-        this.stage.remove(player.ship.id);
+        this.stage.remove(player.ship);
         this.broadcastRemoval(player.ship.id);
     }
 

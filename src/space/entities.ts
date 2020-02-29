@@ -27,6 +27,7 @@ export interface EntityType {
 export namespace EntityType {
     export const Ship = {name: 'ship'};
     export const Bullet = {name: 'bullet'};
+    export const ShipDebris = {name: 'shipDebris'};
 }
 
 const SCALE = 2048;
@@ -41,64 +42,12 @@ export class EntityPoolGrid {
         if (!entity.id)
             entity.id = ++this.lastId;
 
-        return this.store(entity);
+        return this.updateGrid(entity);
     }
 
-    public remove(id :number) {
-        for (const coord in this.grid) {
-            this.grid[coord].remove(id);
-        }
-    }
+    public updateGrid(entity :Entity) {
+        if (!entity) return;
 
-    public step(delta: number) {
-        for (const key in this.grid) {
-            for (const id in this.grid[key].entities) {
-                const entity = this.grid[key].entities[id];
-                entity.step(delta);
-                this.store(entity);
-            }
-        }
-    }
-
-    public allEntities() :Entity[] {
-        const entities: Entity[] = [];
-        Object.values(this.grid).forEach((cell: EntityPool) => {
-            [].push.apply(entities, Object.values(cell.entities));
-        });
-        return entities;
-    }
-
-    public fetchAroundCoord(point: {x: number, y: number}): Entity[] {
-        const entities: Entity[] = [];
-        const scaled = this.localCell(point);
-        for (let i = 0; i < 9; i++) {
-            const offset = {
-                x: (i % 3) - 1,
-                y: Math.floor(i / 3) - 1,
-            };
-
-            const cellKey = this.localCellKey({x: scaled.x + offset.x, y: scaled.y + offset.y});
-            const cell = this.grid[cellKey];
-
-            if (!cell) continue;
-
-            [].push.apply(entities, Object.values(cell.entities));
-        }
-        return entities;
-    }
-
-    private localCell(point: {x: number, y: number}): {x: number, y: number} {
-        return {
-            x: Math.floor(point.x / SCALE),
-            y: Math.floor(point.y / SCALE),
-        };
-    }
-
-    private localCellKey(point :{x :number, y :number}) {
-        return Object.values(point).join('_');
-    }
-
-    private store(entity :Entity) {
         const name = this.localCellKey(this.localCell(entity));
 
         if (!this.grid.hasOwnProperty(name)) {
@@ -116,6 +65,51 @@ export class EntityPoolGrid {
             this.grid[name].add(entity);
             entity.sectorKey = name;
         }
+    }
+
+    public remove(id :number) {
+        for (const coord in this.grid) {
+            this.grid[coord].remove(id);
+        }
+    }
+
+    public allEntities() :Entity[] {
+        const entities: Entity[] = [];
+        Object.values(this.grid).forEach((cell: EntityPool) => {
+            [].push.apply(entities, Object.values(cell.entities));
+        });
+        return entities;
+    }
+
+    public fetchAroundCoord(point: {x: number, y: number}): any[] {
+        const pools: any[] = [];
+        const scaled = this.localCell(point);
+        for (let i = 0; i < 9; i++) {
+            const offset = {
+                x: (i % 3) - 1,
+                y: Math.floor(i / 3) - 1,
+            };
+
+            const cellKey = this.localCellKey({x: scaled.x + offset.x, y: scaled.y + offset.y});
+            const cell = this.grid[cellKey];
+
+            if (!cell) continue;
+
+            pools.push(cell.entities);
+        }
+
+        return pools;
+    }
+
+    private localCell(point: {x: number, y: number}): {x: number, y: number} {
+        return {
+            x: Math.floor(point.x / SCALE),
+            y: Math.floor(point.y / SCALE),
+        };
+    }
+
+    private localCellKey(point :{x :number, y :number}) {
+        return Object.values(point).join('_');
     }
 }
 

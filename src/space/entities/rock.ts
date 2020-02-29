@@ -26,6 +26,7 @@ export class Rock implements Entity {
     constructor() {
         const initialSpeed = 0.5;
 
+        this.angle += this.vangle;
         this.vx = initialSpeed * Math.sin(this.angle * Math.PI / 180);
         this.vy = initialSpeed * Math.cos(this.angle * Math.PI / 180);
     }

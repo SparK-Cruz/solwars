@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
 import { Bullet } from './entities/bullet';
+import { Config } from './config';
 
 export class Stage extends EventEmitter {
     public tick = 0;
@@ -10,9 +11,21 @@ export class Stage extends EventEmitter {
 
     private sectors = new EntityPoolGrid();
 
+    private steppers: Entity[] = [];
+
     public constructor(public collisionSystem :any) {
         super();
         this.collisionResult = this.collisionSystem.createResult();
+        // this.setMaxListeners(0);
+        this.on('step', (delta) => {
+            for(let i=0; i<this.steppers.length; i++) {
+                if (!(this.steppers[i]))
+                    continue;
+
+                this.steppers[i].step(delta);
+                this.sectors.updateGrid(this.steppers[i]);
+            }
+        });
     }
 
     public add(entity :Entity) {
@@ -25,20 +38,21 @@ export class Stage extends EventEmitter {
 
         (<any>entity).on(EntityEvent.Spawn, this.onSpawnChildEntity);
         (<any>entity).on(EntityEvent.Despawn, this.onDespawnEntity);
+
+        this.addStepper(entity);
     }
 
-    public remove(id :number) {
-        this.sectors.remove(id);
+    public remove(entity :Entity) {
+        this.removeStepper(entity);
+        this.sectors.remove(entity.id);
 
-        const shape = this.shapes[id];
+        const shape = this.shapes[entity.id];
 
-        if (!shape)
-            return;
-
-        const entity = shape.entity;
-        this.collisionSystem.remove(shape);
-        this.collisionSystem.update();
-        delete this.shapes[id];
+        if (shape) {
+            this.collisionSystem.remove(shape);
+            this.collisionSystem.update();
+            delete this.shapes[entity.id];
+        }
 
         (<any>entity).off(EntityEvent.Spawn, this.onSpawnChildEntity);
         (<any>entity).off(EntityEvent.Despawn, this.onDespawnEntity);
@@ -51,7 +65,7 @@ export class Stage extends EventEmitter {
     public step(delta: number) :number {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
-        this.sectors.step(delta);
+        this.emit('step', delta);
 
         for (let i in this.shapes) {
             const shape = this.shapes[i];
@@ -68,6 +82,20 @@ export class Stage extends EventEmitter {
 
     public fetchEntitiesAround(point :{x :number, y :number}) :Entity[] {
         return this.sectors.fetchAroundCoord(point);
+    }
+
+    private addStepper(listener: Entity) {
+        this.steppers.push(listener);
+    }
+
+    private removeStepper(listener: Entity) {
+        for(let i = this.steppers.length - 1; i >= 0; i--) {
+            if (this.steppers[i].id != listener.id)
+                continue;
+
+            this.steppers.splice(i, 1);
+            return;
+        }
     }
 
     private addOrFetchCollisionShape(entity: Entity) {
@@ -125,7 +153,7 @@ export class Stage extends EventEmitter {
     }
 
     private onDespawnEntity = (entity: Entity) => {
+        this.remove(entity);
         this.emit(EntityEvent.Despawn, entity.id);
-        this.remove(entity.id);
     }
 }

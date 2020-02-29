@@ -5,7 +5,7 @@ import { Bullet } from './entities/bullet';
 
 interface SavedState {
   tick: number,
-  entities: Entity[],
+  entities: any[],
   ranking: {name: string, bounty: number}[],
 }
 
@@ -16,7 +16,7 @@ export class CodecFacade {
     const stream = {
       tick: state.tick,
       ranking: state.ranking.map(p => {return {name: p.name, bounty: p.bounty}}),
-      entities: state.entities.map(this.encodeEntity)
+      entities: state.entities.map(p => Object.values(p).map(this.encodeEntity))
     };
 
     // TODO PSON / binary
@@ -28,8 +28,29 @@ export class CodecFacade {
     return <SavedState>JSON.parse(state);
   }
 
-  public encodeEntity(entity :Entity) {
-    return entity;
+  public encodeEntity(entity :any) {
+    return {
+        type: entity.type,
+        id: entity.id,
+        name: entity.name,
+        alive: entity.alive,
+        x: entity.x,
+        y: entity.y,
+        vx: entity.vx,
+        vy: entity.vy,
+        health: entity.health,
+        damage: entity.damage,
+        angle: entity.angle,
+        vangle: entity.vangle,
+        color: entity.color,
+        //ship
+        vmax: entity.vmax,
+        model: entity.model,
+        decals: entity.decals,
+        //bullet
+        parent: entity.parent,
+        bulletType: entity.bulletType,
+    };
   }
 
   public decodeEntity(data: Entity) {

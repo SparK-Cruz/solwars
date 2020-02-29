@@ -7,7 +7,7 @@ import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Config } from '../space/config';
-import { EntityType } from '../space/entities';
+import { EntityType, Entity } from '../space/entities';
 
 export class Client extends EventEmitter {
     private remoteId: number = null;
@@ -127,7 +127,7 @@ export class Client extends EventEmitter {
         this.remoteId = data.id;
         this.ship = <Ship>this.codec.decodeEntity(data.ship);
         this.stage.clear();
-        this.stage.add(this.ship);
+        this.stage.add(this.ship, false);
 
         this.emit(ClientEvents.SHIP, this.ship);
         this.cacheStaticInfo(data);
@@ -136,7 +136,7 @@ export class Client extends EventEmitter {
     private onServerUpdate(data: any) {
         const decoded = this.codec.decode(data);
 
-        this.stage.addAll(decoded.entities.map(e => this.codec.decodeEntity(e)));
+        this.stage.addAll([].concat(...decoded.entities).map((e: Entity) => this.codec.decodeEntity(e)));
         this.ranking = decoded.ranking;
 
         this.emit(ClientEvents.INFO, this.fetchInfo());

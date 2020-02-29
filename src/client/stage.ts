@@ -16,14 +16,17 @@ export class Stage {
         this.entities = {};
     }
 
-    public add(entity: Entity) {
+    public add(entity: Entity, removable = true) {
         if (!entity.id) return;
+        (<any>entity).removable = removable;
 
         this.entities[entity.id] = this.entities[entity.id] || entity;
         Object.assign(this.entities[entity.id], entity);
     }
 
     public addAll(entities: Entity[]) {
+        // console.log(entities);
+
         const received: number[] = [];
         for (const i in entities) {
             received.push(entities[i].id);
@@ -31,7 +34,8 @@ export class Stage {
         }
 
         for (const id in this.entities) {
-            if (received.includes(parseInt(id)))
+            if (received.includes(parseInt(id))
+                || !((<any>this.entities[id]).removable))
                 continue;
 
             this.remove(parseInt(id));
