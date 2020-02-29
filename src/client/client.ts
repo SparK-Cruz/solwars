@@ -109,7 +109,7 @@ export class Client extends EventEmitter {
     private onConnect(data: any) {
 
         this.remoteId = data.id;
-        this.ship = this.codec.decodeShip(data.ship);
+        this.ship = <Ship>this.codec.decodeEntity(data.ship);
         this.stage.clear();
         this.stage.add(this.ship);
 
@@ -120,11 +120,7 @@ export class Client extends EventEmitter {
     private onServerUpdate(data: any) {
         const decoded = this.codec.decode(data);
 
-        this.stage.addAll(decoded.entities.map(e => {
-            return e.type.name == EntityType.Ship.name
-                ? this.codec.decodeShip(<Ship>e)
-                : e;
-        }));
+        this.stage.addAll(decoded.entities.map(e => this.codec.decodeEntity(e)));
         this.ranking = decoded.ranking;
 
         this.emit(ClientEvents.INFO, this.fetchInfo());

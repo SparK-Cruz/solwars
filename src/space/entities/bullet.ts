@@ -19,10 +19,12 @@ export class Bullet extends EventEmitter implements Entity {
 
     private energy :number;
 
-    constructor(type: number, public parent: Entity) {
+    constructor(public bulletType: number, public parent: Entity) {
         super();
 
-        const trait = Config.bullets[type];
+        if (!Config.bullets) return;
+
+        const trait = Config.bullets[bulletType];
         if (!trait) return;
 
         this.x = parent.x;

@@ -1,6 +1,7 @@
-import { Entity } from './entities';
+import { Entity, EntityType } from './entities';
 import { Ship } from './entities/ship';
 import { Model } from './entities/ships/model';
+import { Bullet } from './entities/bullet';
 
 interface SavedState {
   tick: number,
@@ -31,10 +32,27 @@ export class CodecFacade {
     return entity;
   }
 
-  public decodeShip(data: Ship) {
+  public decodeEntity(data: Entity) {
+    switch(data.type.name) {
+      case EntityType.Ship.name:
+        return this.decodeShip(<Ship>data);
+      case EntityType.Bullet.name:
+        return this.decodeBullet(<Bullet>data);
+    }
+
+    return data;
+  }
+
+  private decodeShip(data: Ship) {
     const ship = new Ship(Model.byId[data.model]);
     Object.assign(ship, data);
     return ship;
+  }
+
+  private decodeBullet(data: Bullet) {
+    const bullet = new Bullet(data.bulletType, data.parent);
+    Object.assign(bullet, data);
+    return bullet;
   }
 }
 
