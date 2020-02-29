@@ -89,10 +89,8 @@ export class Ship extends EventEmitter implements entities.Entity {
   }
 
   step(delta: number) :void {
-    if (!this.alive)
-        return;
+    if (this.alive) this.readControls(delta);
 
-    this.readControls(delta);
     this.updatePhysics(delta);
     this.updateHealth(delta);
     this.updateGuns(delta);
