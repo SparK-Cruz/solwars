@@ -2,6 +2,7 @@ import { Entity, EntityType } from './entities';
 import { Ship } from './entities/ship';
 import { Model } from './entities/ships/model';
 import { Bullet } from './entities/bullet';
+import { ShipDebris } from './entities/ship_debris';
 
 interface SavedState {
   tick: number,
@@ -30,26 +31,30 @@ export class CodecFacade {
 
   public encodeEntity(entity :any) {
     return {
-        type: entity.type,
-        id: entity.id,
-        name: entity.name,
-        alive: entity.alive,
-        x: entity.x,
-        y: entity.y,
-        vx: entity.vx,
-        vy: entity.vy,
-        health: entity.health,
-        damage: entity.damage,
-        angle: entity.angle,
-        vangle: entity.vangle,
-        color: entity.color,
-        //ship
-        vmax: entity.vmax,
-        model: entity.model,
-        decals: entity.decals,
-        //bullet
-        parent: entity.parent,
-        bulletType: entity.bulletType,
+      type: entity.type,
+      id: entity.id,
+      name: entity.name,
+      alive: entity.alive,
+      x: entity.x,
+      y: entity.y,
+      vx: entity.vx,
+      vy: entity.vy,
+      health: entity.health,
+      damage: entity.damage,
+      angle: entity.angle,
+      vangle: entity.vangle,
+      color: entity.color,
+      //ship
+      vmax: entity.vmax,
+      model: entity.model,
+      decals: entity.decals,
+      control: entity.control,
+      //bullet
+      parent: entity.parent,
+      bulletType: entity.bulletType,
+      //ship debris
+      size: entity.size,
+      energy: entity.energy,
     };
   }
 
@@ -59,6 +64,8 @@ export class CodecFacade {
         return this.decodeShip(<Ship>data);
       case EntityType.Bullet.name:
         return this.decodeBullet(<Bullet>data);
+      case EntityType.ShipDebris.name:
+        return this.decodeShipDebris(<ShipDebris>data);
     }
 
     return data;
@@ -74,6 +81,12 @@ export class CodecFacade {
     const bullet = new Bullet(data.bulletType, data.parent);
     Object.assign(bullet, data);
     return bullet;
+  }
+
+  private decodeShipDebris(data: ShipDebris) {
+    const shipDebris = new ShipDebris(data.size, data.parent);
+    Object.assign(shipDebris, data);
+    return shipDebris;
   }
 }
 

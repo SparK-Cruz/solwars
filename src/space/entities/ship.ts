@@ -97,14 +97,17 @@ export class Ship extends EventEmitter implements entities.Entity {
   }
 
   collide(other :entities.Entity, result :any) :void {
+    if (other.type.name == entities.EntityType.ShipDebris.name)
+        return;
+
     const push = {
       x: result.overlap * result.overlap_x,
       y: result.overlap * result.overlap_y
     };
     this.x -= push.x;
     this.y -= push.y;
-    this.vx -= result.overlap / 2 * result.overlap_x;
-    this.vy -= result.overlap / 2 * result.overlap_y;
+    this.vx -= result.overlap / 100 * result.overlap_x;
+    this.vy -= result.overlap / 100 * result.overlap_y;
 
     this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) / 16;
     if (typeof (<any>other).addDamage !== 'undefined') {
@@ -119,7 +122,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.updateHealth(0);
 
     if (wasAlive && !this.alive) {
-      this.emit(entities.EntityEvent.Die, origin);
+      this.die(origin);
     }
   }
 
@@ -223,6 +226,31 @@ export class Ship extends EventEmitter implements entities.Entity {
     const a2 = Math.atan2(y2, x2);
 
     return (a2 - a1) * 180 / Math.PI;
+  }
+
+  private die(killer: any) {
+    const debris = 5;
+    const size = 6;
+    const parent = {
+        id: this.id,
+        x: this.x,
+        y: this.y,
+        vx: this.vx,
+        vy: this.vy,
+        color: this.color,
+    };
+
+    for(let i = 0; i < debris; i++) {
+      const spreadAngle = 360 / (i + 1) * Math.PI / 180;
+      const offset = {
+        x: size/2 * Math.sin(spreadAngle),
+        y: -size/2 * Math.cos(spreadAngle),
+      };
+
+      this.emit(entities.EntityEvent.Spawn, entities.EntityType.ShipDebris, size, parent, offset);
+    }
+
+    this.emit(entities.EntityEvent.Die, killer);
   }
 
   private updateHealth(delta: number) {

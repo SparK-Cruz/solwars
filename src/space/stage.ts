@@ -2,6 +2,8 @@ import { EventEmitter } from 'events';
 import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
 import { Bullet } from './entities/bullet';
 import { Config } from './config';
+import { ShipDebris } from './entities/ship_debris';
+import { Ship } from './entities/ship';
 
 export class Stage extends EventEmitter {
     public tick = 0;
@@ -139,6 +141,9 @@ export class Stage extends EventEmitter {
         switch(entityType.name) {
             case EntityType.Bullet.name:
                 entity = new Bullet(entityModel, parent);
+                break;
+            case EntityType.ShipDebris.name:
+                entity = new ShipDebris(entityModel, <Ship>parent);
                 break;
             // case EntityType.Ship.name:
             // ships aren't child entities yet... we still don't have carriers nor turrets...

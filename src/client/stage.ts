@@ -25,8 +25,6 @@ export class Stage {
     }
 
     public addAll(entities: Entity[]) {
-        // console.log(entities);
-
         const received: number[] = [];
         for (const i in entities) {
             received.push(entities[i].id);

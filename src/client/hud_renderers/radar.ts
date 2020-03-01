@@ -144,6 +144,10 @@ export class Radar implements Renderable {
                 ctx.fillStyle = "#ff0000";
                 size = 1;
             }
+            if (entity.type.name === EntityType.ShipDebris.name) {
+                ctx.fillStyle = "rgba(255, 159, 51, 0.2)";
+                size = 1;
+            }
 
             const pos = this.camera.translate(entity);
             ctx.fillRect(pos.x * this.scale - size / 2, pos.y * this.scale - size / 2, size, size);

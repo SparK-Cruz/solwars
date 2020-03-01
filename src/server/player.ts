@@ -134,8 +134,9 @@ export class Player extends EventEmitter {
             death.killer = (<Bullet>killer).parent;
         }
 
+        this.ship.emit(EntityEvent.Despawn, this.ship);
+
         setTimeout(() => {
-            this.ship.emit(EntityEvent.Despawn, this.ship);
             this.socket.emit(CodecEvents.DEATH);
         }, 5000);
 

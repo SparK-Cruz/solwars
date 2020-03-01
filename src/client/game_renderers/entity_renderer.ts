@@ -6,6 +6,8 @@ import { ShipRenderer } from "./ship_renderer";
 import { Ship } from "../../space/entities/ship";
 import { BulletRenderer } from "./bullet_renderer";
 import { Bullet } from "../../space/entities/bullet";
+import { ShipDebrisRenderer } from "./ship_debris_renderer";
+import { ShipDebris } from "../../space/entities/ship_debris";
 
 export class EntityRenderer implements Renderable {
     private ctx: CanvasRenderingContext2D;
@@ -61,6 +63,8 @@ export class EntityRenderer implements Renderable {
                 return new ShipRenderer(<Ship>entity);
             case EntityType.Bullet.name:
                 return new BulletRenderer(<Bullet>entity);
+            case EntityType.ShipDebris.name:
+                return new ShipDebrisRenderer(<ShipDebris>entity);
             default:
                 console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
         }
