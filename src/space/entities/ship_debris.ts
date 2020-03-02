@@ -2,8 +2,6 @@ import { EventEmitter } from 'events';
 import { Entity, EntityType, EntityEvent } from '../entities';
 import { Ship } from './ship';
 
-const SPREAD = 1;
-
 export class ShipDebris extends EventEmitter implements Entity {
     public id: number;
     public type = EntityType.ShipDebris;
@@ -45,9 +43,6 @@ export class ShipDebris extends EventEmitter implements Entity {
 
         this.collisionMap = [[-nums[0], -nums[0]], [-nums[1], nums[1]], [nums[2], nums[2]]];
 
-        this.vx += SPREAD * Math.sin(this.angle * Math.PI / 180);
-        this.vy -= SPREAD * Math.cos(this.angle * Math.PI / 180);
-
         this.angle = (Math.random() * 360);
     }
 
@@ -57,17 +52,13 @@ export class ShipDebris extends EventEmitter implements Entity {
     }
 
     public collide(other: Entity, result: any): void {
-        if (other.type.name == EntityType.ShipDebris.name
-            && (<ShipDebris>other).parent == this.parent)
-            return;
-
         Entity.defaultCollide.call(this, other, result);
     }
 
     private updatePhysics(delta: number): void {
         this.vx *= 0.995;
         this.vy *= 0.995;
-        this.vangle *= 0.97;
+        this.vangle *= 0.997;
         this.angle += this.vangle;
         this.x += this.vx * delta;
         this.y += this.vy * delta;

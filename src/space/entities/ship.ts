@@ -222,8 +222,8 @@ export class Ship extends EventEmitter implements entities.Entity {
     for(let i = 0; i < debris; i++) {
       const angle = (360 / debris) * (i + 1);
       const offset = {
-        x: size/2 * Math.sin(angle * Math.PI / 180),
-        y: -size/2 * Math.cos(angle * Math.PI / 180),
+        x: size * 2.5 * Math.sin(angle * Math.PI / 180),
+        y: -size * 2.5 * Math.cos(angle * Math.PI / 180),
       };
       this.emit(entities.EntityEvent.Spawn, entities.EntityType.ShipDebris, {size, angle}, parent, offset);
     }
