@@ -112,7 +112,7 @@ export class Bot extends Input {
     }
 
     public connect() {
-        this.client.connect('BOT ' + this.name);
+        this.client.connect('\u2063NPC ' + this.name);
         this.lastSeen = Date.now();
     }
 

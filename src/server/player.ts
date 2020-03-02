@@ -91,6 +91,11 @@ export class Player extends EventEmitter {
             // Customize ship here
             const decal = this.randomShades(167);
 
+            if (name.startsWith('\u2063NPC ')) {
+                decal.color = '#333333';
+                decal.shade = '#a2a2a2';
+            }
+
             ship.decals[0].color = decal.color;
             ship.color = decal.shade;
 
