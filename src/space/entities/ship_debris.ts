@@ -2,7 +2,7 @@ import { EventEmitter } from 'events';
 import { Entity, EntityType, EntityEvent } from '../entities';
 import { Ship } from './ship';
 
-const SPREAD = Math.random() * 0.1 + 0.1;
+const SPREAD = 1;
 
 export class ShipDebris extends EventEmitter implements Entity {
     public id: number;
@@ -10,6 +10,7 @@ export class ShipDebris extends EventEmitter implements Entity {
 
     public sectorKey: string = "";
     public collisionMap: number[][] = [];
+    public mass = 10;
 
     public x: number;
     public y: number;
@@ -19,10 +20,11 @@ export class ShipDebris extends EventEmitter implements Entity {
     public vangle: number;
 
     public color: string;
+    public size: number;
 
     public energy: number = 1000;
 
-    constructor(public size: number, public parent: Ship) {
+    constructor(public options: any, public parent: Ship) {
         super();
 
         this.x = parent.x;
@@ -31,19 +33,22 @@ export class ShipDebris extends EventEmitter implements Entity {
         this.vy = parent.vy / 2;
         this.color = parent.color;
 
-        this.angle = Math.round(Math.random() * 360);
-        this.vangle = Math.random() * 1;
+        this.size = options.size;
+        this.angle = options.angle;
+        this.vangle = (Math.random() * 10) - 5;
 
         const nums = [
-            Math.round(Math.random() * 2) + size,
-            Math.round(Math.random() * 2) + size,
-            Math.round(Math.random() * 2) + size,
+            Math.round(Math.random() * 2) + options.size,
+            Math.round(Math.random() * 2) + options.size,
+            Math.round(Math.random() * 2) + options.size,
         ];
 
         this.collisionMap = [[-nums[0], -nums[0]], [-nums[1], nums[1]], [nums[2], nums[2]]];
 
         this.vx += SPREAD * Math.sin(this.angle * Math.PI / 180);
         this.vy -= SPREAD * Math.cos(this.angle * Math.PI / 180);
+
+        this.angle = (Math.random() * 360);
     }
 
     public step(delta: number): void {
@@ -52,17 +57,11 @@ export class ShipDebris extends EventEmitter implements Entity {
     }
 
     public collide(other: Entity, result: any): void {
-        const push = {
-            x: result.overlap * result.overlap_x,
-            y: result.overlap * result.overlap_y
-        };
-        this.vx -= result.overlap / 100 * result.overlap_x;
-        this.vy -= result.overlap / 100 * result.overlap_y;
-        this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) % 2;
+        if (other.type.name == EntityType.ShipDebris.name
+            && (<ShipDebris>other).parent == this.parent)
+            return;
 
-        if (typeof (<any>other).addDamage !== 'undefined') {
-            (<any>other).addDamage(result.overlap, this);
-        }
+        Entity.defaultCollide.call(this, other, result);
     }
 
     private updatePhysics(delta: number): void {

@@ -65,6 +65,7 @@ export class CodecFacade {
       parent: entity.parent,
       bulletType: entity.bulletType,
       //ship debris
+      options: entity.options,
       size: entity.size,
       energy: entity.energy,
     };
@@ -96,7 +97,7 @@ export class CodecFacade {
   }
 
   private decodeShipDebris(data: ShipDebris) {
-    const shipDebris = new ShipDebris(data.size, data.parent);
+    const shipDebris = new ShipDebris(data.options, data.parent);
     Object.assign(shipDebris, data);
     return shipDebris;
   }

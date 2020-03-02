@@ -15,6 +15,7 @@ export class Rock implements Entity {
         [-30, 0],
         [-21, -21],
     ];
+    public mass = 1000;
 
     public x :number;
     public y :number;
@@ -36,9 +37,7 @@ export class Rock implements Entity {
     }
 
     public collide(other :Entity, result :any) :void {
-        if (typeof (<any>other).addDamage !== 'undefined') {
-            (<any>other).addDamage(result.overlap * 140, other);
-        }
+        Entity.defaultCollide.call(this, other, result);
     }
 
     private updatePhysics(delta: number): void {
