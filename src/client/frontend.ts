@@ -15,12 +15,20 @@ nameField.value = localStorage.getItem('name');
 nameField.focus();
 nameField.select();
 
-form.addEventListener('submit', e => {
-    e.preventDefault();
-
+engine.on('start', () => {
     button.blur();
     nameField.blur();
     (<HTMLFieldSetElement>form.firstElementChild).disabled = true;
+});
+
+engine.on('stop', () => {
+    (<HTMLFieldSetElement>form.firstElementChild).disabled = false;
+    nameField.focus();
+    nameField.select();
+});
+
+form.addEventListener('submit', e => {
+    e.preventDefault();
 
     const name = nameField.value || defaultName;
     localStorage.setItem('name', name == defaultName ? '' : name);
@@ -40,8 +48,4 @@ window.addEventListener('keydown', e => {
     e.preventDefault();
 
     engine.stop();
-
-    (<HTMLFieldSetElement>form.firstElementChild).disabled = false;
-    nameField.focus();
-    nameField.select();
 });

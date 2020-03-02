@@ -9,12 +9,19 @@ import { Bullet } from "../../space/entities/bullet";
 import { ShipDebrisRenderer } from "./ship_debris_renderer";
 import { ShipDebris } from "../../space/entities/ship_debris";
 
+const CACHE_TTL = 60 * 64; // 60 seconds at 64 fps
+
 export class EntityRenderer implements Renderable {
     private ctx: CanvasRenderingContext2D;
     private cache: any = {};
+    private cacheCycle: number = 0;
 
     public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
         this.ctx = canvas.getContext('2d');
+    }
+
+    public clearCache() {
+        this.cache = {};
     }
 
     public render() {
@@ -26,6 +33,12 @@ export class EntityRenderer implements Renderable {
 
             const renderer = this.fetchRenderer(entity);
             this.renderEntity(entity, renderer, offset);
+        }
+
+        if (++this.cacheCycle % CACHE_TTL == 0) {
+            this.cacheCycle = 0;
+            console.log('Clearing entity cache: '+Object.values(this.cache).length+' objects');
+            this.clearCache();
         }
 
         return this.canvas;

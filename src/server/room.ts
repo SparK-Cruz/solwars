@@ -105,7 +105,7 @@ export class Room {
     }
 
     private topPlayers() {
-        return this.ranking = this.ranking || this.players.filter(p => p.ship && p.bounty).sort((a, b) => b.bounty - a.bounty).slice(0, 10);
+        return this.ranking = this.ranking || this.players.filter(p => p.ship && p.bounty).sort((a, b) => b.bounty - a.bounty).slice(0, 20);
     }
 
     private setupListeners() {

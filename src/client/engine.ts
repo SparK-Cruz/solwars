@@ -1,3 +1,4 @@
+import { EventEmitter } from 'events';
 import { Client, ClientEvents, ClientInfo } from "./client";
 import { Input } from "./input";
 import { Camera } from "./camera";
@@ -7,7 +8,7 @@ import { HudRenderer } from "./hud_renderer";
 const FRAMESKIP_THRESHOLD: number = 55;
 let lastTick: number = null;
 
-export class Engine {
+export class Engine extends EventEmitter {
     private input: Input;
     private client: Client;
     private camera: Camera;
@@ -15,6 +16,8 @@ export class Engine {
     private hudRenderer: HudRenderer;
 
     public constructor(private game: HTMLCanvasElement, private hud: HTMLCanvasElement) {
+        super();
+
         this.input = new Input(window);
         this.client = new Client(this.input);
         this.camera = new Camera();
@@ -31,6 +34,7 @@ export class Engine {
     public start(name: string, callback: Function = null) {
         const timeout = setTimeout(() => {
             callback && callback({error: 'Connection Timeout'});
+            this.stop();
         }, 10000);
 
         const once = (data: any) => {
@@ -48,6 +52,8 @@ export class Engine {
 
         this.client.once(ClientEvents.SHIP, once);
         this.client.connect(name);
+
+        this.emit('start');
     }
 
     public stop() {
@@ -55,6 +61,11 @@ export class Engine {
         this.input.disable();
         this.client.disconnect();
         this.hideCanvas();
+
+        this.gameRenderer.clearCache();
+        this.client.getStage().clear();
+
+        this.emit('stop');
     }
 
     private listenClient(client: Client) {
@@ -76,8 +87,10 @@ export class Engine {
             this.hudRenderer.render();
         }
 
-        if (!this.running)
+        if (!this.running) {
+            this.stop();
             return;
+        }
 
         requestAnimationFrame(() => this.renderFrame());
     }

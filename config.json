@@ -79,20 +79,20 @@
     },
     "bullets": [
         {
-            "speed": 7,
-            "energy": 300,
+            "speed": 6,
+            "energy": 400,
             "cooldown": 10,
             "color": "rgb(255, 0, 0)"
         },
         {
             "speed": 6,
-            "energy": 400,
+            "energy": 700,
             "cooldown": 10,
             "color": "rgb(255, 255, 0)"
         },
         {
             "speed": 6,
-            "energy": 500,
+            "energy": 1000,
             "cooldown": 10,
             "color": "rgb(0, 0, 255)"
         }

@@ -229,15 +229,18 @@ export class Bot extends Input {
             this.pool.forEach((bot: Bot) => bot.step());
         }, 1000/32);
 
+        const onInfo = (info: ClientInfo) => {
+            this.adjustBotCount(this.bots, info.ranking.length);
+        };
+
         this.trackLoop = setInterval(() => {
             if (!this.pool.length) {
                 // make sure pool zero exists
                 this.adjustBotCount(1);
             }
 
-            this.pool[0].client.once(ClientEvents.INFO, (info: ClientInfo) => {
-                this.adjustBotCount(this.bots, info.ranking.length);
-            });
+            this.pool[0].client.off(ClientEvents.INFO, onInfo);
+            this.pool[0].client.once(ClientEvents.INFO, onInfo);
 
             this.pool.forEach((bot: Bot) => {
                 if (!bot.client

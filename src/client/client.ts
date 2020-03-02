@@ -7,7 +7,7 @@ import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Config } from '../space/config';
-import { EntityType, Entity } from '../space/entities';
+import { Entity } from '../space/entities';
 
 export class Client extends EventEmitter {
     private remoteId: number = null;
@@ -94,6 +94,10 @@ export class Client extends EventEmitter {
     private bindEvents(socket: SocketIOClient.Socket) {
         socket.on(CodecEvents.CONNECT, () => {
             this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
+        });
+
+        socket.on(CodecEvents.DISCONNECT, () => {
+            this.remoteId = null;
         });
 
         socket.on(CodecEvents.ACCEPT, (data: any) => {

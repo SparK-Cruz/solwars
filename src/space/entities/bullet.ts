@@ -6,18 +6,19 @@ export class Bullet extends EventEmitter implements Entity {
     public id :number;
     public type = EntityType.Bullet;
 
-    public sectorKey :string = "";
-    public collisionMap = [[0, 0]];
+    public sectorKey: string = "";
+    public collisionMap = [[-1, -1], [-1, 1], [1, 1], [1, -1]];
 
-    public x :number;
-    public y :number;
-    public vx :number;
-    public vy :number;
-    public angle :number;
+    public x: number;
+    public y: number;
+    public vx: number;
+    public vy: number;
+    public angle: number;
 
-    public color :string;
+    public color: string;
 
-    private energy :number;
+    private energy: number;
+    private damage: number;
 
     constructor(public bulletType: number, public parent: Entity) {
         super();
@@ -33,6 +34,7 @@ export class Bullet extends EventEmitter implements Entity {
         this.vy = parent.vy;
         this.angle = parent.angle;
         this.energy = trait.energy;
+        this.damage = trait.energy;
         this.color = trait.color;
 
         this.vx += trait.speed * Math.sin(this.angle * Math.PI / 180);
@@ -49,7 +51,7 @@ export class Bullet extends EventEmitter implements Entity {
             return;
 
         if (typeof (<any>other).addDamage !== 'undefined') {
-            (<any>other).addDamage(this.energy * 2, this);
+            (<any>other).addDamage(this.damage, this);
         }
 
         this.energy = 0;
@@ -67,6 +69,6 @@ export class Bullet extends EventEmitter implements Entity {
             return;
         }
 
-        this.energy -= 0.5 * delta;
+        this.energy -= 1 * delta;
     }
 }
