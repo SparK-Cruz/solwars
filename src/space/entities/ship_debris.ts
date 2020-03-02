@@ -82,11 +82,4 @@ export class ShipDebris extends EventEmitter implements Entity {
 
         this.energy -= delta;
     }
-
-    private angleDiff(x1 :number, y1 :number, x2 :number, y2 :number) {
-        const a1 = Math.atan2(y1, x1);
-        const a2 = Math.atan2(y2, x2);
-
-        return (a2 - a1) * 180 / Math.PI;
-    }
 }

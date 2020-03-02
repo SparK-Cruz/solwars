@@ -207,15 +207,8 @@ export class Ship extends EventEmitter implements entities.Entity {
     }
   }
 
-  private angleDiff(x1 :number, y1 :number, x2 :number, y2 :number) {
-    const a1 = Math.atan2(y1, x1);
-    const a2 = Math.atan2(y2, x2);
-
-    return (a2 - a1) * 180 / Math.PI;
-  }
-
   private die(killer: any) {
-    const debris = 5;
+    const debris = 7;
     const size = 6;
     const parent = {
         id: this.id,

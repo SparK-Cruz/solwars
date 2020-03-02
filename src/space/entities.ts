@@ -16,6 +16,13 @@ export interface Entity {
 }
 
 export namespace Entity {
+    function angleDiff(x1 :number, y1 :number, x2 :number, y2 :number) {
+        const a1 = Math.atan2(y1, x1);
+        const a2 = Math.atan2(y2, x2);
+
+        return (a2 - a1) * 180 / Math.PI;
+    }
+
     export function defaultCollide(other: Entity, result: any): void {
         const push = {
             x: result.overlap * result.overlap_x,
@@ -29,7 +36,7 @@ export namespace Entity {
         this.vx -= push.x * (other.mass / mass);
         this.vy -= push.y * (other.mass / mass);
 
-        this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) * (other.mass / mass) % 4;
+        this.vangle += angleDiff(other.vx, other.vy, push.x, push.y) * (other.mass / mass) % 4;
 
         if (typeof (<any>other).addDamage !== 'undefined') {
             (<any>other).addDamage(result.overlap * 100 * (this.mass / mass), other);
