@@ -1,7 +1,7 @@
 import { Room } from './room';
 import { Ship } from '../space/entities/ship';
 import { Model as ShipModel } from '../space/entities/ships/model';
-import { CodecEvents } from '../space/codec_facade';
+import { CodecEvents, PlayerDeath, DeathCauses } from '../space/codec_facade';
 import { EntityEvent, Entity, EntityType } from '../space/entities';
 import { Bullet } from '../space/entities/bullet';
 import { Config } from '../space/config';
@@ -11,18 +11,6 @@ export module PlayerEvents {
     export const Ship = 'ship';
     export const Disconnect = 'disconnect';
     export const Die = 'die';
-}
-
-export module DeathCauses {
-    export const Collision = 'collision';
-    export const Bullet = 'bullet';
-}
-
-export interface PlayerDeath {
-    cause: string,
-    bounty: number,
-    killer: Entity,
-    type: EntityType,
 }
 
 export class Player extends EventEmitter {
@@ -127,7 +115,7 @@ export class Player extends EventEmitter {
     }
 
     private onDie(killer: Entity) {
-        const death = {
+        const death: PlayerDeath = {
             cause: DeathCauses.Collision,
             bounty: this.bounty,
             killer: killer,
@@ -142,9 +130,10 @@ export class Player extends EventEmitter {
         this.ship.emit(EntityEvent.Despawn, this.ship);
 
         setTimeout(() => {
-            this.socket.emit(CodecEvents.DEATH);
+            this.socket.emit(CodecEvents.RESPAWN);
         }, 5000);
 
+        this.socket.emit(CodecEvents.DEATH, death);
         this.emit(PlayerEvents.Die, death);
     }
 

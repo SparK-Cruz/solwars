@@ -1,7 +1,7 @@
 import * as socketio from 'socket.io-client';
 
 import { Stage } from './stage';
-import { CodecFacade, CodecEvents } from '../space/codec_facade';
+import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
 import { Ship } from '../space/entities/ship';
 import { Input } from './input';
 import { EventEmitter } from 'events';
@@ -43,7 +43,7 @@ export class Client extends EventEmitter {
     }
 
     public get connected() {
-        return this.socket && this.socket.connected;
+        return !!this.remoteId;
     }
 
     public connect(name: string) {
@@ -111,8 +111,11 @@ export class Client extends EventEmitter {
             this.onServerRemoveObject(data);
         });
 
-        socket.on(CodecEvents.DEATH, () => {
-            this.onDeath();
+        socket.on(CodecEvents.DEATH, (death: any) => {
+            this.onDeath(death);
+        });
+        socket.on(CodecEvents.RESPAWN, () => {
+            this.onRespawn();
         });
 
         this.input.change((state: number) => {
@@ -146,7 +149,11 @@ export class Client extends EventEmitter {
         this.stage.remove(data);
     }
 
-    private onDeath() {
+    private onDeath(death: PlayerDeath) {
+        console.log(`You died for ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
+        this.ship.alive = false;
+    }
+    private onRespawn() {
         // Get a new ship
         this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
     }

@@ -1,9 +1,9 @@
 import * as socketio from 'socket.io';
 import { Server } from 'http';
 
-import { CodecFacade, CodecEvents } from '../space/codec_facade';
+import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
 import { Stage } from '../space/stage';
-import { Player, PlayerEvents, PlayerDeath } from './player';
+import { Player, PlayerEvents } from './player';
 import { EntityEvent } from '../space/entities';
 import { Config } from '../space/config';
 import { Ship } from '../space/entities/ship';

@@ -10,6 +10,18 @@ interface SavedState {
   ranking: {name: string, bounty: number}[],
 }
 
+export module DeathCauses {
+    export const Collision = 'collision';
+    export const Bullet = 'bullet';
+}
+
+export interface PlayerDeath {
+    cause: string,
+    bounty: number,
+    killer: Entity,
+    type: EntityType,
+}
+
 export class CodecFacade {
   public constructor() {}
 
@@ -97,6 +109,7 @@ export namespace CodecEvents {
   export const STEP = "step";
   export const REMOVE_OBJECT = "removal";
   export const DEATH = "death";
+  export const RESPAWN = "respawn";
 
   // server reads
   export const SEND_INPUT = "input";
