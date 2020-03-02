@@ -1,4 +1,4 @@
-import { Client, ClientEvents } from "../client/client";
+import { Client, ClientEvents, ClientInfo } from "../client/client";
 import { Input } from "../client/input";
 import { Mapping } from "../space/entities/ships/mapping";
 import { EntityType } from "../space/entities";
@@ -54,26 +54,33 @@ const ANGLE_TOLERANCE = 2;
 const ENERGY_RESERVE = 0.65;
 
 const ONE_MINUTE = 3600000;
+const MAX_BOTS = 10;
 
 export class Bot extends Input {
+    private static bots = 0;
     private static pool: Bot[] = [];
 
     private static mainLoop: NodeJS.Timeout;
     private static trackLoop: NodeJS.Timeout;
 
     public static set(bots: number) {
-        bots = Math.min(Math.abs(bots), botNames.length);
+        this.disableLoops();
+        bots = Math.min(Math.abs(bots), botNames.length, MAX_BOTS);
 
         console.log(`SPAWNING ${bots} BOTS!`);
 
-        if (this.pool.length != bots) {
-            if (this.pool.length == 0) {
-                this.setupLoops();
-            }
-            if (bots == 0) {
-                this.disableLoops();
-            }
-        }
+        this.adjustBotCount(bots);
+        this.setupLoops();
+
+        this.bots = bots;
+    }
+
+    private static adjustBotCount(ideal: number, players: number = 0) {
+        const bots = Math.max(this.pool.length - (players - ideal), 0);
+        if (bots == this.pool.length)
+            return;
+
+        console.log(`ADJUSTING BOTS TO ${bots}`);
 
         if (this.pool.length > bots) {
             const removed = this.pool.splice(bots);
@@ -223,6 +230,15 @@ export class Bot extends Input {
         }, 1000/32);
 
         this.trackLoop = setInterval(() => {
+            if (!this.pool.length) {
+                // make sure pool zero exists
+                this.adjustBotCount(1);
+            }
+
+            this.pool[0].client.once(ClientEvents.INFO, (info: ClientInfo) => {
+                this.adjustBotCount(this.bots, info.ranking.length);
+            });
+
             this.pool.forEach((bot: Bot) => {
                 if (!bot.client
                     || !bot.client.connected
