@@ -17,26 +17,17 @@ export interface Entity {
 
 export namespace Entity {
     export function defaultCollide(other: Entity, result: any): void {
-        const rigidness = 0.8;
         const push = {
             x: result.overlap * result.overlap_x,
             y: result.overlap * result.overlap_y
         };
-        const mass = this.mass + other.mass;
-        const thisMomentum = {
-            x: this.vx * this.mass,
-            y: this.vy * this.mass,
-        }
-        const otherMomentum = {
-            x: other.vx * other.mass,
-            y: other.vy * other.mass,
-        }
         this.x -= push.x;
         this.y -= push.y;
-        this.vx -= this.vx * (other.mass / mass) * rigidness;
-        this.vy -= this.vy * (other.mass / mass) * rigidness;
-        this.vx += other.vx * (other.mass / mass) * rigidness;
-        this.vy += other.vy * (other.mass / mass) * rigidness;
+
+        const mass = this.mass + other.mass;
+
+        this.vx -= push.x * (other.mass / mass);
+        this.vy -= push.y * (other.mass / mass);
 
         this.vangle += this.angleDiff(other.vx, other.vy, push.x, push.y) * (other.mass / mass) % 4;
 
