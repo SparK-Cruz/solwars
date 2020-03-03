@@ -86,7 +86,9 @@ form input.btn {
 #keys-form {
     float: right;
 }
-
+#keys-form .template {
+    display: none;
+}
 #keys-form input[type=text]:focus {
     border-color: #f93;
 }
