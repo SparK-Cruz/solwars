@@ -1,5 +1,20 @@
 import { Mapping } from '../space/entities/ships/mapping';
 
+export const DEFAULT_MAPPING = {
+    'k38': Mapping.FORWARD, //Arrow up
+    'k87': Mapping.FORWARD, //W
+    'k40': Mapping.BACKWARD, //Arrow down
+    'k83': Mapping.BACKWARD, //S
+    'k37': Mapping.LEFT, //Arrow left
+    'k65': Mapping.LEFT, //A
+    'k39': Mapping.RIGHT, //Arrow right
+    'k68': Mapping.RIGHT, //D
+    'k81': Mapping.STRAFE_LEFT, //Q
+    'k69': Mapping.STRAFE_RIGHT, //E
+    'k32': Mapping.SHOOT, //SPACE BAR
+    'k16': Mapping.AFTERBURNER, //SHIFT
+};
+
 export class Input {
     private onChange = function(state :number) :void{};
     protected mapping :Mapping = new Mapping();
@@ -7,18 +22,7 @@ export class Input {
     private enabler: Function;
     private disabler: Function;
 
-    map :any = {
-        'k38': Mapping.FORWARD, //Arrow up
-        'k40': Mapping.BACKWARD, //Arrow down
-        'k37': Mapping.LEFT, //Arrow left
-        'k39': Mapping.RIGHT, //Arrow right
-        'k69': Mapping.SHOOT, //E
-        'k16': Mapping.AFTERBURNER, //SHIFT
-        'k17': Mapping.SHOOT, //CTRL
-        'k81': Mapping.AFTERBURNER, //Q
-        'k65': Mapping.STRIFE_LEFT, //A
-        'k68': Mapping.STRIFE_RIGHT, //D
-    };
+    map :any = DEFAULT_MAPPING;
 
     public constructor(emmiter: any) {
         const keydown = (e :KeyboardEvent) => {
@@ -32,6 +36,10 @@ export class Input {
             if (this.disabler)
                 return;
 
+            if (localStorage.keyMapping) {
+                this.map = JSON.parse(localStorage.keyMapping);
+            }
+
             emmiter.addEventListener('keydown', keydown);
             emmiter.addEventListener('keyup', keyup);
 
@@ -41,8 +49,6 @@ export class Input {
                 this.disabler = null;
             };
         };
-
-        this.enable();
     }
 
     public enable() {
@@ -54,18 +60,18 @@ export class Input {
     }
 
     public keydown(e :KeyboardEvent) :void {
-        if (typeof this.map['k'+e.keyCode] == 'undefined')
+        if (typeof this.map['k'+e.which] == 'undefined')
             return;
 
-        if (this.mapping.press(this.map['k'+e.keyCode]))
+        if (this.mapping.press(this.map['k'+e.which]))
             this.updateControl(this.mapping.state);
     }
 
     public keyup(e :KeyboardEvent) :void {
-        if (typeof this.map['k'+e.keyCode] == 'undefined')
+        if (typeof this.map['k'+e.which] == 'undefined')
             return;
 
-        if (this.mapping.release(this.map['k'+e.keyCode]))
+        if (this.mapping.release(this.map['k'+e.which]))
             this.updateControl(this.mapping.state);
     }
 

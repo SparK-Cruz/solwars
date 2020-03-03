@@ -122,7 +122,7 @@ export class Ship extends EventEmitter implements entities.Entity {
 
   private readControls(delta: number) {
     this.readThrust(delta);
-    this.readStrife(delta);
+    this.readStrafe(delta);
     this.readTurn();
     this.readShoot();
   }
@@ -140,7 +140,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     this.vx += (thrust * power) * Math.sin(inRads(this.angle)) * delta;
     this.vy -= (thrust * power) * Math.cos(inRads(this.angle)) * delta;
   }
-  private readStrife(delta: number) {
+  private readStrafe(delta: number) {
     let strife = Control.strifing(this.control);
 
     let power = this.power * 0.7;

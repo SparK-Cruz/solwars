@@ -9,8 +9,8 @@ export namespace Control {
     }
     export function strifing(state :number) :number {
         let result = 0;
-        result += (state & Mapping.STRIFE_RIGHT) > 0 ? 1 : 0;
-        result -= (state & Mapping.STRIFE_LEFT) > 0 ? 1 : 0;
+        result += (state & Mapping.STRAFE_RIGHT) > 0 ? 1 : 0;
+        result -= (state & Mapping.STRAFE_LEFT) > 0 ? 1 : 0;
         return result;
     }
     export function turning(state :number) :number {

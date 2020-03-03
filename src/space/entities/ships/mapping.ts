@@ -3,8 +3,8 @@ export class Mapping {
     static BACKWARD = 2;      //00000010
     static LEFT = 4;          //00000100
     static RIGHT = 8;         //00001000
-    static STRIFE_LEFT = 16;  //00010000
-    static STRIFE_RIGHT = 32; //00100000
+    static STRAFE_LEFT = 16;  //00010000
+    static STRAFE_RIGHT = 32; //00100000
     static SHOOT = 64;        //01000000
     static AFTERBURNER = 128; //10000000
 

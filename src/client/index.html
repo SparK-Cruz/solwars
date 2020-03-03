@@ -3,109 +3,38 @@
     <head>
         <meta charset="utf-8" />
         <title>Sol Wars</title>
-        <style>
-            body {
-                margin: 0px;
-                padding: 0px;
-                color: #39f;
-                background-color: black;
-            }
-            #front-end {
-                padding: 20px;
-                font-family: sans-serif;
-            }
-            #front-end header {
-                text-align: center;
-            }
-            #front-end header h1 {
-                margin: 5px auto;
-                line-height: 44px;
-                font-size: 81px;
-                width: max-content;
-            }
-            #front-end header h1 span {
-                display: block;
-                width: inherit;
-                text-align: left;
-                font-size: 16px;
-                font-weight: normal;
-                margin-bottom: 0px;
-            }
-
-            #join-form {
-                display: block;
-                width: 270px;
-                padding: 50px;
-                margin: 100px auto;
-                border: 2px solid #202020;
-                border-radius: 10px;
-            }
-            #join-form fieldset {
-                border: none;
-            }
-
-            #join-form div {
-                width: 250px;
-                margin-bottom: 10px;
-                overflow: hidden;
-            }
-
-            #join-form label {
-                width: 250px;
-                margin-bottom: 4px;
-                font-size: 10px;
-                font-weight: bold;
-                text-transform: uppercase;
-            }
-
-            #join-form input {
-                border: 2px solid #39f;
-                border-radius: 10px;
-                box-sizing: border-box;
-                padding: 10px 10px;
-                width: 250px;
-                color: #39f;
-                background-color: #000000;
-                font-weight: bold;
-            }
-
-            #join-form input::placeholder {
-                color: #069;
-            }
-
-            #join-form input.btn {
-                text-decoration: none;
-                text-transform: uppercase;
-                color: black;
-                background-color: #39f;
-            }
-
-            canvas {
-                position: absolute;
-                display: none;
-                top: 0px;
-                left: 0px;
-                z-index: 100;
-                margin: 0px;
-                padding: 0px;
-            }
-        </style>
+        <link type="text/css" rel="stylesheet" href="frontend/style.css" />
     </head>
     <body>
         <!-- FRONT END -->
-        <section id="front-end">
+        <section id="frontend">
             <header>
                 <h1><span>SubSpace</span>Sol Wars</h1>
             </header>
-            <form id="join-form">
-                <fieldset>
-                    <div>
-                        <label for="player-name">Name</label>
-                        <input type="text" id="player-name" maxlength="32" />
-                    </div>
-                    <div><input type="submit" id="join-btn" class="btn" value="Join Game" /></div>
-                </fieldset>
-            </form>
+            <section id="forms">
+                <form id="join-form">
+                    <fieldset>
+                        <div>
+                            <label for="player-name">Name</label>
+                            <input type="text" id="player-name" maxlength="32" />
+                        </div>
+                        <div><input type="submit" id="join-btn" class="btn" value="Join Game" /></div>
+                    </fieldset>
+                </form>
+
+                <form id="keys-form">
+                    <fieldset>
+                        <div class="template action">
+                            <label class="name"></label>
+                            <input type="hidden" class="codes" />
+                            <input type="text" class="keys" />
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <div><input disabled type="submit" id="reset-keys-btn" class="btn" value="Restore Defaults" /></div>
+                    </fieldset>
+                </form>
+            </section>
         </section>
 
         <!-- GAME ENGINE -->

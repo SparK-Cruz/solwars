@@ -8,9 +8,10 @@
     "start": "node dist/start.js & node dist/bot_start.js",
     "build": "tsc && npm run build-frontend && npm run build-assets",
     "build-frontend": "browserify dist/client/frontend.js > dist/client/dist_frontend.js",
-    "build-assets": "npm run build-html && npm run build-img",
+    "build-assets": "npm run build-html && npm run build-img && npm run build-css",
     "build-html": "cp src/client/*.html dist/client/",
-    "build-img": "cp -r src/client/img dist/client/"
+    "build-img": "cp -r src/client/img dist/client/",
+    "build-css": "cp src/client/frontend/*.css dist/client/frontend/"
   },
   "keywords": [
     "space",
