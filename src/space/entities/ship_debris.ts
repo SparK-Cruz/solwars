@@ -20,7 +20,8 @@ export class ShipDebris extends EventEmitter implements Entity {
     public color: string;
     public size: number;
 
-    public energy: number = 1000;
+    // 64 frames * 5 seconds
+    public energy: number = 320;
 
     constructor(public options: any, public parent: Ship) {
         super();
