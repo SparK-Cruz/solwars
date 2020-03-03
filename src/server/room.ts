@@ -101,7 +101,8 @@ export class Room {
 
     private tick() {
         this.stage.step(this.deltaTick);
-        this.broadcastState();
+        if (this.stage.tick % (TPS / (TPS_TARGET / 2)) == 0)
+            this.broadcastState();
     }
 
     private topPlayers() {

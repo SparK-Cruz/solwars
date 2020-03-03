@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
 import { Bullet } from './entities/bullet';
-import { Config } from './config';
 import { ShipDebris } from './entities/ship_debris';
 import { Ship } from './entities/ship';
 

@@ -37,7 +37,7 @@ export class RankingRenderer implements Renderable {
 
         this.ctx.fillText(text, textPos.x, textPos.y);
 
-        this.ranking.forEach((player, i) => {
+        this.ranking.slice(0, 10).forEach((player, i) => {
             const text = player.name + ' (' + player.bounty + ')';
 
             const textInfo = this.ctx.measureText(text);

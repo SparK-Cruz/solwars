@@ -116,15 +116,15 @@ export class Ship extends EventEmitter implements entities.Entity {
     return this.damage + this.afterburnerCost * delta < this.health;
   }
 
-  private canShoot(delta: number) {
-    return (this.damage + this.shootCost * delta < this.health && !this.gunsCooldown);
+  private canShoot() {
+    return (this.damage + this.shootCost < this.health && !this.gunsCooldown);
   }
 
   private readControls(delta: number) {
     this.readThrust(delta);
     this.readStrife(delta);
     this.readTurn();
-    this.readShoot(delta);
+    this.readShoot();
   }
   private readThrust(delta: number) {
     let power = this.power;
@@ -153,9 +153,9 @@ export class Ship extends EventEmitter implements entities.Entity {
     let turn = Control.turning(this.control);
     this.vangle = turn * this.turnSpeed;
   }
-  private readShoot(delta: number) {
+  private readShoot() {
     if (!Control.shooting(this.control)
-      || !this.canShoot(delta))
+      || !this.canShoot())
       return;
 
     const linearOffset = 32;
