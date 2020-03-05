@@ -12,6 +12,7 @@ export const DEFAULT_MAPPING = {
     'k81': Mapping.STRAFE_LEFT, //Q
     'k69': Mapping.STRAFE_RIGHT, //E
     'k32': Mapping.SHOOT, //SPACE BAR
+    'k17': Mapping.SHOOT, //CTRL
     'k16': Mapping.AFTERBURNER, //SHIFT
 };
 
