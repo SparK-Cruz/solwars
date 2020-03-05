@@ -80,7 +80,7 @@ export class Room {
         const ranking = this.topPlayers();
 
         this.players.forEach((player, index) => {
-            if ((this.stage.tick + index) % (TPS / (TPS_TARGET / 2)) !== 0)
+            if ((this.stage.tick + index) % Math.ceil(TPS / (TPS_TARGET / 3)) !== 0)
                 return;
 
             // No ship no data...
