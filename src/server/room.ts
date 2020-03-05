@@ -79,7 +79,9 @@ export class Room {
     private broadcastState() {
         const ranking = this.topPlayers();
 
-        this.players.forEach((player) => {
+        this.players.forEach((player, index) => {
+            if ((this.stage.tick + index) % (TPS / (TPS_TARGET / 2)) !== 0)
+                return;
 
             // No ship no data...
             if (!player.ship)
@@ -101,8 +103,7 @@ export class Room {
 
     private tick() {
         this.stage.step(this.deltaTick);
-        if (this.stage.tick % (TPS / (TPS_TARGET / 2)) == 0)
-            this.broadcastState();
+        this.broadcastState();
     }
 
     private topPlayers() {
