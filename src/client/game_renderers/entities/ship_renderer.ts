@@ -1,7 +1,8 @@
-import { Ship } from '../../space/entities/ship';
-import { Control } from '../../space/entities/ships/control';
-import { Renderable } from './renderable';
-import { Assets, Asset } from '../assets';
+import { Ship } from '../../../space/entities/ship';
+import { Control } from '../../../space/entities/ships/control';
+import { Renderable } from '../renderable';
+import { Assets, Asset } from '../../assets';
+import { R2d } from '../r2d';
 
 export class ShipRenderer implements Renderable {
   private canvas :HTMLCanvasElement;
@@ -43,15 +44,15 @@ export class ShipRenderer implements Renderable {
 
   public render() :HTMLCanvasElement {
     if (this.body && this.light && this.alive) {
-      this.ctx.drawImage(this.multiplyLight(this.body, this.light, this.ship.angle), 0, 0);
+      this.ctx.drawImage(R2d.multiplyImage(this.body, this.light, this.ship.angle), 0, 0);
     }
 
     if (this.body && this.ship.damage >= this.ship.health && this.alive) {
-      const {buffer, bfr} = this.prepareBuffer(this.canvas);
+      const {buffer, bfr} = R2d.buffer(this.canvas);
       bfr.fillStyle = 'rgba(0,0,0,0.5)';
       bfr.fillRect(0, 0, buffer.width, buffer.height);
 
-      this.ctx.drawImage(this.multiplyLight(this.body, buffer, this.ship.angle), 0, 0);
+      this.ctx.drawImage(R2d.multiplyImage(this.body, buffer, this.ship.angle), 0, 0);
       this.alive = false;
     }
 
@@ -108,80 +109,10 @@ export class ShipRenderer implements Renderable {
   }
 
   private paintBaseColor(sprite :HTMLImageElement, color :string, maskImage :HTMLImageElement) {
-    this.bdy.drawImage(this.applyMask(this.multiplyColor(sprite, color), maskImage), 0, 0);
+    this.bdy.drawImage(R2d.applyMask(R2d.multiplyColor(sprite, color), maskImage), 0, 0);
   }
 
   private paintDecal(sprite :HTMLImageElement, decal :HTMLImageElement, color :string, maskImage :HTMLImageElement) {
-    this.bdy.drawImage(this.applyMask(this.applyMask(this.multiplyColor(sprite, color), decal), maskImage), 0, 0);
-  }
-
-  private multiplyLight(source :HTMLCanvasElement, multiplier :HTMLCanvasElement | HTMLImageElement, angle :number) :HTMLCanvasElement {
-    const {buffer, bfr} = this.prepareBuffer(source);
-    const light = this.prepareBuffer(multiplier);
-    const mask = this.prepareBuffer(source);
-
-    const lightCenter = {
-      x: multiplier.width / 2,
-      y: multiplier.height / 2
-    };
-
-    light.bfr.save();
-    light.bfr.translate(lightCenter.x, lightCenter.y);
-    light.bfr.rotate(-angle * Math.PI / 180);
-    light.bfr.drawImage(multiplier, -lightCenter.x, -lightCenter.y);
-    light.bfr.restore();
-
-    const offset = {
-      x: mask.buffer.width / 2 - light.buffer.width / 2,
-      y: mask.buffer.height / 2 - light.buffer.height / 2
-    };
-
-    mask.bfr.save();
-    mask.bfr.drawImage(source, 0, 0);
-    mask.bfr.globalCompositeOperation = 'multiply';
-    mask.bfr.drawImage(light.buffer, 0, 0);
-    mask.bfr.restore();
-
-    bfr.save();
-    bfr.drawImage(this.applyMask(mask.buffer, source), 0, 0);
-    bfr.restore();
-
-    return buffer;
-  }
-
-  private multiplyColor(source :HTMLImageElement, color :string) :HTMLCanvasElement {
-    const {buffer, bfr} = this.prepareBuffer(source);
-
-    bfr.save();
-    bfr.drawImage(source, 0, 0);
-    bfr.globalCompositeOperation = 'multiply';
-    bfr.fillStyle = color;
-    bfr.fillRect(0, 0, buffer.width, buffer.height);
-    bfr.restore();
-
-    return buffer;
-  }
-
-  private applyMask(source :HTMLCanvasElement | HTMLImageElement, maskImage :HTMLCanvasElement | HTMLImageElement) :HTMLCanvasElement {
-    let {buffer, bfr} = this.prepareBuffer(source);
-
-    bfr.save();
-    bfr.drawImage(source, 0, 0);
-    bfr.globalCompositeOperation = 'destination-in';
-    bfr.drawImage(maskImage, 0, 0);
-    bfr.restore();
-
-    return buffer;
-  }
-
-  private prepareBuffer(source :HTMLCanvasElement | HTMLImageElement) :{buffer :HTMLCanvasElement, bfr :CanvasRenderingContext2D} {
-    const buffer = document.createElement('canvas');
-
-    buffer.width = source.width;
-    buffer.height = source.height;
-
-    const bfr = buffer.getContext('2d');
-
-    return {buffer, bfr};
+    this.bdy.drawImage(R2d.applyMask(R2d.applyMask(R2d.multiplyColor(sprite, color), decal), maskImage), 0, 0);
   }
 }

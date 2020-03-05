@@ -55,9 +55,11 @@ export interface EntityType {
 }
 
 export namespace EntityType {
+    export const None = {name: 'none'};
     export const Ship = {name: 'ship'};
     export const Bullet = {name: 'bullet'};
     export const ShipDebris = {name: 'shipDebris'};
+    export const Rock = {name: 'rock'};
 }
 
 const SCALE = 2048;

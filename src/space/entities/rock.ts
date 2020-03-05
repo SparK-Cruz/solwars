@@ -1,21 +1,13 @@
-import { Entity, EntityType, EntityEvent } from '../entities';
+import { EventEmitter } from 'events';
+import { Entity, EntityType } from '../entities';
 
-export class Rock implements Entity {
+export class Rock extends EventEmitter implements Entity {
     public id :number;
-    public type = EntityType.Bullet;
+    public type = EntityType.Rock;
 
     public sectorKey :string = "";
-    public collisionMap = [
-        [0, -30],
-        [21, -21],
-        [30, 0],
-        [21, 21],
-        [0, 30],
-        [-21, 21],
-        [-30, 0],
-        [-21, -21],
-    ];
-    public mass = 1000;
+    public collisionMap: number[][] = [];
+    public mass = 100000;
 
     public x :number;
     public y :number;
@@ -24,12 +16,18 @@ export class Rock implements Entity {
     public angle :number;
     public vangle :number;
 
-    constructor() {
-        const initialSpeed = 0.5;
+    public color: string = '#474747';
 
-        this.angle += this.vangle;
-        this.vx = initialSpeed * Math.sin(this.angle * Math.PI / 180);
-        this.vy = initialSpeed * Math.cos(this.angle * Math.PI / 180);
+    constructor(public size: number, public sides: number) {
+        super();
+
+        const theta = 360 / sides;
+        for (let i = 0; i<sides; i++) {
+            this.collisionMap.push([
+                size/2 * Math.sin(theta*i * Math.PI / 180),
+                size/2 * Math.cos(theta*i * Math.PI / 180),
+            ]);
+        }
     }
 
     public step(delta: number) :void {
@@ -38,9 +36,11 @@ export class Rock implements Entity {
 
     public collide(other :Entity, result :any) :void {
         Entity.defaultCollide.call(this, other, result);
+        this.vangle = this.vangle % 2;
     }
 
     private updatePhysics(delta: number): void {
+        this.angle += this.vangle * delta;
         this.x += this.vx * delta;
         this.y += this.vy * delta;
     }

@@ -36,16 +36,16 @@ export class Config {
     public static bots: number;
 
     public static read(callback: Function) {
-        json
-            .readFile('./config.json', (err: any, contents: any) => {
-                if (err) {
-                    console.log(err);
-                }
-                for(let i in contents) {
-                    (<any>Config)[i] = contents[i];
-                }
+        json.readFile('./config.json', (err: any, contents: any) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            for(let i in contents) {
+                (<any>Config)[i] = contents[i];
+            }
 
-                callback();
-            });
+            callback();
+        });
     }
 }

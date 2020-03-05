@@ -143,7 +143,7 @@ export class Client extends EventEmitter {
     private onServerUpdate(data: any) {
         const decoded = this.codec.decode(data);
 
-        this.stage.addAll([].concat(...decoded.entities).map((e: Entity) => this.codec.decodeEntity(e)));
+        this.stage.addAll([].concat(...decoded.entities).map((e: Entity) => this.codec.decodeEntity(e)).filter(e => e));
         this.ranking = decoded.ranking;
 
         this.emit(ClientEvents.INFO, this.fetchInfo());

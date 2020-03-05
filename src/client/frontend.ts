@@ -2,7 +2,8 @@ import { Engine } from "./engine";
 import { JoinForm } from "./frontend/join_form";
 import { KeysForm } from "./frontend/keys_form";
 
-const forms = <HTMLElement>document.getElementById('forms');
+// const forms = <HTMLElement>document.getElementById('forms');
+const frontend = <HTMLElement>document.getElementById('frontend');
 const game = <HTMLCanvasElement>document.getElementById('game');
 const hud = <HTMLCanvasElement>document.getElementById('hud');
 const engine = new Engine(game, hud);
@@ -22,8 +23,8 @@ window.addEventListener('keydown', e => {
 });
 
 engine.on('start', () => {
-    forms.style.overflow = 'hidden';
+    frontend.style.overflow = 'hidden';
 });
 engine.on('stop', () => {
-    forms.style.overflow = 'visible';
+    frontend.style.overflow = 'visible';
 });

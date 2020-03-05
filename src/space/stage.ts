@@ -3,6 +3,10 @@ import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
 import { Bullet } from './entities/bullet';
 import { ShipDebris } from './entities/ship_debris';
 import { Ship } from './entities/ship';
+import * as json from 'jsonfile';
+import { CodecFacade } from './codec_facade';
+import { EntitySpawner } from './entity_spawner';
+import { Rock } from './entities/rock';
 
 export class Stage extends EventEmitter {
     public tick = 0;
@@ -17,7 +21,7 @@ export class Stage extends EventEmitter {
     public constructor(public collisionSystem :any) {
         super();
         this.collisionResult = this.collisionSystem.createResult();
-        // this.setMaxListeners(0);
+
         this.on('step', (delta) => {
             for(let i=0; i<this.steppers.length; i++) {
                 if (!(this.steppers[i]))
@@ -27,15 +31,35 @@ export class Stage extends EventEmitter {
                 this.sectors.updateGrid(this.steppers[i]);
             }
         });
+
+        json.readFile('./maps/default.json', (err: any, contents: any) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+            if (!contents.hasOwnProperty('npe'))
+                return;
+
+            const codec = new CodecFacade();
+            for(let i in contents.npe) {
+                if (contents.npe[i].spawner) {
+                    this.add(codec.decodeSpawner(contents.npe[i]));
+                    continue;
+                }
+                this.add(codec.decodeEntity(<Entity>contents.npe[i]));
+            }
+        });
     }
 
     public add(entity :Entity) {
         this.sectors.add(entity);
 
         const shape = this.addOrFetchCollisionShape(entity);
-        shape.x = entity.x;
-        shape.y = entity.y;
-        shape.angle = entity.angle * Math.PI / 180;
+        if (shape) {
+            shape.x = entity.x;
+            shape.y = entity.y;
+            shape.angle = entity.angle * Math.PI / 180;
+        }
 
         (<any>entity).on(EntityEvent.Spawn, this.onSpawnChildEntity);
         (<any>entity).on(EntityEvent.Despawn, this.onDespawnEntity);
@@ -107,6 +131,10 @@ export class Stage extends EventEmitter {
             return null;
         }
 
+        if (typeof entity.collisionMap == 'undefined') {
+            return null;
+        }
+
         const shape = <any>this.collisionSystem.createPolygon(entity.x, entity.y, entity.collisionMap, entity.angle);
         shape.entity = entity;
         this.shapes[entity.id] = shape;
@@ -143,6 +171,10 @@ export class Stage extends EventEmitter {
                 break;
             case EntityType.ShipDebris.name:
                 entity = new ShipDebris(entityModel, <Ship>parent);
+                break;
+            case EntityType.Rock.name:
+                entity = new Rock(entityModel.size, entityModel.sides);
+                Object.assign(entity, parent);
                 break;
             // case EntityType.Ship.name:
             // ships aren't child entities yet... we still don't have carriers nor turrets...

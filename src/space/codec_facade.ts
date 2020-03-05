@@ -3,6 +3,8 @@ import { Ship } from './entities/ship';
 import { Model } from './entities/ships/model';
 import { Bullet } from './entities/bullet';
 import { ShipDebris } from './entities/ship_debris';
+import { Rock } from './entities/rock';
+import { EntitySpawner } from './entity_spawner';
 
 interface SavedState {
   tick: number,
@@ -29,7 +31,7 @@ export class CodecFacade {
     const stream = {
       tick: state.tick,
       ranking: state.ranking.map(p => {return {name: p.name, bounty: p.bounty}}),
-      entities: state.entities.map(p => Object.values(p).map(this.encodeEntity))
+      entities: state.entities.map(p => Object.values(p).map(this.encodeEntity).filter(e => e))
     };
 
     // TODO PSON / binary
@@ -42,6 +44,10 @@ export class CodecFacade {
   }
 
   public encodeEntity(entity :any) {
+    if (entity.spawner) {
+        return null;
+    }
+
     return {
       type: entity.type,
       id: entity.id,
@@ -68,6 +74,8 @@ export class CodecFacade {
       options: entity.options,
       size: entity.size,
       energy: entity.energy,
+      //rock
+      sides: entity.sides
     };
   }
 
@@ -79,9 +87,15 @@ export class CodecFacade {
         return this.decodeBullet(<Bullet>data);
       case EntityType.ShipDebris.name:
         return this.decodeShipDebris(<ShipDebris>data);
+      case EntityType.Rock.name:
+        return this.decodeRock(<Rock>data);
     }
+  }
 
-    return data;
+  public decodeSpawner(data: Entity) {
+    const spawner: Entity = new (<any>EntitySpawner)[data.type.name];
+    Object.assign(spawner, data);
+    return spawner;
   }
 
   private decodeShip(data: Ship) {
@@ -100,6 +114,12 @@ export class CodecFacade {
     const shipDebris = new ShipDebris(data.options, data.parent);
     Object.assign(shipDebris, data);
     return shipDebris;
+  }
+
+  private decodeRock(data: Rock) {
+    const rock = new Rock(data.size, data.sides);
+    Object.assign(rock, data);
+    return rock;
   }
 }
 

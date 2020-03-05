@@ -1,0 +1,44 @@
+{
+    "temp": [
+        {
+            "type": {"name": "ship"},
+            "model": "warbird",
+            "name": "DON'T DO DRUGS",
+            "color": "#3399ff",
+            "decals": [{
+                "name": "decal1",
+                "color": "#ffffff"
+            }],
+            "x": 0,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 72,
+            "bullet": 2,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "spawner": true,
+            "type": {"name": "rock"},
+            "size": 10,
+            "sides": 8,
+            "mass": 60,
+            "count": 2000,
+            "radius": 16000,
+            "spread": 500
+        }
+    ],
+    "npe": [
+        {
+            "spawner": true,
+            "type": {"name": "rock"},
+            "size": 32,
+            "sides": 7,
+            "mass": 200,
+            "count": 40,
+            "radius": 3500,
+            "spread": 3400
+        }
+    ]
+}

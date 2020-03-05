@@ -1,5 +1,5 @@
-import { ShipDebris } from '../../space/entities/ship_debris';
-import { Renderable } from './renderable';
+import { ShipDebris } from '../../../space/entities/ship_debris';
+import { Renderable } from '../renderable';
 
 export class ShipDebrisRenderer implements Renderable {
     private canvas: HTMLCanvasElement;
@@ -13,7 +13,7 @@ export class ShipDebrisRenderer implements Renderable {
         this.canvas.width = 20;
         this.canvas.height = 20;
 
-        this.alpha = Math.random() * 0.5;
+        this.alpha = Math.random() * 0.5 + 0.2;
         this.draw(this.alpha);
     }
 
@@ -22,10 +22,10 @@ export class ShipDebrisRenderer implements Renderable {
     }
 
     private draw(alpha: number) {
-        this.ctx.clearRect(0, 0, 20, 20);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.save();
         this.ctx.beginPath();
-        this.ctx.translate(10, 10);
+        this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
         this.ctx.moveTo(0, 0);
         this.debris.collisionMap.forEach(point => {
             this.ctx.lineTo(point[0], point[1]);

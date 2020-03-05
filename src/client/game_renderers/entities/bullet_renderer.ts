@@ -1,5 +1,5 @@
-import { Bullet } from '../../space/entities/bullet';
-import { Renderable } from './renderable';
+import { Bullet } from '../../../space/entities/bullet';
+import { Renderable } from '../renderable';
 
 export class BulletRenderer implements Renderable {
     private canvas :HTMLCanvasElement;

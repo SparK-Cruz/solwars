@@ -141,12 +141,15 @@ export class Radar implements Renderable {
                 ctx.fillStyle = "#ffffff";
             }
             if (entity.type.name === EntityType.Bullet.name) {
-                ctx.fillStyle = "#ff0000";
-                size = 1;
+                continue;
             }
             if (entity.type.name === EntityType.ShipDebris.name) {
                 ctx.fillStyle = "rgba(255, 159, 51, 0.2)";
                 size = 1;
+            }
+            if (entity.type.name === EntityType.Rock.name) {
+                ctx.fillStyle = "#eeeeee";
+                size = (<any>entity).size * this.scale;
             }
 
             const pos = this.camera.translate(entity);

@@ -2,12 +2,14 @@ import { Renderable } from "./renderable";
 import { Camera } from "../camera";
 import { Stage } from ".././stage";
 import { Entity, EntityType } from "../../space/entities";
-import { ShipRenderer } from "./ship_renderer";
+import { ShipRenderer } from "./entities/ship_renderer";
 import { Ship } from "../../space/entities/ship";
-import { BulletRenderer } from "./bullet_renderer";
+import { BulletRenderer } from "./entities/bullet_renderer";
 import { Bullet } from "../../space/entities/bullet";
-import { ShipDebrisRenderer } from "./ship_debris_renderer";
+import { ShipDebrisRenderer } from "./entities/ship_debris_renderer";
 import { ShipDebris } from "../../space/entities/ship_debris";
+import { RockRenderer } from "./entities/rock_renderer";
+import { Rock } from "../../space/entities/rock";
 
 const CACHE_TTL = 60 * 64; // 60 seconds at 64 fps
 
@@ -78,6 +80,8 @@ export class EntityRenderer implements Renderable {
                 return new BulletRenderer(<Bullet>entity);
             case EntityType.ShipDebris.name:
                 return new ShipDebrisRenderer(<ShipDebris>entity);
+            case EntityType.Rock.name:
+                return new RockRenderer(<Rock>entity);
             default:
                 console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
         }
