@@ -7,16 +7,9 @@ body {
 
 /* FRONTEND */
 #frontend {
+    display: block;
     padding: 0px;
     font-family: sans-serif;
-    height: 1px;
-    width: 1px;
-    overflow: visible;
-}
-#frontend .container{
-    position: absolute;
-    width: 100%;
-    padding: 0px;
 }
 #frontend header {
     text-align: center;
