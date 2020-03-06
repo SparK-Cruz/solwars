@@ -5,6 +5,7 @@ import { Bullet } from './entities/bullet';
 import { ShipDebris } from './entities/ship_debris';
 import { Rock } from './entities/rock';
 import { EntitySpawner } from './entity_spawner';
+import { Prize } from './entities/prize';
 
 interface SavedState {
   tick: number,
@@ -89,6 +90,8 @@ export class CodecFacade {
         return this.decodeShipDebris(<ShipDebris>data);
       case EntityType.Rock.name:
         return this.decodeRock(<Rock>data);
+      case EntityType.Prize.name:
+        return this.decodePrize(<Prize>data);
     }
   }
 
@@ -121,6 +124,12 @@ export class CodecFacade {
     Object.assign(rock, data);
     return rock;
   }
+
+  private decodePrize(data: Prize) {
+    const prize = new Prize();
+    Object.assign(prize, data);
+    return prize;
+  }
 }
 
 export namespace CodecEvents {
@@ -131,6 +140,7 @@ export namespace CodecEvents {
   export const REMOVE_OBJECT = "removal";
   export const DEATH = "death";
   export const RESPAWN = "respawn";
+  export const UPGRADE = "upgrade";
 
   // server reads
   export const SEND_INPUT = "input";

@@ -1,18 +1,18 @@
 export interface Entity {
-    type :EntityType;
-    id :number;
-    sectorKey :string;
-    collisionMap :number[][];
+    type: EntityType;
+    id: number;
+    sectorKey: string;
+    collisionMap: number[][];
     mass: number;
 
-    x :number;
-    y :number;
-    vx ?:number;
-    vy ?:number;
-    angle ?:number;
+    x: number;
+    y: number;
+    vx?: number;
+    vy?: number;
+    angle?: number;
 
-    step(delta: number) :void;
-    collide(entity :Entity, result :any) :void;
+    step(delta: number): void;
+    collide(entity: Entity, result: any): void;
 }
 
 export namespace Entity {
@@ -60,6 +60,7 @@ export namespace EntityType {
     export const Bullet = {name: 'bullet'};
     export const ShipDebris = {name: 'shipDebris'};
     export const Rock = {name: 'rock'};
+    export const Prize = {name: 'prize'};
 }
 
 const SCALE = 2048;

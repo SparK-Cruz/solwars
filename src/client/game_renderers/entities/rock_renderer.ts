@@ -1,14 +1,11 @@
 import { Rock } from "../../../space/entities/rock";
 import { Renderable } from "../renderable";
-import { Assets, Asset } from "../../assets";
-import { R2d } from "../r2d";
 
 export class RockRenderer implements Renderable {
     private canvas: HTMLCanvasElement;
     private ctx: CanvasRenderingContext2D;
 
     private body: HTMLCanvasElement;
-    private light: HTMLImageElement;
 
     constructor(public rock: Rock) {
         this.canvas = document.createElement('canvas');
@@ -17,17 +14,11 @@ export class RockRenderer implements Renderable {
         this.canvas.width = rock.size;
         this.canvas.height = rock.size;
 
-        this.body = this.draw(rock.size);
-
-        Assets.fetch('img/light.png', {target: this, callback: (sprite :Asset) => {
-            this.light = sprite.content;
-        }});
+        this.body = this.draw(this.rock.size);
     }
 
     public render(): HTMLCanvasElement {
-        if (this.light) {
-            this.ctx.drawImage(R2d.multiplyImage(this.body, this.light, this.rock.angle), 0, 0);
-        }
+        this.ctx.drawImage(this.body, 0, 0);
         return this.canvas;
     }
 

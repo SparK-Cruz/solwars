@@ -4,6 +4,7 @@ import { Input } from "./input";
 import { Camera } from "./camera";
 import { GameRenderer } from "./game_renderer";
 import { HudRenderer } from "./hud_renderer";
+import { ToastRenderer, ToastTime } from './toast_renderer';
 
 const FRAMESKIP_THRESHOLD: number = 55;
 let lastTick: number = null;
@@ -14,6 +15,7 @@ export class Engine extends EventEmitter {
     private camera: Camera;
     private gameRenderer: GameRenderer;
     private hudRenderer: HudRenderer;
+    private toastRenderer: ToastRenderer;
 
     public constructor(private game: HTMLCanvasElement, private hud: HTMLCanvasElement) {
         super();
@@ -23,6 +25,7 @@ export class Engine extends EventEmitter {
         this.camera = new Camera();
         this.gameRenderer = new GameRenderer(game, this.camera, this.client.getStage());
         this.hudRenderer = new HudRenderer(hud, this.camera, this.client.getStage());
+        this.toastRenderer = new ToastRenderer(hud);
 
         this.listenClient(this.client);
     }
@@ -75,6 +78,10 @@ export class Engine extends EventEmitter {
         client.on(ClientEvents.INFO, (info: ClientInfo) => {
             this.hudRenderer.update(info);
         });
+        client.on(ClientEvents.UPGRADE, (name: string) => {
+            console.log(name);
+            this.toastRenderer.toast(name, ToastTime.SHORT);
+        });
     }
 
     private renderFrame() {
@@ -85,6 +92,7 @@ export class Engine extends EventEmitter {
             this.camera.setResolution(this.game.width, this.game.height);
             this.gameRenderer.render();
             this.hudRenderer.render();
+            this.toastRenderer.render();
         }
 
         if (!this.running) {

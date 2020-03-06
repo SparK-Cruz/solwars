@@ -21,6 +21,11 @@ export class Bullet extends EventEmitter implements Entity {
     private energy: number;
     private damage: number;
 
+    private immune: EntityType[] = [
+        EntityType.ShipDebris,
+        EntityType.Prize,
+    ];
+
     constructor(public bulletType: number, public parent: Entity) {
         super();
 
@@ -48,7 +53,7 @@ export class Bullet extends EventEmitter implements Entity {
     }
 
     public collide(other :Entity, result :any) :void {
-        if (other.type.name == EntityType.ShipDebris.name)
+        if (this.immune.includes(other.type))
             return;
 
         if (typeof (<any>other).addDamage !== 'undefined') {

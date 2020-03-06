@@ -60,7 +60,7 @@ export class RockSpawner extends EventEmitter implements Entity {
                 y: this.radius * Math.cos(angle) + spread.distance * Math.cos(spread.angle),
             };
 
-            const rock = Object.assign({}, rocky, {size: (0.9 + Math.random() * 0.2) * rocky.size});
+            const rock = Object.assign({}, rocky, {size: (0.6 + Math.random() * 0.8) * rocky.size});
 
             this.emit(EntityEvent.Spawn, EntityType.Rock, rock, reference, offset);
         }

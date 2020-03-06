@@ -10,6 +10,8 @@ import { ShipDebrisRenderer } from "./entities/ship_debris_renderer";
 import { ShipDebris } from "../../space/entities/ship_debris";
 import { RockRenderer } from "./entities/rock_renderer";
 import { Rock } from "../../space/entities/rock";
+import { PrizeRenderer } from "./entities/prize_renderer";
+import { Prize } from "../../space/entities/prize";
 
 const CACHE_TTL = 60 * 64; // 60 seconds at 64 fps
 
@@ -82,6 +84,8 @@ export class EntityRenderer implements Renderable {
                 return new ShipDebrisRenderer(<ShipDebris>entity);
             case EntityType.Rock.name:
                 return new RockRenderer(<Rock>entity);
+            case EntityType.Prize.name:
+                return new PrizeRenderer(<Prize>entity);
             default:
                 console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
         }

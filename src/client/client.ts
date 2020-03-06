@@ -27,9 +27,6 @@ export class Client extends EventEmitter {
             make: null,
             model: null,
         },
-        maxEnergy: 0,
-        maxSpeed: 0,
-        acceleration: 0,
         turnSpeed: 0,
         tickRate: 64,
     };
@@ -122,6 +119,10 @@ export class Client extends EventEmitter {
             this.onRespawn();
         });
 
+        socket.on(CodecEvents.UPGRADE, (name: string) => {
+            this.emit(ClientEvents.UPGRADE, name);
+        });
+
         this.input.change((state: number) => {
             socket.emit(CodecEvents.SEND_INPUT, state);
             if (this.ship)
@@ -168,16 +169,16 @@ export class Client extends EventEmitter {
         this.staticInfo.ship.id = model.id;
         this.staticInfo.ship.make = model.make;
         this.staticInfo.ship.model = model.name;
-        this.staticInfo.acceleration = data.ship.power;
         this.staticInfo.turnSpeed = data.ship.turnSpeed;
-        this.staticInfo.maxEnergy = data.ship.health;
-        this.staticInfo.maxSpeed = data.ship.vmax;
         this.staticInfo.tickRate = data.tps;
     }
 
     private fetchInfo(): ClientInfo {
         return Object.assign({}, this.staticInfo, {
             angle: this.ship.angle,
+            maxEnergy: this.ship.health,
+            maxSpeed: this.ship.vmax,
+            acceleration: this.ship.power,
             energy: this.ship.health - this.ship.damage,
             alive: this.ship.alive,
             cooldown: this.ship.gunsCooldown,
@@ -199,6 +200,7 @@ export class Client extends EventEmitter {
 export namespace ClientEvents {
     export const SHIP = 'ship';
     export const INFO = 'info';
+    export const UPGRADE = 'upgrade';
 }
 
 interface StaticInfo {
@@ -209,14 +211,14 @@ interface StaticInfo {
         make: string,
         model: string,
     },
-    maxEnergy: number,
-    maxSpeed: number,
-    acceleration: number,
     turnSpeed: number,
 }
 
 export interface ClientInfo extends StaticInfo {
     angle: number;
+    maxEnergy: number;
+    maxSpeed: number;
+    acceleration: number;
     energy: number;
     cooldown: number;
     gunHeat: number;

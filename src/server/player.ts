@@ -1,5 +1,5 @@
 import { Room } from './room';
-import { Ship } from '../space/entities/ship';
+import { Ship, ShipEvents } from '../space/entities/ship';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { CodecEvents, PlayerDeath, DeathCauses } from '../space/codec_facade';
 import { EntityEvent, Entity, EntityType } from '../space/entities';
@@ -48,10 +48,18 @@ export class Player extends EventEmitter {
 
     private onJoin(data :any) {
         this.name = data.name;
+        const upgradeListener = (name: string) => {
+            this.bounty += 10;
+            this.socket.emit(CodecEvents.UPGRADE, name);
+        };
         this.fetchPlayerShip(data.name, this.ship)
             .then(ship => {
                 this.emit(PlayerEvents.Ship, ship);
-                ship.once(EntityEvent.Die, (killer: Entity) => this.onDie(killer))
+                ship.on(ShipEvents.Upgrade, upgradeListener);
+                ship.once(EntityEvent.Die, (killer: Entity) => {
+                    ship.off(ShipEvents.Upgrade, upgradeListener);
+                    this.onDie(killer)
+                });
                 this.socket.emit(CodecEvents.ACCEPT, {
                     id: this.id,
                     ship: this.room.codec.encodeEntity(ship),

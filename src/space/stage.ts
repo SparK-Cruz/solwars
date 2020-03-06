@@ -7,6 +7,8 @@ import * as json from 'jsonfile';
 import { CodecFacade } from './codec_facade';
 import { EntitySpawner } from './entity_spawner';
 import { Rock } from './entities/rock';
+import { Prize } from './entities/prize';
+import { PrizeSpawner } from './entity_spawner/prize_spawner';
 
 export class Stage extends EventEmitter {
     public tick = 0;
@@ -175,6 +177,10 @@ export class Stage extends EventEmitter {
             case EntityType.Rock.name:
                 entity = new Rock(entityModel.size, entityModel.sides);
                 Object.assign(entity, parent);
+                break;
+            case EntityType.Prize.name:
+                entity = new Prize(entityModel, <PrizeSpawner>parent);
+                Object.assign(entity, {x: parent.x, y: parent.y});
                 break;
             // case EntityType.Ship.name:
             // ships aren't child entities yet... we still don't have carriers nor turrets...

@@ -58,8 +58,8 @@ export class Ship extends EventEmitter implements entities.Entity {
   gunsCooldown = 0;
   shootHeat = 16;
 
-  private afterburnerCost = 6;
-  private shootCost = 150;
+  public afterburnerCost = 6;
+  public shootCost = 150;
 
   constructor(model :Model) {
     super();
@@ -253,4 +253,8 @@ export class Ship extends EventEmitter implements entities.Entity {
 
     this.gunsCooldown -= 1 * delta;
   }
+}
+
+export namespace ShipEvents {
+    export const Upgrade = 'upgrade';
 }

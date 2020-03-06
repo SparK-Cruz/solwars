@@ -1,7 +1,7 @@
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { ClientInfo } from "../client";
-import { EntityType } from "../../space/entities";
+import { EntityType, Entity } from "../../space/entities";
 import { Stage } from ".././stage";
 
 export class Radar implements Renderable {
@@ -150,6 +150,10 @@ export class Radar implements Renderable {
             if (entity.type.name === EntityType.Rock.name) {
                 ctx.fillStyle = "#eeeeee";
                 size = (<any>entity).size * this.scale;
+            }
+            if (entity.type.name === EntityType.Prize.name) {
+                ctx.fillStyle = "#00ff00";
+                size = 2;
             }
 
             const pos = this.camera.translate(entity);
