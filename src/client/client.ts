@@ -181,8 +181,6 @@ export class Client extends EventEmitter {
             acceleration: this.ship.power,
             energy: this.ship.health - this.ship.damage,
             alive: this.ship.alive,
-            cooldown: this.ship.gunsCooldown,
-            gunHeat: this.ship.shootHeat,
             speed: {
                 x: this.ship.vx,
                 y: this.ship.vy,
@@ -220,8 +218,6 @@ export interface ClientInfo extends StaticInfo {
     maxSpeed: number;
     acceleration: number;
     energy: number;
-    cooldown: number;
-    gunHeat: number;
     alive: boolean;
     speed: { x: number, y: number };
     position: { x: number, y: number };

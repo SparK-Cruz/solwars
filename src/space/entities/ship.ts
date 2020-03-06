@@ -56,7 +56,6 @@ export class Ship extends EventEmitter implements entities.Entity {
   bomb = 0;
 
   gunsCooldown = 0;
-  shootHeat = 16;
 
   public afterburnerCost = 6;
   public shootCost = 150;
@@ -82,11 +81,6 @@ export class Ship extends EventEmitter implements entities.Entity {
 
     this.bullet = traits.bullet;
     this.bomb = traits.bomb;
-
-    const bulletTraits = Config.bullets[traits.bullet];
-    if (bulletTraits) {
-      this.shootHeat = bulletTraits.cooldown;
-    }
   }
 
   step(delta: number) :void {
@@ -164,9 +158,13 @@ export class Ship extends EventEmitter implements entities.Entity {
       y: -linearOffset * Math.cos(inRads(this.angle)),
     };
 
-    this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this, offset);
-    this.gunsCooldown += this.shootHeat;
+    if (Config.bullets) {
+        const bulletTraits = Config.bullets[this.bullet];
+        this.gunsCooldown += bulletTraits.cooldown;
+    }
+
     this.damage += this.shootCost;
+    this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this, offset);
   }
 
   private updatePhysics(delta: number) {

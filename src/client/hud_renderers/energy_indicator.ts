@@ -26,7 +26,7 @@ export class EnergyIndicator implements Renderable {
 
         this.ctx.save();
         this.ctx.beginPath();
-        this.ctx.rect(20, this.canvas.height - 250, 6, 230);
+        this.ctx.rect(20, this.canvas.height - 250, 8, 230);
         this.ctx.strokeStyle = "#202020";
         this.ctx.stroke();
         this.ctx.closePath();
@@ -34,7 +34,7 @@ export class EnergyIndicator implements Renderable {
 
         this.ctx.save();
         this.ctx.beginPath();
-        this.ctx.rect(22, (this.canvas.height - 248) + 226 - 226 * perc, 2, 226 * perc);
+        this.ctx.rect(22, (this.canvas.height - 248) + 226 - 226 * perc, 4, 226 * perc);
         this.ctx.fillStyle = color;
         this.ctx.fill();
         this.ctx.closePath();
