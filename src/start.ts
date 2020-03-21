@@ -25,7 +25,7 @@ Config.read(() => {
     console.log('Serving on port '+port);
 
     // BOTs
-    let bots = Config.bots;
+    let bots = Config.bots.playerCap;
     if (typeof process.argv[2] != 'undefined') {
         bots = parseInt(process.argv[2]);
     }

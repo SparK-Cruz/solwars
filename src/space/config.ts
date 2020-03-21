@@ -27,13 +27,25 @@ interface BulletConfig {
     color: string,
 }
 
+interface BotsConfig {
+    playerCap: number,
+    ship: BotShip,
+    prefix: string,
+}
+
+interface BotShip {
+    model: string,
+    decals: {name: string, color: string}[],
+    color: string,
+}
+
 export class Config {
     public static TPS: number;
     public static maxPlayers: number;
     public static serverPort: number;
     public static ships: ShipsConfig;
     public static bullets: BulletConfig[];
-    public static bots: number;
+    public static bots: BotsConfig;
 
     public static read(callback: Function) {
         json.readFile('./config.json', (err: any, contents: any) => {

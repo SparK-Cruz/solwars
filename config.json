@@ -1,7 +1,20 @@
 {
     "TPS": 64,
     "maxPlayers": 100,
-    "bots": 5,
+    "bots": {
+        "playerCap": 5,
+        "ship": {
+            "model": "javelin",
+            "color": "#3399ff",
+            "decals": [
+                {
+                    "name": "decal1",
+                    "color": "#ffffff"
+                }
+            ]
+        },
+        "prefix": "BOT "
+    },
     "serverPort": 80,
     "ships": {
         "warbird": {

@@ -3,6 +3,7 @@ import { Bot } from "./bot";
 import { Ship } from "../../space/entities/ship";
 import { Stage } from "../../space/stage";
 import { EntityType, Entity } from "../../space/entities";
+import { Config } from "../../space/config";
 
 const botNames = [
     'Albert',
@@ -50,14 +51,14 @@ const TARGET_LOOKUP_INTERVAL = 5000;
 
 export class BotManager {
     private bots: Bot[] = [];
-    private prefix = '\u2063NPC ';
+    private prefix = '';
     private stage: Stage;
 
     private playerCap = 0;
 
     public constructor(private room: Room) {
+        this.prefix = Config.bots.prefix;
         this.stage = room.getStage();
-
         this.setupLoops();
     }
 

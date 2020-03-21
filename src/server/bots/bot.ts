@@ -6,13 +6,14 @@ import { Ship } from '../../space/entities/ship';
 import { Model } from '../../space/entities/ships/model';
 import { Mapping } from '../../space/entities/ships/mapping';
 import { Control } from '../../space/entities/ships/control';
+import { Config } from '../../space/config';
 
-const MIN_DISTANCE = 180;
-const MAX_DISTANCE = 450;
-const DISTANCE_BAND = 70;
-const IDEAL_BULLET_SPEED = 7;
-const ANGLE_TOLERANCE = 2;
-const ENERGY_RESERVE = 0.65;
+const MIN_DISTANCE = 150;
+const MAX_DISTANCE = 400;
+const DISTANCE_BAND = 90;
+const IDEAL_BULLET_SPEED = 7.5;
+const ANGLE_TOLERANCE = 5;
+const ENERGY_RESERVE = 0.55;
 
 export class Bot extends Player {
     public get isBot(): boolean {
@@ -66,9 +67,9 @@ export class Bot extends Player {
     protected fetchPlayerShip(name: string, cache: Ship = null) {
         let onSuccess = (ship :Ship) => {};
         setTimeout(() => {
-            const ship = new Ship(Model.Javelin);
-            ship.decals[0].color = '#333333';
-            ship.color = '#a2a2a2';
+            const ship = new Ship(Model.byId[Config.bots.ship.model]);
+            ship.decals = Config.bots.ship.decals;
+            ship.color = Config.bots.ship.color;
             onSuccess(ship);
         }, 0);
 
