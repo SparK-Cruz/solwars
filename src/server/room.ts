@@ -114,6 +114,9 @@ export class Room {
             if ((this.stage.tick + index) % Math.ceil(TPS / (TPS_TARGET / 3)) !== 0)
                 return;
 
+            if (player.isBot)
+                return;
+
             // No ship no data...
             if (!player.ship)
                 return;

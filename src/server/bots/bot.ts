@@ -15,6 +15,10 @@ const ANGLE_TOLERANCE = 2;
 const ENERGY_RESERVE = 0.65;
 
 export class Bot extends Player {
+    public get isBot(): boolean {
+        return true;
+    }
+
     private target: Ship = null;
 
     private mapping: Mapping = new Mapping();

@@ -14,6 +14,10 @@ export module PlayerEvents {
 }
 
 export class Player extends EventEmitter {
+    public get isBot(): boolean {
+        return false;
+    }
+
     public name: string = "Nemo";
     public bounty: number = 1;
     public ship: Ship = null;
