@@ -1,7 +1,7 @@
 {
     "TPS": 64,
     "maxPlayers": 100,
-    "bots": 4,
+    "bots": 5,
     "serverPort": 80,
     "ships": {
         "warbird": {
@@ -87,13 +87,13 @@
         {
             "speed": 8,
             "energy": 700,
-            "cooldown": 20,
+            "cooldown": 16,
             "color": "rgb(200, 200, 0)"
         },
         {
             "speed": 9,
             "energy": 1000,
-            "cooldown": 25,
+            "cooldown": 17,
             "color": "rgb(0, 0, 255)"
         }
     ],

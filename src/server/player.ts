@@ -17,8 +17,9 @@ export class Player extends EventEmitter {
     public name: string = "Nemo";
     public bounty: number = 1;
     public ship: Ship = null;
+    public id: number;
 
-    public constructor(public id :number, public socket :SocketIO.Socket, public room :Room) {
+    public constructor(public socket :SocketIO.Socket, public room :Room) {
         super();
         this.setupListeners();
     }
@@ -71,7 +72,7 @@ export class Player extends EventEmitter {
             });
     }
 
-    private fetchPlayerShip(name :string, cache: Ship = null) {
+    protected fetchPlayerShip(name :string, cache: Ship = null) {
         let onSuccess = (ship :Ship) => {};
         let onError = (reason :string) => {};
 

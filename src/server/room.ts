@@ -4,7 +4,7 @@ import { Server } from 'http';
 import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
 import { Stage } from '../space/stage';
 import { Player, PlayerEvents } from './player';
-import { EntityEvent } from '../space/entities';
+import { EntityEvent, EntityType } from '../space/entities';
 import { Config } from '../space/config';
 import { Ship } from '../space/entities/ship';
 
@@ -24,6 +24,12 @@ export class Room {
 
     private deltaTick: number = 1;
 
+    private lastId = 0;
+
+    public get playerCount(): number {
+        return this.players.length;
+    }
+
     public constructor(private server: Server) {
         this.io = socketio(this.server);
 
@@ -36,10 +42,35 @@ export class Room {
         this.setupListeners();
     }
 
+    public getStage() {
+        return this.stage;
+    }
+
     public open() {
         setInterval(() => {
             this.tick();
         }, 1000/TPS);
+    }
+
+    public setupPlayer(player: Player) {
+        player.id = ++this.lastId;
+
+        player.once(PlayerEvents.Ship, (ship: Ship) => {
+            console.log(player.name + ' has joined the game');
+        });
+        player.on(PlayerEvents.Ship, (ship: Ship) => {
+            this.onPlayerShip(player, ship);
+            this.ranking = null;
+        });
+        player.on(PlayerEvents.Die, (death: PlayerDeath) => {
+            this.onPlayerDie(player, death);
+            this.ranking = null;
+        });
+        player.on(PlayerEvents.Disconnect, () => {
+            this.onPlayerDisconnect(player);
+            this.ranking = null;
+        });
+        this.players.push(player);
     }
 
     private onEntityDespawn = (id: number) => {
@@ -113,7 +144,7 @@ export class Room {
     private setupListeners() {
         this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
 
-        let id = 0;
+        this.lastId = 0;
         this.io.sockets.on(CodecEvents.CONNECTION, (socket :SocketIO.Socket) => {
             if (this.players.length > Config.maxPlayers) {
                 socket.disconnect(true);
@@ -122,23 +153,8 @@ export class Room {
 
             this.players = this.players.filter(p => p.socket.connected);
 
-            const player = new Player(++id, socket, this);
-            player.once(PlayerEvents.Ship, (ship: Ship) => {
-                console.log(player.name + ' has joined the game');
-            });
-            player.on(PlayerEvents.Ship, (ship: Ship) => {
-                this.onPlayerShip(player, ship);
-                this.ranking = null;
-            });
-            player.on(PlayerEvents.Die, (death: PlayerDeath) => {
-                this.onPlayerDie(player, death);
-                this.ranking = null;
-            });
-            player.on(PlayerEvents.Disconnect, () => {
-                this.onPlayerDisconnect(player);
-                this.ranking = null;
-            });
-            this.players.push(player);
+            const player = new Player(socket, this);
+            this.setupPlayer(player);
         });
     }
 }

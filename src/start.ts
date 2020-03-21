@@ -4,6 +4,9 @@ import { Server } from 'http';
 import { Room } from './server/room';
 import { Config } from './space/config';
 
+// test stuff
+import { BotManager } from './server/bots/bot_manager';
+
 const app = express();
 const server = new Server(app);
 
@@ -11,13 +14,22 @@ const server = new Server(app);
 app.use('/', express.static(__dirname + '/client'));
 
 Config.read(() => {
-  const STATIC_PORT = Config.serverPort;
+    const STATIC_PORT = Config.serverPort;
 
-  const port = process.env.PORT || STATIC_PORT;
+    const port = process.env.PORT || STATIC_PORT;
 
-  const room = new Room(server);
-  server.listen(port);
-  room.open();
+    const room = new Room(server);
+    server.listen(port);
+    room.open();
 
-  console.log('Serving on port '+port);
+    console.log('Serving on port '+port);
+
+    // BOTs
+    let bots = Config.bots;
+    if (typeof process.argv[2] != 'undefined') {
+        bots = parseInt(process.argv[2]);
+    }
+
+    const botman = new BotManager(room);
+    botman.setPlayerCap(bots);
 });

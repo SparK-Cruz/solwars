@@ -107,7 +107,7 @@ export class Stage extends EventEmitter {
         return this.tick;
     }
 
-    public fetchEntitiesAround(point :{x :number, y :number}) :Entity[] {
+    public fetchEntitiesAround(point :{x :number, y :number}) :Entity[][] {
         return this.sectors.fetchAroundCoord(point);
     }
 
