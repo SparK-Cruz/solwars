@@ -1,7 +1,7 @@
 import { Renderable } from "./renderable";
 import { Camera } from "../camera";
 import { Stage } from ".././stage";
-import { Entity, EntityType } from "../../space/entities";
+import { Entity, EntityType, EntityEvent } from "../../space/entities";
 import { ShipRenderer } from "./entities/ship_renderer";
 import { Ship } from "../../space/entities/ship";
 import { BulletRenderer } from "./entities/bullet_renderer";
@@ -13,19 +13,16 @@ import { Rock } from "../../space/entities/rock";
 import { PrizeRenderer } from "./entities/prize_renderer";
 import { Prize } from "../../space/entities/prize";
 
-const CACHE_TTL = 60 * 64; // 60 seconds at 64 fps
-
 export class EntityRenderer implements Renderable {
     private ctx: CanvasRenderingContext2D;
     private cache: any = {};
-    private cacheCycle: number = 0;
 
     public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
         this.ctx = canvas.getContext('2d');
-    }
 
-    public clearCache() {
-        this.cache = {};
+        this.stage.on(EntityEvent.Despawn, (id: number) => {
+            delete this.cache[id];
+        });
     }
 
     public render() {
@@ -37,12 +34,6 @@ export class EntityRenderer implements Renderable {
 
             const renderer = this.fetchRenderer(entity);
             this.renderEntity(entity, renderer, offset);
-        }
-
-        if (++this.cacheCycle % CACHE_TTL == 0) {
-            this.cacheCycle = 0;
-            console.log('Clearing entity cache: '+Object.values(this.cache).length+' objects');
-            this.clearCache();
         }
 
         return this.canvas;

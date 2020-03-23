@@ -80,9 +80,31 @@ export namespace Model {
     name: 'RSC17',
     make: 'Loakhaed',
     description: 'The leading edge in cloak technology.',
-    polygon: [[-16, 12], [0, -16], [16, 12]],
-    color: 'rgb(255, 255, 255)',
-    decals: []
+    polygon: [
+        [1, -14],
+          [5, -4],
+            [10, -4],
+              [12, -9],
+                [14, 5],
+                  [7, 8],
+                    [5, 14],
+                      [2, 14],
+                        [1, 10],
+                        [0, 10],
+                      [-1, 14],
+                    [-4, 14],
+                  [-6, 8],
+                [-13, 5],
+              [-11, -9],
+            [-9, -4],
+          [-4, -4],
+        [0, -14],
+    ],
+    color: 'rgb(51, 127, 51)',
+    decals: [{
+        name: 'decal0',
+        color: 'rgb(255, 200, 51)'
+      }]
   }
 
   export const Leviathan :Model = {

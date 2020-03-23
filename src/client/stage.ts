@@ -1,6 +1,7 @@
-import { Entity } from '../space/entities';
+import { EventEmitter } from 'events';
+import { Entity, EntityEvent } from '../space/entities';
 
-export class Stage {
+export class Stage extends EventEmitter {
     public tick: number;
     public entities: any = {};
 
@@ -44,6 +45,7 @@ export class Stage {
         if (!this.entities.hasOwnProperty(id))
             return;
 
+        this.emit(EntityEvent.Despawn, id);
         this.entities[id] = null;
         delete this.entities[id];
     }

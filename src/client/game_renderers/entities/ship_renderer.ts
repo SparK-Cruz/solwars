@@ -18,8 +18,8 @@ export class ShipRenderer implements Renderable {
     this.ctx = this.canvas.getContext('2d');
 
     const files = [
-      'img/'+this.ship.model+'.png',
-      'img/'+this.ship.model+'_mask.png'
+      'img/ships/'+this.ship.model+'.png',
+      'img/ships/'+this.ship.model+'_mask.png'
     ];
 
     const colors = [
@@ -27,7 +27,7 @@ export class ShipRenderer implements Renderable {
     ];
 
     for (let i = 0; i < this.ship.decals.length; i++) {
-      files.push('img/'+this.ship.model+'_'+this.ship.decals[i].name+'.png');
+      files.push('img/ships/'+this.ship.model+'_'+this.ship.decals[i].name+'.png');
       colors.push(this.ship.decals[i].color);
     }
 

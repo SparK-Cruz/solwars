@@ -4,17 +4,12 @@
             "type": {"name": "ship"},
             "model": "warbird",
             "name": "DON'T DO DRUGS",
-            "color": "#3399ff",
-            "decals": [{
-                "name": "decal1",
-                "color": "#ffffff"
-            }],
             "x": 0,
             "y": 0,
             "vx": 0,
             "vy": 0,
-            "control": 72,
-            "bullet": 2,
+            "control": 8,
+            "bullet": 0,
             "health": 1200,
             "regen": 1200
         },
@@ -27,6 +22,45 @@
             "count": 2000,
             "radius": 16000,
             "spread": 500
+        },
+        {
+            "type": {"name": "ship"},
+            "model": "warbird",
+            "name": "HA-46",
+            "x": 0,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "type": {"name": "ship"},
+            "model": "javelin",
+            "name": "FC-12/0",
+            "x": 32,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "type": {"name": "ship"},
+            "model": "spider",
+            "name": "RSC17",
+            "x": 64,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
         }
     ],
     "npe": [
