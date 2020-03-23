@@ -24,10 +24,6 @@ export class GameRenderer implements Renderable {
         this.c.imageSmoothingEnabled = false;
     }
 
-    clearCache(): void {
-        this.entityRenderer.clearCache();
-    }
-
     render() :HTMLCanvasElement {
         this.copySize(this.canvas, this.bgCanvas);
         this.copySize(this.canvas, this.fgCanvas);

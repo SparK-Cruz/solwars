@@ -15,6 +15,7 @@ export class Stage extends EventEmitter {
 
     public clear() {
         this.entities = {};
+        this.emit('clear');
     }
 
     public add(entity: Entity, removable = true) {
@@ -45,7 +46,7 @@ export class Stage extends EventEmitter {
         if (!this.entities.hasOwnProperty(id))
             return;
 
-        this.emit(EntityEvent.Despawn, id);
+        this.emit('despawn', id);
         this.entities[id] = null;
         delete this.entities[id];
     }

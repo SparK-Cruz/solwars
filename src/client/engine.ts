@@ -65,7 +65,6 @@ export class Engine extends EventEmitter {
         this.client.disconnect();
         this.hideCanvas();
 
-        this.gameRenderer.clearCache();
         this.client.getStage().clear();
 
         this.emit('stop');

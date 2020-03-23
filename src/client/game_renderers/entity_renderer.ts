@@ -1,7 +1,7 @@
 import { Renderable } from "./renderable";
 import { Camera } from "../camera";
 import { Stage } from ".././stage";
-import { Entity, EntityType, EntityEvent } from "../../space/entities";
+import { Entity, EntityType } from "../../space/entities";
 import { ShipRenderer } from "./entities/ship_renderer";
 import { Ship } from "../../space/entities/ship";
 import { BulletRenderer } from "./entities/bullet_renderer";
@@ -20,8 +20,11 @@ export class EntityRenderer implements Renderable {
     public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
         this.ctx = canvas.getContext('2d');
 
-        this.stage.on(EntityEvent.Despawn, (id: number) => {
+        this.stage.on('despawn', (id: number) => {
             delete this.cache[id];
+        });
+        this.stage.on('clear', (id: number) => {
+            this.cache = {};
         });
     }
 
