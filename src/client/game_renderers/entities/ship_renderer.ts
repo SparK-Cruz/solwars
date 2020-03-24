@@ -11,8 +11,6 @@ export class ShipRenderer implements Renderable {
   private bdy :CanvasRenderingContext2D;
   private light :HTMLImageElement;
 
-  private alive :boolean;
-
   constructor(public ship :Ship) {
     this.canvas = document.createElement('canvas');
     this.ctx = this.canvas.getContext('2d');
@@ -31,29 +29,18 @@ export class ShipRenderer implements Renderable {
       colors.push(this.ship.decals[i].color);
     }
 
-    Assets.fetchAll(files, {target: this, callback: (sprites :Asset[]) => {
+    Assets.fetchAll(files, (sprites :Asset[]) => {
       this.draw(sprites, colors);
-    }});
+    });
 
-    Assets.fetch('img/light.png', {target: this, callback: (sprite :Asset) => {
+    Assets.fetch('img/light.png').once('load', (sprite :Asset) => {
       this.light = sprite.content;
-    }});
-
-    this.alive = true;
+    });
   }
 
   public render() :HTMLCanvasElement {
-    if (this.body && this.light && this.alive) {
+    if (this.body && this.light) {
       this.ctx.drawImage(R2d.multiplyImage(this.body, this.light, this.ship.angle), 0, 0);
-    }
-
-    if (this.body && this.ship.damage >= this.ship.health && this.alive) {
-      const {buffer, bfr} = R2d.buffer(this.canvas);
-      bfr.fillStyle = 'rgba(0,0,0,0.5)';
-      bfr.fillRect(0, 0, buffer.width, buffer.height);
-
-      this.ctx.drawImage(R2d.multiplyImage(this.body, buffer, this.ship.angle), 0, 0);
-      this.alive = false;
     }
 
     return this.canvas;
@@ -104,6 +91,8 @@ export class ShipRenderer implements Renderable {
   private drawBody(sprite :HTMLImageElement) {
     this.canvas.width = sprite.width;
     this.canvas.height = sprite.height;
+    this.body.width = sprite.width;
+    this.body.height = sprite.height;
 
     this.bdy.drawImage(sprite, 0, 0);
   }

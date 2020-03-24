@@ -155,7 +155,7 @@ export class Client extends EventEmitter {
     }
 
     private onDeath(death: PlayerDeath) {
-        console.log(`You died for ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
+        console.log(`You died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
         this.ship.alive = false;
     }
     private onRespawn() {

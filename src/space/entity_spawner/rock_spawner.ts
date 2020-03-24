@@ -14,7 +14,6 @@ export class RockSpawner extends EventEmitter implements Entity {
     public vx: number = 0;
     public vy: number = 0;
     public angle: number = 0;
-    public vangle: number = 0;
 
     public size: number;
     public sides: number;
@@ -45,7 +44,6 @@ export class RockSpawner extends EventEmitter implements Entity {
             vy: this.vy,
             mass: this.mass,
             angle: this.angle,
-            vangle: this.vangle,
         };
 
         for (let i = 0; i < this.count; i++) {

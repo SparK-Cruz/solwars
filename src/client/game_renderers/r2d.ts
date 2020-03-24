@@ -5,8 +5,8 @@ export namespace R2d {
         const mask = this.buffer(source);
 
         const lightCenter = {
-          x: multiplier.width / 2,
-          y: multiplier.height / 2
+          x: light.buffer.width / 2,
+          y: light.buffer.height / 2
         };
 
         light.bfr.save();
@@ -18,7 +18,8 @@ export namespace R2d {
         mask.bfr.save();
         mask.bfr.drawImage(source, 0, 0);
         mask.bfr.globalCompositeOperation = 'multiply';
-        mask.bfr.drawImage(light.buffer, 0, 0);
+        // mask.bfr.translate(center.x, center.y);
+        mask.bfr.drawImage(light.buffer, 0, 0, buffer.width, buffer.height);
         mask.bfr.restore();
 
         bfr.save();
@@ -42,7 +43,7 @@ export namespace R2d {
     }
 
     export function applyMask(source :HTMLCanvasElement | HTMLImageElement, maskImage :HTMLCanvasElement | HTMLImageElement) :HTMLCanvasElement {
-        let {buffer, bfr} = this.buffer(source);
+        const {buffer, bfr} = this.buffer(source);
 
         bfr.save();
         bfr.drawImage(source, 0, 0);

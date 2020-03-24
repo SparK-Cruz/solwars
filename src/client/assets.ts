@@ -1,65 +1,66 @@
+import { EventEmitter } from 'events';
+
 export class Assets {
-  private static pool :any;
+    private static pool :any = {};
 
-  public static fetchAll(assetnames :string[], listener :AssetListener) :void {
-    const assets :any[] = [];
+    public static fetchAll(assetnames :string[], callback: any) :void {
+        const assets :any[] = [];
 
-    const checkEnd = () => {
-      if (assets.filter((x :Asset) => !!x).length === assetnames.length)
-        listener.callback.call(listener.target, assets);
-    };
+        const checkEnd = () => {
+            if (assets.filter((x :Asset) => x.content.src && x.content.complete).length === assetnames.length)
+                callback(assets);
+        };
 
-    for(let i in assetnames) {
-      const index :number = parseInt(i);
-      const name = assetnames[index];
+        for(let i in assetnames) {
+            const index :number = parseInt(i);
+            const name = assetnames[index];
 
-      Assets.fetch(name, {target: this, callback: (asset :Asset) => {
-        assets[index] = asset;
-        checkEnd();
-      }});
+            Assets.fetch(name).once('load', (asset :Asset) => {
+                assets[index] = asset;
+                checkEnd();
+            });
+        }
+  }
+
+    public static fetch(assetname :string) :Asset {
+        if (assetname.indexOf('img/') !== 0) {
+            const asset = new Asset();
+            setTimeout(() => { asset.emit('load', asset); }, 300);
+            return asset;
+        }
+
+        const asset = Assets.fetchImage(assetname);
+        return asset;
     }
-  }
 
-  public static fetch(assetname :string, listener :AssetListener) :Asset {
-    if (assetname.indexOf('img/') === 0)
-      return Assets.fetchImage(assetname, listener);
-  }
+    private static fetchImage(assetname :string) :Asset {
+        if (this.pool.hasOwnProperty(assetname)) {
+            const asset = this.pool[assetname];
+            // cached resources are acting weird, timeout 0 didn't work
+            setTimeout(() => { asset.emit('load', asset); }, 300);
+            return asset;
+        }
 
-  private static fetchImage(assetname :string, listener :AssetListener) :Asset {
-    const asset = new Asset();
+        const asset = new Asset();
 
-    asset.onload(listener);
+        asset.content = new Image();
+        asset.content.onload = () => {
+            asset.emit('load', asset);
+        };
+        asset.content.src = assetname;
 
-    asset.content = new Image();
-    asset.content.onload = () => {
-      asset.triggerLoad();
-    };
-    asset.content.src = assetname;
+        this.pool[assetname] = asset;
 
-    return asset;
-  }
+        return asset;
+    }
 }
 
-export class Asset {
-  private listeners :AssetListener[] = [];
+export class Asset extends EventEmitter {
+    public loaded: boolean = false;
+    public content: any;
 
-  public loaded: boolean = false;
-  public content: any;
-
-  public onload(listener :AssetListener) {
-    this.listeners.push(listener);
-  }
-
-  public triggerLoad() {
-    this.loaded = true;
-    for(let i in this.listeners) {
-      let listener = this.listeners[i];
-      listener.callback.call(listener.target, this);
+    public constructor() {
+        super();
+        this.setMaxListeners(0);
     }
-  }
-}
-
-export interface AssetListener {
-  target :any;
-  callback :Function;
 }

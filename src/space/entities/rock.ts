@@ -14,20 +14,26 @@ export class Rock extends EventEmitter implements Entity {
     public vx :number;
     public vy :number;
     public angle :number;
-    public vangle :number;
+    public vangle :number = 0;
 
     public color: string = '#474747';
 
     constructor(public size: number, public sides: number) {
         super();
 
-        const theta = 360 / sides;
+        const sideVariation = Math.random() * 0.5 + 0.5;
+        const theta = 360 / Math.round(sides * sideVariation);
+        const radius = size / 2;
         for (let i = 0; i<sides; i++) {
+            const surfaceVariation = Math.random() * 0.2 + 0.8;
+            const tethaVariation = Math.random();
             this.collisionMap.push([
-                size/2 * Math.sin(theta*i * Math.PI / 180),
-                size/2 * Math.cos(theta*i * Math.PI / 180),
+                surfaceVariation * radius * Math.sin(theta*(i + tethaVariation) * Math.PI / 180),
+                surfaceVariation * radius * Math.cos(theta*(i + tethaVariation) * Math.PI / 180),
             ]);
         }
+
+        this.vangle = Math.random() * 4 - 2;
     }
 
     public step(delta: number) :void {
