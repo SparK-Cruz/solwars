@@ -25,7 +25,7 @@ export class Assets {
     public static fetch(assetname :string) :Asset {
         if (assetname.indexOf('img/') !== 0) {
             const asset = new Asset();
-            // setTimeout(() => { asset.emit('load', asset); }, 300);
+            setTimeout(() => { asset.emit('load', asset); }, 0);
             return asset;
         }
 
@@ -36,8 +36,9 @@ export class Assets {
     private static fetchImage(assetname :string) :Asset {
         if (this.pool.hasOwnProperty(assetname)) {
             const asset = this.pool[assetname];
-            // cached resources are acting weird, timeout 0 didn't work
-            setTimeout(() => { asset.emit('load', asset); }, 300);
+            if (asset.loaded) {
+                setTimeout(() => { asset.emit('load', asset); }, 0);
+            }
             return asset;
         }
 
@@ -46,6 +47,7 @@ export class Assets {
         asset.content = new Image();
         asset.content.onload = () => {
             asset.emit('load', asset);
+            asset.loaded = true;
         };
         asset.content.src = assetname;
 
