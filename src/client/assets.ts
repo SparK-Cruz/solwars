@@ -25,7 +25,7 @@ export class Assets {
     public static fetch(assetname :string) :Asset {
         if (assetname.indexOf('img/') !== 0) {
             const asset = new Asset();
-            setTimeout(() => { asset.emit('load', asset); }, 300);
+            // setTimeout(() => { asset.emit('load', asset); }, 300);
             return asset;
         }
 
