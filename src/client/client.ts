@@ -51,7 +51,7 @@ export class Client extends EventEmitter {
             if (!(<any>process).browser) {
                 address = 'http://127.0.0.1:'+(process.env.PORT || Config.serverPort);
             }
-            this.socket = socketio(address, {autoConnect: false});
+            this.socket = socketio(address, {autoConnect: false, transports: ['websocket']});
 
             this.bindEvents(this.socket);
         }
