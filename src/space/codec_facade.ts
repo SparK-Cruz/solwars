@@ -7,10 +7,12 @@ import { Rock } from './entities/rock';
 import { EntitySpawner } from './entity_spawner';
 import { Prize } from './entities/prize';
 
+const LZString = require('lz-string');
+
 interface SavedState {
-  tick: number,
-  entities: any[],
-  ranking: {name: string, bounty: number}[],
+    tick: number,
+    entities: any[],
+    ranking: {name: string, bounty: number}[],
 }
 
 export module DeathCauses {
@@ -36,12 +38,12 @@ export class CodecFacade {
         };
 
         // TODO PSON / binary
-        return JSON.stringify(stream);
+        return this.encodeBin(JSON.stringify(stream));
     }
 
     public decode(state :string): SavedState {
         // TODO PSON / binary
-        return <SavedState>JSON.parse(state);
+        return <SavedState>JSON.parse(this.decodeBin(state));
     }
 
     public encodeEntity(entity :any, force: boolean = false) {
@@ -152,6 +154,13 @@ export class CodecFacade {
         const prize = new Prize();
         Object.assign(prize, data);
         return prize;
+    }
+
+    private encodeBin(json: string): string {
+        return LZString.compress(json);
+    }
+    private decodeBin(bin: string): string {
+        return LZString.decompress(bin);
     }
 }
 
