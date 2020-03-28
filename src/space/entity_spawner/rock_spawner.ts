@@ -7,6 +7,7 @@ export class RockSpawner extends EventEmitter implements Entity {
 
     public id: number;
     public sectorKey: string;
+    public newSector: number = 0;
     public collisionMap: number[][];
     public mass = 0;
     public x: number = 0;

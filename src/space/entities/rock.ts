@@ -1,11 +1,14 @@
 import { EventEmitter } from 'events';
 import { Entity, EntityType } from '../entities';
 
+const FRICTION = 0.995;
+
 export class Rock extends EventEmitter implements Entity {
-    public id :number;
+    public id: number;
     public type = EntityType.Rock;
 
-    public sectorKey :string = "";
+    public sectorKey: string = "";
+    public newSector: number = 0;
     public collisionMap: number[][] = [];
     public mass = 100000;
 
@@ -49,5 +52,8 @@ export class Rock extends EventEmitter implements Entity {
         this.angle += this.vangle * delta;
         this.x += this.vx * delta;
         this.y += this.vy * delta;
+
+        this.vx *= FRICTION;
+        this.vy *= FRICTION;
     }
 }

@@ -5,7 +5,6 @@ import { ShipDebris } from './entities/ship_debris';
 import { Ship } from './entities/ship';
 import * as json from 'jsonfile';
 import { CodecFacade } from './codec_facade';
-import { EntitySpawner } from './entity_spawner';
 import { Rock } from './entities/rock';
 import { Prize } from './entities/prize';
 import { PrizeSpawner } from './entity_spawner/prize_spawner';

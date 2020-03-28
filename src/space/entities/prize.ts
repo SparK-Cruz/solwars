@@ -11,7 +11,8 @@ export interface PrizeEffect {
 export class Prize extends EventEmitter implements Entity {
     public type = EntityType.Prize;
     public id: number;
-    public sectorKey: string;
+    public sectorKey: string = '';
+    public newSector: number = 0;
     public collisionMap: number[][] = [
         [-7, -7],
         [-7, 7],

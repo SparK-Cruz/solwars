@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityEvent } from '../space/entities';
+import { Entity } from '../space/entities';
 
 export class Stage extends EventEmitter {
     public tick: number;
@@ -22,8 +22,12 @@ export class Stage extends EventEmitter {
         if (!entity.id) return;
         (<any>entity).removable = removable;
 
-        this.entities[entity.id] = this.entities[entity.id] || entity;
-        Object.assign(this.entities[entity.id], entity);
+        if (this.entities.hasOwnProperty(entity.id)) {
+            Object.assign(this.entities[entity.id], entity);
+            return;
+        }
+
+        this.entities[entity.id] = entity;
     }
 
     public addAll(entities: Entity[]) {

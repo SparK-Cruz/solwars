@@ -7,6 +7,7 @@ export class Bullet extends EventEmitter implements Entity {
     public type = EntityType.Bullet;
 
     public sectorKey: string = "";
+    public newSector: number = 0;
     public collisionMap = [[-1, -1], [-1, 1], [1, 1], [1, -1]];
     public mass = 5;
 

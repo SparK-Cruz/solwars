@@ -7,6 +7,7 @@ export class ShipDebris extends EventEmitter implements Entity {
     public type = EntityType.ShipDebris;
 
     public sectorKey: string = "";
+    public newSector: number = 0;
     public collisionMap: number[][] = [];
     public mass = 10;
 

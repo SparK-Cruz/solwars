@@ -2,6 +2,7 @@ export interface Entity {
     type: EntityType;
     id: number;
     sectorKey: string;
+    newSector: number;
     collisionMap: number[][];
     mass: number;
 
@@ -64,6 +65,7 @@ export namespace EntityType {
 }
 
 const SCALE = 2048;
+const FRESHNESS = 6;
 
 export class EntityPoolGrid {
     private grid :any = {};
@@ -94,10 +96,14 @@ export class EntityPoolGrid {
             entity.sectorKey = null;
         }
 
-        if (!entity.sectorKey) {
-            this.grid[name].add(entity);
-            entity.sectorKey = name;
+        if (entity.sectorKey) {
+            entity.newSector = Math.max(0, entity.newSector -1);
+            return;
         }
+
+        this.grid[name].add(entity);
+        entity.sectorKey = name;
+        entity.newSector = FRESHNESS;
     }
 
     public remove(id :number) {

@@ -10,6 +10,7 @@ import { Ship } from '../space/entities/ship';
 
 const Collisions = require('collisions').Collisions;
 
+const UPDATE_SKIP = 3;
 const TPS_TARGET = 64;
 let TPS = 64;
 
@@ -111,7 +112,7 @@ export class Room {
         const ranking = this.topPlayers();
 
         this.players.forEach((player, index) => {
-            if ((this.stage.tick + index) % Math.ceil(TPS / (TPS_TARGET / 3)) !== 0)
+            if ((this.stage.tick + index) % Math.ceil(TPS / (TPS_TARGET / UPDATE_SKIP)) !== 0)
                 return;
 
             if (player.isBot)
@@ -121,11 +122,15 @@ export class Room {
             if (!player.ship)
                 return;
 
-            player.sendState(this.codec.encode({
-                tick: this.stage.tick,
-                entities: this.stage.fetchEntitiesAround(player.ship),
-                ranking: ranking,
-            }));
+            player.sendState(this.codec.encode(
+                {
+                    tick: this.stage.tick,
+                    entities: this.stage.fetchEntitiesAround(player.ship),
+                    ranking: ranking,
+                },
+                // if player ship is new to the sector, force full entity encoding
+                player.ship.newSector > 0
+            ));
         });
     }
 

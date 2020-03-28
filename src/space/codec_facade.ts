@@ -16,25 +16,25 @@ interface SavedState {
 }
 
 export module DeathCauses {
-        export const Collision = 'collision';
-        export const Bullet = 'bullet';
+    export const Collision = 'collision';
+    export const Bullet = 'bullet';
 }
 
 export interface PlayerDeath {
-        cause: string,
-        bounty: number,
-        killer: Entity,
-        type: EntityType,
+    cause: string,
+    bounty: number,
+    killer: Entity,
+    type: EntityType,
 }
 
 export class CodecFacade {
     public constructor() {}
 
-    public encode(state: SavedState): string {
+    public encode(state: SavedState, force: boolean = false): string {
         const stream = {
             tick: state.tick,
             ranking: state.ranking.map(p => {return {name: p.name, bounty: p.bounty}}),
-            entities: state.entities.map(p => Object.values(p).map(this.encodeEntity).filter(e => e))
+            entities: state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e))
         };
 
         // TODO PSON / binary
@@ -46,16 +46,39 @@ export class CodecFacade {
         return <SavedState>JSON.parse(this.decodeBin(state));
     }
 
-    public encodeEntity(entity :any) {
+    public encodeEntity(entity :any, force: boolean = false) {
         if (entity.spawner) {
-                return null;
+            return null;
         }
 
+        if (entity.newSector || force) {
+            return this.fullEncode(entity);
+        }
+
+        return this.lightEncode(entity);
+    }
+
+    private lightEncode(entity: any) {
         return {
+            newSector: false,
+            id: entity.id,
+            x: entity.x,
+            y: entity.y,
+            vx: entity.vx,
+            vy: entity.vy,
+            angle: entity.angle,
+            vangle: entity.vangle,
+            control: entity.control,
+            damage: entity.damage,
+        }
+    }
+
+    private fullEncode(entity: any) {
+        return {
+            newSector: true,
             type: entity.type,
             id: entity.id,
             name: entity.name,
-            alive: entity.alive,
             x: entity.x,
             y: entity.y,
             vx: entity.vx,

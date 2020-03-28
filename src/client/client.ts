@@ -9,6 +9,8 @@ import { Model as ShipModel } from '../space/entities/ships/model';
 import { Config } from '../space/config';
 import { Entity } from '../space/entities';
 
+let first = true;
+
 export class Client extends EventEmitter {
     private remoteId: number = null;
     private name: string = null;
@@ -51,7 +53,7 @@ export class Client extends EventEmitter {
             if (!(<any>process).browser) {
                 address = 'http://127.0.0.1:'+(process.env.PORT || Config.serverPort);
             }
-            this.socket = socketio(address, {autoConnect: false, transports: ['websocket']});
+            this.socket = socketio(address, {autoConnect: false});
 
             this.bindEvents(this.socket);
         }
@@ -131,7 +133,6 @@ export class Client extends EventEmitter {
     }
 
     private onConnect(data: any) {
-
         this.remoteId = data.id;
         this.ship = <Ship>this.codec.decodeEntity(data.ship);
         this.stage.clear();
@@ -144,7 +145,7 @@ export class Client extends EventEmitter {
     private onServerUpdate(data: any) {
         const decoded = this.codec.decode(data);
 
-        this.stage.addAll([].concat(...decoded.entities).map((e: Entity) => this.codec.decodeEntity(e)).filter(e => e));
+        this.stage.addAll([].concat(...decoded.entities).map((e: any) => e.newSector ? this.codec.decodeEntity(e) : e).filter(e => e));
         this.ranking = decoded.ranking;
 
         this.emit(ClientEvents.INFO, this.fetchInfo());

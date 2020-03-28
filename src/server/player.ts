@@ -67,7 +67,7 @@ export class Player extends EventEmitter {
                 });
                 this.socket.emit(CodecEvents.ACCEPT, {
                     id: this.id,
-                    ship: this.room.codec.encodeEntity(ship),
+                    ship: this.room.codec.encodeEntity(ship, true),
                     tps: Config.TPS,
                 });
             })

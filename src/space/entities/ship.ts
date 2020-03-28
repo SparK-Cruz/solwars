@@ -22,7 +22,8 @@ export class Ship extends EventEmitter implements entities.Entity {
   model :string;
   name: string;
 
-  sectorKey :string = "";
+  sectorKey: string = "";
+  newSector: number = 0;
 
   collisionMap :number[][] = [];
   mass = 100;

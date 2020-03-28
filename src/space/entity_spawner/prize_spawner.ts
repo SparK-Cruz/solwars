@@ -7,6 +7,7 @@ export class PrizeSpawner extends EventEmitter implements Entity {
     public type = EntityType.Prize;
     public id: number;
     public sectorKey: string;
+    public newSector: number = 0;
     public collisionMap: number[][];
     public mass: number;
 
