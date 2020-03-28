@@ -2,7 +2,7 @@
     "TPS": 64,
     "maxPlayers": 100,
     "bots": {
-        "playerCap": 5,
+        "playerCap": 3,
         "ship": {
             "model": "javelin",
             "color": "#3399ff",
