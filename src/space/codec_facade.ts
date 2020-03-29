@@ -173,8 +173,6 @@ const stringify = fastjson({
     },
 });
 
-let first = true;
-
 export class CodecFacade {
     public constructor() {}
 

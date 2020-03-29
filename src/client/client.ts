@@ -7,9 +7,6 @@ import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Config } from '../space/config';
-import { Entity } from '../space/entities';
-
-let first = true;
 
 export class Client extends EventEmitter {
     private remoteId: number = null;
