@@ -64,8 +64,8 @@ export namespace EntityType {
     export const Prize = {name: 'prize'};
 }
 
-const SCALE = 2048;
-const FRESHNESS = 6;
+const SCALE = 1280;
+const FRESHNESS = 4;
 
 export class EntityPoolGrid {
     private grid :any = {};

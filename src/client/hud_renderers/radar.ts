@@ -15,7 +15,7 @@ export class Radar implements Renderable {
     private bbfr: CanvasRenderingContext2D;
 
     private info: ClientInfo;
-    private scale = 1/20;
+    private scale = 1/12;
     private regionScale = 1/512;
     private pos = {x: -220, y: -250};
 

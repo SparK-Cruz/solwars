@@ -11,8 +11,8 @@ import { Config } from '../../space/config';
 const MIN_DISTANCE = 150;
 const MAX_DISTANCE = 400;
 const DISTANCE_BAND = 90;
-const IDEAL_BULLET_SPEED = 7.5;
-const ANGLE_TOLERANCE = 5;
+const IDEAL_BULLET_SPEED = 7;
+const ANGLE_TOLERANCE = 4;
 const ENERGY_RESERVE = 0.55;
 
 export class Bot extends Player {

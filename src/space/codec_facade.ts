@@ -7,8 +7,6 @@ import { Rock } from './entities/rock';
 import { EntitySpawner } from './entity_spawner';
 import { Prize } from './entities/prize';
 
-const LZString = require('lz-string');
-
 interface SavedState {
     tick: number,
     entities: any[],
@@ -27,6 +25,156 @@ export interface PlayerDeath {
     type: EntityType,
 }
 
+const LZString = require('lz-string');
+const fastjson = require('fast-json-stringify');
+const flatstr = require('flatstr');
+
+const stringify = fastjson({
+    title: 'Stream',
+    type: 'object',
+    properties: {
+        tick: {
+            type: 'integer',
+        },
+        ranking: {
+            type: 'array',
+            items: {
+                type: 'object',
+                properties: {
+                    name: {
+                        type: 'string',
+                    },
+                    bounty: {
+                        type: 'integer',
+                    },
+                }
+            }
+        },
+        entities: {
+            type: 'array',
+            items: {
+                type: 'array',
+                items: {
+                    type: 'object',
+                    properties: {
+                        newSector: {
+                            type: 'boolean',
+                        },
+                        id: {
+                            type: 'integer',
+                        },
+                        name: {
+                            type: 'string',
+                        },
+                        x: {
+                            type: 'integer',
+                        },
+                        y: {
+                            type: 'integer',
+                        },
+                        vx: {
+                            type: 'integer',
+                        },
+                        vy: {
+                            type: 'integer',
+                        },
+                        vmax: {
+                            type: 'number',
+                        },
+                        angle: {
+                            type: 'number',
+                        },
+                        vangle: {
+                            type: 'number',
+                        },
+                        control: {
+                            type: 'integer',
+                        },
+                        damage: {
+                            type: 'number',
+                        },
+                        health: {
+                            type: 'integer',
+                        },
+                        color: {
+                            type: 'string',
+                        },
+                        model: {
+                            type: 'string',
+                        },
+                        decals: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string',
+                                    },
+                                    color: {
+                                        type: 'string',
+                                    },
+                                },
+                            },
+                        },
+                        parent: {
+                            type: 'object',
+                            properties: {
+                                type: {
+                                    type: 'object',
+                                    properties: {
+                                        name: {
+                                            type: 'string',
+                                        },
+                                    },
+                                },
+                                id: {
+                                    type: 'string',
+                                },
+                                name: {
+                                    type: 'string',
+                                },
+                            },
+                        },
+                        bulletType: {
+                            type: 'integer',
+                        },
+                        options: {
+                            type: 'object',
+                            properties: {
+                                size: {
+                                    type: 'number',
+                                },
+                                angle: {
+                                    type: 'number',
+                                },
+                            },
+                        },
+                        size: {
+                            type: 'number',
+                        },
+                        energy: {
+                            type: 'number',
+                        },
+                        sides: {
+                            type: 'integer',
+                        },
+                        type: {
+                            type: 'object',
+                            properties: {
+                                name: {
+                                    type: 'string',
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+});
+
+let first = true;
+
 export class CodecFacade {
     public constructor() {}
 
@@ -38,12 +186,12 @@ export class CodecFacade {
         };
 
         // TODO PSON / binary
-        return this.encodeBin(JSON.stringify(stream));
+        return this.encodeBin(flatstr(stringify(stream)));
     }
 
     public decode(state :string): SavedState {
         // TODO PSON / binary
-        return <SavedState>JSON.parse(this.decodeBin(state));
+        return <SavedState>JSON.parse(flatstr(this.decodeBin(state)));
     }
 
     public encodeEntity(entity :any, force: boolean = false) {
@@ -56,53 +204,6 @@ export class CodecFacade {
         }
 
         return this.lightEncode(entity);
-    }
-
-    private lightEncode(entity: any) {
-        return {
-            newSector: false,
-            id: entity.id,
-            x: entity.x,
-            y: entity.y,
-            vx: entity.vx,
-            vy: entity.vy,
-            angle: entity.angle,
-            vangle: entity.vangle,
-            control: entity.control,
-            damage: entity.damage,
-        }
-    }
-
-    private fullEncode(entity: any) {
-        return {
-            newSector: true,
-            type: entity.type,
-            id: entity.id,
-            name: entity.name,
-            x: entity.x,
-            y: entity.y,
-            vx: entity.vx,
-            vy: entity.vy,
-            health: entity.health,
-            damage: entity.damage,
-            angle: entity.angle,
-            vangle: entity.vangle,
-            color: entity.color,
-            //ship
-            vmax: entity.vmax,
-            model: entity.model,
-            decals: entity.decals,
-            control: entity.control,
-            //bullet
-            parent: entity.parent,
-            bulletType: entity.bulletType,
-            //ship debris
-            options: entity.options,
-            size: entity.size,
-            energy: entity.energy,
-            //rock
-            sides: entity.sides
-        };
     }
 
     public decodeEntity(data: Entity) {
@@ -154,6 +255,56 @@ export class CodecFacade {
         const prize = new Prize();
         Object.assign(prize, data);
         return prize;
+    }
+
+    private lightEncode(entity: any) {
+        return {
+            newSector: false,
+            id: entity.id,
+            x: entity.x,
+            y: entity.y,
+            vx: entity.vx,
+            vy: entity.vy,
+            vmax: entity.vmax,
+            angle: entity.angle,
+            vangle: entity.vangle,
+            control: entity.control,
+            damage: entity.damage,
+        }
+    }
+
+    private fullEncode(entity: any) {
+        return {
+            // all
+            newSector: true,
+            id: entity.id,
+            name: entity.name,
+            x: entity.x,
+            y: entity.y,
+            vx: entity.vx,
+            vy: entity.vy,
+            vmax: entity.vmax, // ship
+            angle: entity.angle,
+            vangle: entity.vangle,
+            control: entity.control, // ship
+            damage: entity.damage,
+            health: entity.health,
+            color: entity.color,
+            //ship
+            model: entity.model,
+            decals: entity.decals,
+            //bullet
+            parent: entity.parent,
+            bulletType: entity.bulletType,
+            //ship debris
+            options: entity.options,
+            size: entity.size,
+            energy: entity.energy,
+            //rock
+            sides: entity.sides,
+            // all
+            type: entity.type,
+        };
     }
 
     private encodeBin(json: string): string {

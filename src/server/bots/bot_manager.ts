@@ -46,7 +46,7 @@ const botNames = [
     'Yuri',
 ].sort((a, b) => Math.round(Math.random() * 2 - 1));
 
-const INPUT_TPS = 32;
+const INPUT_TPS = 16;
 const TARGET_LOOKUP_INTERVAL = 5000;
 
 export class BotManager {
