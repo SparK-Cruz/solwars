@@ -57,7 +57,7 @@ export class Player extends EventEmitter {
             this.bounty += 10;
             this.socket.emit(CodecEvents.UPGRADE, name);
         };
-        this.fetchPlayerShip(data.name, this.ship)
+        this.fetchPlayerShip(data, this.ship)
             .then(ship => {
                 this.emit(PlayerEvents.Ship, ship);
                 ship.on(ShipEvents.Upgrade, upgradeListener);
@@ -76,7 +76,7 @@ export class Player extends EventEmitter {
             });
     }
 
-    protected fetchPlayerShip(name :string, cache: Ship = null) {
+    protected fetchPlayerShip(data :any, cache: Ship) {
         let onSuccess = (ship :Ship) => {};
         let onError = (reason :string) => {};
 
@@ -84,25 +84,26 @@ export class Player extends EventEmitter {
         // Otherwise there's not enough time to set the callbacks
         // on the outer scope
         setTimeout(() => {
-            // It's random for now
-            // const models = [ShipModel.Warbird, ShipModel.Javelin];
-            // const ship = new Ship(models[Math.round(Math.random())]);
-            const ship = new Ship(ShipModel.Javelin);
+            let model = ShipModel.byId[data.model] || ShipModel.Warbird;
 
-            // Customize ship here
-            const decal = this.randomShades(167);
-
-            if (name.startsWith('\u2063NPC ')) {
-                decal.color = '#333333';
-                decal.shade = '#a2a2a2';
+            // this validation is temporary until we have all ships
+            const models = [ShipModel.Warbird.id, ShipModel.Javelin.id, ShipModel.Spider.id];
+            if (!models.includes(model.id)) {
+                model = ShipModel.Warbird;
             }
 
-            ship.decals[0].color = decal.color;
-            ship.color = decal.shade;
+            const ship = new Ship(model);
 
+            // Customize ship here
+            const options: any = {};
             if (cache) {
-                ship.decals[0].color = cache.decals[0].color;
-                ship.color = cache.color
+                Object.assign(options, {color: cache.color, decal: cache.decals[0].color});
+            }
+            Object.assign(options, data);
+
+            if (options.color && options.decal) {
+                ship.color = options.color;
+                ship.decals[0].color = options.decal;
             }
 
             onSuccess(ship);

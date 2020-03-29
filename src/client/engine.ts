@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Client, ClientEvents, ClientInfo } from "./client";
+import { Client, ClientEvents, ClientInfo, ClientOptions } from "./client";
 import { Input } from "./input";
 import { Camera } from "./camera";
 import { GameRenderer } from "./game_renderer";
@@ -34,7 +34,7 @@ export class Engine extends EventEmitter {
         return this.client.connected;
     }
 
-    public start(name: string, callback: Function = null) {
+    public start(options: ClientOptions, callback: Function = null) {
         const timeout = setTimeout(() => {
             callback && callback({error: 'Connection Timeout'});
             this.stop();
@@ -54,7 +54,7 @@ export class Engine extends EventEmitter {
         };
 
         this.client.once(ClientEvents.SHIP, once);
-        this.client.connect(name);
+        this.client.connect(options);
 
         this.emit('start');
     }

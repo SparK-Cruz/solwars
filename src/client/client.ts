@@ -8,9 +8,16 @@ import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { Config } from '../space/config';
 
+export interface ClientOptions {
+    name: string,
+    model: string,
+    color?: string,
+    decal?: string,
+}
+
 export class Client extends EventEmitter {
     private remoteId: number = null;
-    private name: string = null;
+    private options: ClientOptions = null;
     private stage: Stage = null;
     private codec: CodecFacade = null;
     private ship: Ship = null;
@@ -42,8 +49,8 @@ export class Client extends EventEmitter {
         return !!this.remoteId;
     }
 
-    public connect(name: string) {
-        this.name = name;
+    public connect(options: ClientOptions) {
+        this.options = options;
 
         if (!this.socket) {
             let address = '';
@@ -89,7 +96,7 @@ export class Client extends EventEmitter {
 
     private bindEvents(socket: SocketIOClient.Socket) {
         socket.on(CodecEvents.CONNECT, () => {
-            this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
+            this.socket.emit(CodecEvents.JOIN_GAME, this.options);
         });
 
         socket.on(CodecEvents.DISCONNECT, () => {
@@ -158,7 +165,7 @@ export class Client extends EventEmitter {
     }
     private onRespawn() {
         // Get a new ship
-        this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
+        this.socket.emit(CodecEvents.JOIN_GAME, this.options);
     }
 
     private cacheStaticInfo(data: any) {
