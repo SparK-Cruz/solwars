@@ -120,23 +120,25 @@ export class Engine extends EventEmitter {
     }
 
     private preloadAssets() {
-        Assets.fetchAll([
-            'img/light.png',
-            'img/rock.png',
-            'img/ships/warbird.png',
-            'img/ships/warbird_mask.png',
-            'img/ships/warbird_decal0.png',
-            'img/ships/warbird_decal1.png',
-            'img/ships/javelin.png',
-            'img/ships/javelin_mask.png',
-            'img/ships/javelin_decal0.png',
-            'img/ships/javelin_decal1.png',
-            'img/ships/spider.png',
-            'img/ships/spider_mask.png',
-            'img/ships/spider_decal0.png',
-            'img/ships/spider_decal1.png',
-        ], () => {
-            console.log('Assets pre-loaded');
-        });
+        setTimeout(() => {
+            Assets.fetchAll([
+                'img/light.png',
+                'img/rock.png',
+                'img/ships/warbird.png',
+                'img/ships/warbird_mask.png',
+                'img/ships/warbird_decal0.png',
+                'img/ships/warbird_decal1.png',
+                'img/ships/javelin.png',
+                'img/ships/javelin_mask.png',
+                'img/ships/javelin_decal0.png',
+                'img/ships/javelin_decal1.png',
+                'img/ships/spider.png',
+                'img/ships/spider_mask.png',
+                'img/ships/spider_decal0.png',
+                'img/ships/spider_decal1.png',
+            ], () => {
+                this.emit('load');
+            });
+        }, 0);
     }
 }

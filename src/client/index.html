@@ -6,8 +6,10 @@
         <link type="text/css" rel="stylesheet" href="frontend/style.css" />
     </head>
     <body>
+        <section id="loading">
+        </section>
         <!-- FRONT END -->
-        <section id="frontend">
+        <section id="frontend" style="display: none">
             <header>
                 <h1><span>SubSpace</span>Sol Wars</h1>
             </header>
@@ -18,13 +20,20 @@
                             <label for="player-name">Name</label>
                             <input type="text" id="player-name" maxlength="32" />
                         </div>
-                        <div>
-                            <div class="ship warbird">WARBIRD</div>
-                            <div class="ship javelin">JAVELIN</div>
-                            <div class="ship spider">SPIDER</div>
+                        <div id="ship">
+                            <canvas id="ship-preview" width="64" height="64"></canvas>
+                            <p id="ship-info"></p>
+                            <input type="button" id="prev-ship-btn" class="btn" value="Prev Ship" />
+                            <input type="button" id="next-ship-btn" class="btn" value="Next Ship" />
+                            <div class="color">
+                                <label for="main-color">Main Color</label>
+                                <input type="text" id="main-color" placeholder="Default" maxlength="6" />
+                            </div>
+                            <div class="color">
+                                <label for="accent-color">Accent Color</label>
+                                <input type="text" id="accent-color" placeholder="Default" maxlength="6" />
+                            </div>
                         </div>
-                        <div><input type="button" id="prev-ship-btn" class="btn" value="Prev Ship" /></div>
-                        <div><input type="button" id="next-ship-btn" class="btn" value="Next Ship" /></div>
                         <div><input type="submit" id="join-btn" class="btn" value="Join Game" /></div>
                     </fieldset>
                 </form>
@@ -45,8 +54,15 @@
         </section>
 
         <!-- GAME ENGINE -->
-        <canvas id="game" width="1366" height="768"></canvas>
-        <canvas id='hud' width="1366" height="768"></canvas>
-        <script src="dist_frontend.js"></script>
+        <canvas id="game" width="1366" height="768" style="display: none"></canvas>
+        <canvas id='hud' width="1366" height="768" style="display: none"></canvas>
+        <script>
+            setTimeout(() => {
+                const element = document.createElement('script');
+                element.src = "dist_frontend.js";
+
+                document.body.appendChild(element);
+            }, 0);
+        </script>
     </body>
 </html>

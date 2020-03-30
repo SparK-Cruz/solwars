@@ -2,6 +2,7 @@ import { Engine } from "./engine";
 import { JoinForm } from "./frontend/join_form";
 import { KeysForm } from "./frontend/keys_form";
 
+const loading = <HTMLElement>document.getElementById('loading');
 const frontend = <HTMLElement>document.getElementById('frontend');
 const game = <HTMLCanvasElement>document.getElementById('game');
 const hud = <HTMLCanvasElement>document.getElementById('hud');
@@ -21,6 +22,10 @@ window.addEventListener('keydown', e => {
     engine.stop();
 });
 
+engine.on('load', () => {
+    frontend.style.display = 'block';
+    loading.style.display = 'none';
+});
 engine.on('start', () => {
     frontend.style.display = 'none';
 });

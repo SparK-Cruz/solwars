@@ -5,6 +5,12 @@ body {
     background-color: black;
 }
 
+/* LOADING */
+#loading {
+    background: url('../img/loading.gif') center center no-repeat;
+    min-height: 440px;
+}
+
 /* FRONTEND */
 #frontend {
     display: block;
@@ -81,6 +87,39 @@ form input.btn {
 /* JOIN FORM */
 #join-form {
     float: left;
+}
+#join-form #ship {
+    position: relative;
+}
+#join-form #ship-preview {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto;
+}
+#join-form #prev-ship-btn {
+    margin-right: 26px;
+}
+#join-form #prev-ship-btn,
+#join-form #next-ship-btn {
+    display: block;
+    width: 111px;
+    float: left;
+    margin-bottom: 10px;
+}
+#join-form .color {
+    position: relative;
+}
+#join-form .color input {
+    padding-left: 25px;
+}
+#join-form .color:before {
+    position: absolute;
+    content: '#';
+    bottom: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
 }
 
 /* KEYS FORM */
