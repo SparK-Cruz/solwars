@@ -37,8 +37,8 @@ export class JoinForm {
         nameField.value = localStorage.getItem('name');
 
         this.currentShip = Math.min(this.ships.length -1, Math.max(0, parseInt(localStorage.getItem('model') || '0')));
-        mainColor.value = localStorage.getItem('color');
-        accentColor.value = localStorage.getItem('decal');
+        mainColor.value = localStorage.getItem('color') || '';
+        accentColor.value = localStorage.getItem('decal') || '';
 
         nameField.focus();
         nameField.select();
@@ -66,8 +66,8 @@ export class JoinForm {
 
             localStorage.setItem('name', name == defaultName ? '' : name);
             localStorage.setItem('model', this.currentShip.toFixed(0));
-            localStorage.setItem('color', validColor);
-            localStorage.setItem('decal', validDecal);
+            localStorage.setItem('color', validColor || '');
+            localStorage.setItem('decal', validDecal || '');
 
             engine.start({
                 name,
