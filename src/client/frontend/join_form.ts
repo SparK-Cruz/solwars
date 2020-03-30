@@ -44,10 +44,10 @@ export class JoinForm {
         nameField.select();
 
         engine.on('start', () => {
+            clearInterval(previewInterval);
             button.blur();
             nameField.blur();
             (<HTMLFieldSetElement>form.firstElementChild).disabled = true;
-            clearInterval(previewInterval);
         });
 
         engine.on('stop', () => {

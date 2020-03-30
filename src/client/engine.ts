@@ -68,8 +68,6 @@ export class Engine extends EventEmitter {
         this.hideCanvas();
 
         this.client.getStage().clear();
-
-        this.emit('stop');
     }
 
     private listenClient(client: Client) {
@@ -95,6 +93,7 @@ export class Engine extends EventEmitter {
 
         if (!this.running) {
             this.stop();
+            this.emit('stop');
             return;
         }
 
