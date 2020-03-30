@@ -8,9 +8,6 @@ const game = <HTMLCanvasElement>document.getElementById('game');
 const hud = <HTMLCanvasElement>document.getElementById('hud');
 const engine = new Engine(game, hud);
 
-JoinForm.bind(engine);
-KeysForm.bind();
-
 window.addEventListener('keydown', e => {
     if (!engine.running
         || e.which != 27
@@ -25,6 +22,9 @@ window.addEventListener('keydown', e => {
 engine.on('load', () => {
     frontend.style.display = 'block';
     loading.style.display = 'none';
+
+    JoinForm.bind(engine);
+    KeysForm.bind();
 });
 engine.on('start', () => {
     frontend.style.display = 'none';

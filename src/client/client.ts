@@ -174,8 +174,13 @@ export class Client extends EventEmitter {
     }
 
     private onServerUpdate(data: any) {
-        this.updateTimes.push(Date.now() - this.lastUpdateTime);
-        this.lastUpdateTime = Date.now();
+        const now = Date.now();
+        const diff = now - this.lastUpdateTime;
+        if (diff > 0) {
+            this.updateTimes.push(1000 / diff);
+            this.lastUpdateTime = now;
+        }
+
         while (this.updateTimes.length > UPDATE_LOG_LENGTH) {
             this.updateTimes.shift();
         }

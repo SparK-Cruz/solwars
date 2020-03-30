@@ -56,6 +56,6 @@ export class FpsRenderer implements Renderable {
 
     private calculateTickrate() {
         const count = this.ticksLog.length;
-        return this.ticksLog.map(time => 1000/time).reduce((result, tps) => result + tps / count, 0);
+        return this.ticksLog.reduce((result, tps) => result + tps / count, 0);
     }
 }

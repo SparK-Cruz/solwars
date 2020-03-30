@@ -50,8 +50,9 @@ export class Room {
     }
 
     public open() {
-        setInterval(() => {
+        setTimeout(() => {
             this.tick();
+            this.open();
         }, 1000/TPS);
     }
 
