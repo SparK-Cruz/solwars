@@ -153,7 +153,7 @@ export class Ship extends EventEmitter implements entities.Entity {
       || !this.canShoot())
       return;
 
-    const linearOffset = 32;
+    const linearOffset = 16;
     const offset = {
       x: linearOffset * Math.sin(inRads(this.angle)),
       y: -linearOffset * Math.cos(inRads(this.angle)),

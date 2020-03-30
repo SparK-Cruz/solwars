@@ -5,6 +5,7 @@ import { Camera } from "./camera";
 import { GameRenderer } from "./game_renderer";
 import { HudRenderer } from "./hud_renderer";
 import { ToastRenderer, ToastTime } from './toast_renderer';
+import { Assets } from './assets';
 
 const FRAMESKIP_THRESHOLD: number = 55;
 let lastTick: number = null;
@@ -28,6 +29,7 @@ export class Engine extends EventEmitter {
         this.toastRenderer = new ToastRenderer(hud);
 
         this.listenClient(this.client);
+        this.preloadAssets();
     }
 
     public get running() {
@@ -74,11 +76,7 @@ export class Engine extends EventEmitter {
         client.on(ClientEvents.SHIP, (ship: any) => {
             this.camera.trackable = ship;
         });
-        client.on(ClientEvents.INFO, (info: ClientInfo) => {
-            this.hudRenderer.update(info);
-        });
         client.on(ClientEvents.UPGRADE, (name: string) => {
-            console.log(name);
             this.toastRenderer.toast(name, ToastTime.SHORT);
         });
     }
@@ -90,6 +88,7 @@ export class Engine extends EventEmitter {
         if (fps > FRAMESKIP_THRESHOLD) {
             this.camera.setResolution(this.game.width, this.game.height);
             this.gameRenderer.render();
+            this.hudRenderer.update(this.client.fetchInfo());
             this.hudRenderer.render();
             this.toastRenderer.render();
         }
@@ -118,5 +117,26 @@ export class Engine extends EventEmitter {
 
         const aspect = window.innerWidth / window.innerHeight;
         canvas.width = aspect * canvas.height;
+    }
+
+    private preloadAssets() {
+        Assets.fetchAll([
+            'img/light.png',
+            'img/rock.png',
+            'img/ships/warbird.png',
+            'img/ships/warbird_mask.png',
+            'img/ships/warbird_decal0.png',
+            'img/ships/warbird_decal1.png',
+            'img/ships/javelin.png',
+            'img/ships/javelin_mask.png',
+            'img/ships/javelin_decal0.png',
+            'img/ships/javelin_decal1.png',
+            'img/ships/spider.png',
+            'img/ships/spider_mask.png',
+            'img/ships/spider_decal0.png',
+            'img/ships/spider_decal1.png',
+        ], () => {
+            console.log('Assets pre-loaded');
+        });
     }
 }

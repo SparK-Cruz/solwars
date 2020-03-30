@@ -15,6 +15,8 @@ export interface ClientOptions {
     decal?: string,
 }
 
+const UPDATE_LOG_LENGTH = 100;
+
 export class Client extends EventEmitter {
     private remoteId: number = null;
     private options: ClientOptions = null;
@@ -25,6 +27,9 @@ export class Client extends EventEmitter {
 
     private socket: SocketIOClient.Socket;
     private compensator: NodeJS.Timeout;
+
+    private lastUpdateTime: number = Date.now();
+    private updateTimes: number[] = [];
 
     private staticInfo: StaticInfo = {
         id: 0,
@@ -75,6 +80,28 @@ export class Client extends EventEmitter {
 
     public getStage() {
         return this.stage;
+    }
+
+    public fetchInfo(): ClientInfo {
+        return Object.assign({}, this.staticInfo, {
+            angle: this.ship.angle,
+            maxEnergy: this.ship.health,
+            maxSpeed: this.ship.vmax,
+            acceleration: this.ship.power,
+            energy: this.ship.health - this.ship.damage,
+            alive: this.ship.alive,
+            speed: {
+                x: this.ship.vx,
+                y: this.ship.vy,
+            },
+            position: {
+                x: this.ship.x,
+                y: this.ship.y,
+            },
+            control: this.ship.control,
+            ranking: this.ranking,
+            updates: this.updateTimes,
+        });
     }
 
     private startCompensatingLag() {
@@ -147,12 +174,16 @@ export class Client extends EventEmitter {
     }
 
     private onServerUpdate(data: any) {
+        this.updateTimes.push(Date.now() - this.lastUpdateTime);
+        this.lastUpdateTime = Date.now();
+        while (this.updateTimes.length > UPDATE_LOG_LENGTH) {
+            this.updateTimes.shift();
+        }
+
         const decoded = this.codec.decode(data);
 
         this.stage.addAll([].concat(...decoded.entities).map((e: any) => e.newSector ? this.codec.decodeEntity(e) : e).filter(e => e));
         this.ranking = decoded.ranking;
-
-        this.emit(ClientEvents.INFO, this.fetchInfo());
     }
 
     private onServerRemoveObject(data: any) {
@@ -176,27 +207,6 @@ export class Client extends EventEmitter {
         this.staticInfo.ship.model = model.name;
         this.staticInfo.turnSpeed = data.ship.turnSpeed;
         this.staticInfo.tickRate = data.tps;
-    }
-
-    private fetchInfo(): ClientInfo {
-        return Object.assign({}, this.staticInfo, {
-            angle: this.ship.angle,
-            maxEnergy: this.ship.health,
-            maxSpeed: this.ship.vmax,
-            acceleration: this.ship.power,
-            energy: this.ship.health - this.ship.damage,
-            alive: this.ship.alive,
-            speed: {
-                x: this.ship.vx,
-                y: this.ship.vy,
-            },
-            position: {
-                x: this.ship.x,
-                y: this.ship.y,
-            },
-            control: this.ship.control,
-            ranking: this.ranking,
-        });
     }
 }
 
@@ -228,4 +238,5 @@ export interface ClientInfo extends StaticInfo {
     position: { x: number, y: number };
     control: number;
     ranking: {name: string, bounty: number}[];
+    updates: number[];
 }

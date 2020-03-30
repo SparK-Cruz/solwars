@@ -10,9 +10,11 @@ import { Ship } from '../space/entities/ship';
 
 const Collisions = require('collisions').Collisions;
 
-const UPDATE_SKIP = 2;
+const UPDATE_SKIP = 3;
 const TPS_TARGET = 64;
 let TPS = 64;
+
+const playerSkipFactor = Math.ceil(TPS / (TPS_TARGET / UPDATE_SKIP));
 
 export class Room {
     public codec :CodecFacade;
@@ -112,10 +114,10 @@ export class Room {
         const ranking = this.topPlayers();
 
         this.players.forEach((player, index) => {
-            if ((this.stage.tick + index) % Math.ceil(TPS / (TPS_TARGET / UPDATE_SKIP)) !== 0)
+            if (player.isBot)
                 return;
 
-            if (player.isBot)
+            if ((this.stage.tick + index) % playerSkipFactor !== 0)
                 return;
 
             // No ship no data...
