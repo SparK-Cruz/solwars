@@ -1,5 +1,5 @@
 {
-    "TPS": 64,
+    "TPS": 48,
     "maxPlayers": 100,
     "bots": {
         "playerCap": 3,
