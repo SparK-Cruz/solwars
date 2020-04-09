@@ -5,8 +5,7 @@ import { KeysForm } from "./frontend/keys_form";
 const loading = <HTMLElement>document.getElementById('loading');
 const frontend = <HTMLElement>document.getElementById('frontend');
 const game = <HTMLCanvasElement>document.getElementById('game');
-const hud = <HTMLCanvasElement>document.getElementById('hud');
-const engine = new Engine(game, hud);
+const engine = new Engine(game);
 
 window.addEventListener('keydown', e => {
     if (!engine.running

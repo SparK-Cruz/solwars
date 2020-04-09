@@ -1,27 +1,24 @@
+const PIXI = require('pixi.js');
+
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { ClientInfo } from "../client";
 import { EntityType, Entity } from "../../space/entities";
 import { Stage } from ".././stage";
 
-export class Radar implements Renderable {
-    private ctx: CanvasRenderingContext2D;
+const SCALE = 1/12;
+const REGION_SCALE = 1/512;
+const POS = {x: -220, y: -250};
 
-    private coordBuffer: HTMLCanvasElement;
-    private cbfr: CanvasRenderingContext2D;
-    private frameBuffer: HTMLCanvasElement;
-    private fbfr: CanvasRenderingContext2D;
-    private blipsBuffer: HTMLCanvasElement;
-    private bbfr: CanvasRenderingContext2D;
+export class Radar implements Renderable {
+    private container: any;
+
+    private coordText: any;
+    private blips: any;
 
     private info: ClientInfo;
-    private scale = 1/12;
-    private regionScale = 1/512;
-    private pos = {x: -220, y: -250};
 
-    public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
-        this.ctx = this.canvas.getContext('2d');
-
+    public constructor(private app: any, private camera: Camera, private stage: Stage) {
         this.initialize();
     }
 
@@ -30,168 +27,120 @@ export class Radar implements Renderable {
     }
 
     private initialize() {
+        this.container = new PIXI.Container();
+
         this.initializeCoord();
         this.initializeFrame();
         this.initializeBlips();
+
+        this.app.stage.addChild(this.container);
     }
 
     private initializeCoord() {
-        const {canvas} = this.getCoordBuffer();
-        canvas.width = 200;
-        canvas.height = 20;
+        this.coordText = new PIXI.Text(
+            'W0 N0',
+            {
+                fontFamily: 'monospace',
+                fontSize: 16,
+                fill: 0x3399ff,
+                align: 'center'
+            }
+        );
+        this.container.addChild(this.coordText);
     }
 
     private initializeFrame() {
-        const {canvas, ctx} = this.getFrameBuffer();
-        canvas.width = 200;
-        canvas.height = 200;
-
-        ctx.save();
-        ctx.beginPath();
-        ctx.strokeStyle = "rgba(51, 159, 255, 1)";
-        ctx.lineWidth = 2;
-        this.drawArc(ctx);
-        ctx.stroke();
-        ctx.closePath();
-        ctx.clip();
-        ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
-        ctx.fillRect(0, 0, 200, 200);
-        ctx.restore();
+        const frame = new PIXI.Graphics();
+        frame.lineStyle(2, 0x3399ff, 1, 1);
+        frame.beginFill(0x000000, 0.6);
+        frame.arc(100, 100, 100, 0, Math.PI * 2);
+        frame.position.set(0, 30);
+        this.container.addChild(frame);
     }
 
     private initializeBlips() {
-        const {canvas, ctx} = this.getBlipsBuffer();
-        canvas.width = 200;
-        canvas.height = 200;
+        const mask = new PIXI.Graphics();
+        mask.beginFill(0x000000);
+        mask.arc(100, 100, 100, 0, Math.PI * 2);
 
-        ctx.beginPath();
-        this.drawArc(ctx);
-        ctx.closePath();
-        ctx.clip();
-    }
+        this.blips = new PIXI.Graphics();
+        // this.blips.mask = mask;
 
-    private drawArc(ctx: CanvasRenderingContext2D) {
-        ctx.arc(
-            100, 100,
-            99,
-            0, Math.PI * 2,
-            false
-        );
+        this.blips.position.set(0, 30);
+        this.container.addChild(this.blips);
     }
 
     public render() {
         if (!this.info)
             return;
 
-        const pos = {
-            x: this.canvas.width + this.pos.x,
-            y: this.canvas.height + this.pos.y,
-        };
+        this.container.position.set(
+            this.app.view.width + POS.x,
+            this.app.view.height + POS.y
+        );
 
-        this.ctx.save();
-
-        this.ctx.drawImage(this.drawCoordinates(), pos.x, pos.y);
-        pos.y += 30;
-
-        this.ctx.drawImage(this.getFrameBuffer().canvas, pos.x, pos.y);
-        this.ctx.drawImage(this.drawBlips(), pos.x, pos.y);
-
-        this.ctx.restore();
-
-        return this.canvas;
+        this.drawCoordinates();
+        this.drawBlips();
     }
 
     private drawCoordinates() {
         const positionText = [
-            'H: ',
-            Math.floor(this.info.position.x * this.regionScale),
+            this.info.position.x > 0 ? 'E' : 'W',
+            Math.abs(Math.floor(this.info.position.x * REGION_SCALE)),
             ' ',
-            'V: ',
-            Math.floor(this.info.position.y * this.regionScale)
+            this.info.position.y > 0 ? 'S' : 'N',
+            Math.abs(Math.floor(this.info.position.y * REGION_SCALE)),
         ].join('');
 
-        const {canvas, ctx} = this.getCoordBuffer();
-
-        ctx.clearRect(0, 0, 200, 20);
-
-        ctx.save();
-        ctx.fillStyle = "#3399ff";
-        ctx.font = "16px monospace";
-        const text = ctx.measureText(positionText);
-        ctx.fillText(positionText, canvas.width / 2 - text.width / 2, 20);
-        ctx.restore();
-
-        return canvas;
+        this.coordText.position.set(100 - this.coordText.width / 2, 0);
+        this.coordText.text = positionText;
     }
 
     private drawBlips() {
-        const {canvas, ctx} = this.getBlipsBuffer();
-
-        ctx.clearRect(0, 0, 200, 200);
-
-        ctx.save();
-        ctx.translate(100, 100);
+        this.blips.clear();
 
         const entities = this.stage.fetchAllEntities();
+
         for(let i in entities) {
             const entity = entities[i];
-            let size = 3;
-            ctx.fillStyle = "#ff9933";
-            if (entity.id == this.info.id) {
-                ctx.fillStyle = "#ffffff";
-            }
             if (entity.type.name === EntityType.Bullet.name) {
                 continue;
             }
-            if (entity.type.name === EntityType.ShipDebris.name) {
-                ctx.fillStyle = "rgba(255, 159, 51, 0.2)";
-                size = 1;
+
+            let size = 4;
+            let alpha = 1;
+            let style = 0xff9933;
+
+            if (entity.id == this.info.id) {
+                style = 0xffffff;
             }
-            if (entity.type.name === EntityType.Rock.name) {
-                ctx.fillStyle = "#eeeeee";
-                size = (<any>entity).size * this.scale;
-            }
-            if (entity.type.name === EntityType.Prize.name) {
-                ctx.fillStyle = "#00ff00";
-                size = 2;
+            switch(entity.type.name) {
+                case EntityType.ShipDebris.name:
+                    style = 0xff9933;
+                    alpha = 0.2;
+                    size = 2;
+                    break;
+                case EntityType.Rock.name:
+                    style = 0xeeeeee;
+                    size = (<any>entity).size * SCALE;
+                    break;
+                case EntityType.Prize.name:
+                    style = 0x00ff00;
+                    size = 3;
+                    break;
             }
 
             const pos = this.camera.translate(entity);
-            ctx.fillRect(pos.x * this.scale - size / 2, pos.y * this.scale - size / 2, size, size);
+
+            this.blips.beginFill(style, alpha);
+            this.blips.arc(
+                pos.x * SCALE + 100,
+                pos.y * SCALE + 100,
+                size / 2,
+                0,
+                Math.PI * 2
+            );
+            this.blips.endFill();
         }
-
-        ctx.restore();
-
-        return canvas;
-    }
-
-    private getCoordBuffer() {
-        this.coordBuffer = this.coordBuffer || document.createElement('canvas');
-        this.cbfr = this.cbfr || this.coordBuffer.getContext('2d');
-
-        return {
-            canvas: this.coordBuffer,
-            ctx: this.cbfr
-        };
-    }
-
-    private getFrameBuffer() {
-        this.frameBuffer = this.frameBuffer || document.createElement('canvas');
-        this.fbfr = this.fbfr || this.frameBuffer.getContext('2d');
-
-        return {
-            canvas: this.frameBuffer,
-            ctx: this.fbfr
-        };
-    }
-
-    private getBlipsBuffer() {
-        this.blipsBuffer = this.blipsBuffer || document.createElement('canvas');
-        this.bbfr = this.bbfr || this.blipsBuffer.getContext('2d');
-
-        return {
-            canvas: this.blipsBuffer,
-            ctx: this.bbfr
-        };
     }
 }

@@ -2,8 +2,9 @@ import { Engine } from "../engine";
 import { ShipRenderer } from "../game_renderers/entities/ship_renderer";
 import { Ship } from "../../space/entities/ship";
 import { Model } from "../../space/entities/ships/model";
+import { Actors } from "../../space/actors";
 
-let shipRenderer = new ShipRenderer(new Ship(Model.Warbird));
+let shipRenderer = new ShipRenderer(new Ship());
 let mainColor: HTMLInputElement = null;
 let accentColor: HTMLInputElement = null;
 
@@ -108,7 +109,7 @@ export class JoinForm {
 
     private static previewLoop(ctx: CanvasRenderingContext2D) {
         previewInterval = setInterval(() => {
-            shipRenderer.ship.step(1);
+            Actors.ship.step(shipRenderer.ship, 1);
             ctx.clearRect(0, 0, 64, 64);
             ctx.save();
             ctx.translate(32, 32);
@@ -147,7 +148,8 @@ export class JoinForm {
         `;
 
         const angle = shipRenderer.ship.angle;
-        const ship = new Ship(model);
+        const ship = new Ship();
+        ship.model = model;
         ship.control = 8;
         ship.angle = angle;
         if (validColor) ship.color = validColor;

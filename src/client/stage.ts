@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
 import { Entity } from '../space/entities';
+import { Actors } from '../space/actors';
 
 export class Stage extends EventEmitter {
     public tick: number;
@@ -9,7 +10,7 @@ export class Stage extends EventEmitter {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
         Object.values(this.entities).forEach((e: Entity) => {
-            if (e.step) e.step(1);
+            (<any>Actors)[e.type.name].step(e, 1);
         });
     }
 

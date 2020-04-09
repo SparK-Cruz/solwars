@@ -1,3 +1,3 @@
 export interface Renderable {
-  render() :HTMLCanvasElement;
+  render(): any;
 }

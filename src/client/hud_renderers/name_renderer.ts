@@ -1,16 +1,37 @@
+const PIXI = require('pixi.js');
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { Stage } from ".././stage";
 import { ClientInfo } from "../client";
 import { EntityType } from "../../space/entities";
 
+const style = {
+    fontFamily: 'monospace',
+    fontSize: 10,
+    fill: 0xff9933,
+    align: 'center',
+};
+
 export class NameRenderer implements Renderable {
-    private ctx: CanvasRenderingContext2D;
-
+    private container: any;
+    private playerName: any;
     private info: ClientInfo;
+    private pool: any[] = [];
 
-    public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
-        this.ctx = this.canvas.getContext('2d');
+    public constructor(private app: any, private camera: Camera, private stage: Stage) {
+        this.container = new PIXI.Container();
+        this.playerName = new PIXI.Text('', {
+            fontFamily: 'monospace',
+            fontSize: 14,
+            fill: 0x3399ff,
+            align: 'center',
+        });
+
+        this.playerName.position.set(20);
+        this.container.position.set(0);
+
+        this.container.addChild(this.playerName);
+        this.app.stage.addChild(this.container);
     }
 
     public update(info: ClientInfo) {
@@ -22,6 +43,10 @@ export class NameRenderer implements Renderable {
             return;
 
         const entities = this.stage.fetchAllEntities();
+
+        this.pool.slice(entities.length).forEach(t => t.visible = false);
+
+        let index = 0;
         for(let i in entities) {
             const entity = entities[i];
 
@@ -29,37 +54,38 @@ export class NameRenderer implements Renderable {
                 continue;
 
             let name = (<any>entity).name || 'BUG: PLEASE TAKE A SCREENSHOT';
-
-            const pos = this.camera.translate(entity);
-
             if (typeof (<any>entity).alive != 'undefined'
                 && !(<any>entity).alive) {
                 name = '(Dead) ' + name;
             }
 
-            this.ctx.save();
-            this.ctx.fillStyle = "#ff9933";
-            this.ctx.font = "10px monospace";
-
-            const textInfo = this.ctx.measureText(name);
-            let textPos = {
-                x: pos.x - textInfo.width / 2 + this.camera.offset.x,
-                y: pos.y + 40 + this.camera.offset.y,
-            };
-
             if (entity.id == this.info.id) {
-                textPos = {
-                    x: 20,
-                    y: 34,
-                };
-                this.ctx.font = "14px monospace";
-                this.ctx.fillStyle = "#3399ff";
+                this.playerName.text = name;
+                continue;
             }
 
-            this.ctx.fillText(name, textPos.x, textPos.y);
-            this.ctx.restore();
+            const text = this.getText(index++);
+            text.visible = true;
+
+            const entityPos = this.camera.translate(entity);
+            let pos = {
+                x: entityPos.x - text.width / 2 + this.camera.offset.x,
+                y: entityPos.y + 40 + this.camera.offset.y,
+            };
+
+            text.text = name;
+            text.position.set(pos.x, pos.y);
+        }
+    }
+
+    private getText(index: number) {
+        if (index < this.pool.length) {
+            return this.pool[index];
         }
 
-        return this.canvas;
+        const text = new PIXI.Text('', style);
+        this.pool.push(text);
+        this.container.addChild(text);
+        return text;
     }
 }

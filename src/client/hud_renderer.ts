@@ -1,8 +1,8 @@
+const PIXI = require('pixi.js');
 import { Renderable } from "./game_renderers/renderable";
 import { ClientInfo } from "./client";
 import { Camera } from "./camera";
 import { Stage } from "./stage";
-import { FpsRenderer } from "./hud_renderers/fps_renderer";
 import { SpeedIndicator } from "./hud_renderers/speed_indicator";
 import { EnergyIndicator } from "./hud_renderers/energy_indicator";
 import { GunIndicator } from "./hud_renderers/gun_indicator";
@@ -11,10 +11,6 @@ import { NameRenderer } from "./hud_renderers/name_renderer";
 import { RankingRenderer } from "./hud_renderers/ranking_renderer";
 
 export class HudRenderer implements Renderable {
-    private ctx: CanvasRenderingContext2D = null;
-
-    private fpsRenderer: FpsRenderer;
-
     private energyIndicator: EnergyIndicator;
     private speedIndicator: SpeedIndicator;
     private gunIndicator: GunIndicator;
@@ -23,17 +19,19 @@ export class HudRenderer implements Renderable {
     private rankingRenderer: RankingRenderer;
 
     private alive = true;
+    private debug = new PIXI.Graphics();
 
-    public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
-        this.ctx = canvas.getContext('2d');
+    public constructor(private app: any, private camera: Camera, private stage: Stage) {
+        this.energyIndicator = new EnergyIndicator(app);
+        this.speedIndicator = new SpeedIndicator(app, camera);
+        this.gunIndicator = new GunIndicator(app, camera);
+        this.radar = new Radar(app, camera, stage);
+        this.nameRenderer = new NameRenderer(app, camera, stage);
+        // this.rankingRenderer = new RankingRenderer(canvas);
 
-        this.fpsRenderer = new FpsRenderer(canvas);
-        this.energyIndicator = new EnergyIndicator(canvas);
-        this.speedIndicator = new SpeedIndicator(canvas, camera);
-        this.gunIndicator = new GunIndicator(canvas, camera);
-        this.radar = new Radar(canvas, camera, stage);
-        this.nameRenderer = new NameRenderer(canvas, camera, stage);
-        this.rankingRenderer = new RankingRenderer(canvas);
+        this.debug.lineStyle(1, 0xffffff);
+        this.debug.drawRect(0, 0, 32, 32);
+        app.stage.addChild(this.debug);
     }
 
     public update(info: ClientInfo) {
@@ -42,26 +40,26 @@ export class HudRenderer implements Renderable {
         this.gunIndicator.update(info);
         this.radar.update(info);
         this.nameRenderer.update(info);
-        this.rankingRenderer.update(info.ranking);
-        this.fpsRenderer.update(info.updates);
+        // this.rankingRenderer.update(info.ranking);
 
         this.alive = info.alive;
     }
 
     public render() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.fpsRenderer.render();
-
         if (!this.alive)
             return;
+
+        const shipPos = this.camera.addOffset({
+            x: -16,
+            y: -16,
+        });
+        this.debug.position.set(shipPos.x, shipPos.y);
 
         this.energyIndicator.render();
         this.speedIndicator.render();
         this.gunIndicator.render();
         this.radar.render();
         this.nameRenderer.render();
-        this.rankingRenderer.render();
-
-        return this.canvas;
+        // this.rankingRenderer.render();
     }
 }

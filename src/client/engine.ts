@@ -1,38 +1,66 @@
+const PIXI = require('pixi.js');
 import { EventEmitter } from 'events';
-import { Client, ClientEvents, ClientInfo, ClientOptions } from "./client";
-import { Input } from "./input";
-import { Camera } from "./camera";
-import { GameRenderer } from "./game_renderer";
-import { HudRenderer } from "./hud_renderer";
-import { ToastRenderer, ToastTime } from './toast_renderer';
-import { Assets } from './assets';
 
-const FRAMESKIP_THRESHOLD: number = 55;
-let lastTick: number = null;
+import { Input } from './input';
+import { Client, ClientOptions, ClientEvents } from './client';
+import { Camera } from './camera';
+import { Assets } from './assets';
+import { GameRenderer } from './game_renderer';
+import { HudRenderer } from './hud_renderer';
+import { FpsRenderer } from './hud_renderers/fps_renderer';
 
 export class Engine extends EventEmitter {
+    private app: any;
     private input: Input;
     private client: Client;
     private camera: Camera;
+
     private gameRenderer: GameRenderer;
     private hudRenderer: HudRenderer;
-    private toastRenderer: ToastRenderer;
+    // private toastRenderer: ToastRenderer;
+    private fpsRenderer: FpsRenderer;
 
-    public constructor(private game: HTMLCanvasElement, private hud: HTMLCanvasElement) {
+    public constructor(private game: HTMLCanvasElement) {
         super();
+
+        this.app = new PIXI.Application({
+            backgroundColor: 0x000000,
+            resolution: window.devicePixelRatio || 1,
+            resizeTo: window,
+            view: game,
+        });
 
         this.input = new Input(window);
         this.client = new Client(this.input);
         this.camera = new Camera();
-        this.gameRenderer = new GameRenderer(game, this.camera, this.client.getStage());
-        this.hudRenderer = new HudRenderer(hud, this.camera, this.client.getStage());
-        this.toastRenderer = new ToastRenderer(hud);
+        this.gameRenderer = new GameRenderer(this.app, this.camera);
+        this.hudRenderer = new HudRenderer(this.app, this.camera, this.client.getStage());
+        this.fpsRenderer = new FpsRenderer(this.app);
+
+        // this.app.ticker.addOnce(() => {
+        //     // TODO set viewport follow object to camera.offset
+        // });
+        this.app.ticker.maxFPS = 0;
+        this.app.ticker.add(() => {
+            if (!this.running) return;
+
+            this.gameRenderer.render();
+
+            this.hudRenderer.update(this.client.fetchInfo());
+            this.hudRenderer.render();
+
+            this.fpsRenderer.update(this.client.fetchInfo().updates);
+            this.fpsRenderer.render();
+        });
 
         this.listenClient(this.client);
         this.preloadAssets();
-    }
 
-    public get running() {
+        window.onresize = () => {
+            this.camera.setResolution(this.game.width, this.game.height);
+        };
+    }
+    public get running(): boolean {
         return this.client.connected;
     }
 
@@ -44,30 +72,30 @@ export class Engine extends EventEmitter {
 
         const once = (data: any) => {
             clearTimeout(timeout);
-
-            window.onresize = () => this.adjustCanvas();
             this.input.enable();
+            this.showCanvas();
 
-            lastTick = Date.now();
-            this.adjustCanvas();
-            this.renderFrame();
+            // start renderers
+            this.app.start();
 
             callback && callback(data);
         };
 
         this.client.once(ClientEvents.SHIP, once);
         this.client.connect(options);
+        this.camera.setResolution(this.game.width, this.game.height);
 
         this.emit('start');
     }
-
     public stop() {
-        window.onresize = () => true;
         this.input.disable();
         this.client.disconnect();
         this.hideCanvas();
 
         this.client.getStage().clear();
+
+        // stop renderers
+        this.app.stop();
     }
 
     private listenClient(client: Client) {
@@ -75,69 +103,53 @@ export class Engine extends EventEmitter {
             this.camera.trackable = ship;
         });
         client.on(ClientEvents.UPGRADE, (name: string) => {
-            this.toastRenderer.toast(name, ToastTime.SHORT);
+            // this.toastRenderer.toast(name, ToastTime.SHORT);
         });
     }
 
-    private renderFrame() {
-        const fps = Math.round(1000 / (Date.now() - lastTick));
-        lastTick = Date.now();
-
-        if (fps > FRAMESKIP_THRESHOLD) {
-            this.camera.setResolution(this.game.width, this.game.height);
-            this.gameRenderer.render();
-            this.hudRenderer.update(this.client.fetchInfo());
-            this.hudRenderer.render();
-            this.toastRenderer.render();
-        }
-
-        if (!this.running) {
-            this.stop();
-            this.emit('stop');
-            return;
-        }
-
-        requestAnimationFrame(() => this.renderFrame());
-    }
-
-    private adjustCanvas() {
-        this.adjustToWindow(this.game);
-        this.adjustToWindow(this.hud);
-    }
     private hideCanvas() {
         this.game.style.display = 'none';
-        this.hud.style.display = 'none';
     }
-
-    private adjustToWindow(canvas: HTMLCanvasElement) {
-        canvas.style.display = 'block';
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
-
-        const aspect = window.innerWidth / window.innerHeight;
-        canvas.width = aspect * canvas.height;
+    private showCanvas() {
+        this.game.style.display = 'block';
     }
 
     private preloadAssets() {
-        setTimeout(() => {
-            Assets.fetchAll([
-                'img/light.png',
-                'img/rock.png',
-                'img/ships/warbird.png',
-                'img/ships/warbird_mask.png',
-                'img/ships/warbird_decal0.png',
-                'img/ships/warbird_decal1.png',
-                'img/ships/javelin.png',
-                'img/ships/javelin_mask.png',
-                'img/ships/javelin_decal0.png',
-                'img/ships/javelin_decal1.png',
-                'img/ships/spider.png',
-                'img/ships/spider_mask.png',
-                'img/ships/spider_decal0.png',
-                'img/ships/spider_decal1.png',
-            ], () => {
-                this.emit('load');
-            });
-        }, 0);
+        const loader = PIXI.Loader.shared;
+
+        loader
+            .add('light', 'img/light.png')
+            .add('rock', 'img/rock.png')
+            .add('ship_warbird', 'img/ships/warbird.png')
+            .add('ship_warbird_mask', 'img/ships/warbird_mask.png')
+            .add('ship_warbird_decal0', 'img/ships/warbird_decal0.png')
+            .add('ship_warbird_decal1', 'img/ships/warbird_decal1.png')
+            .add('ship_javelin', 'img/ships/javelin.png')
+            .add('ship_javelin_mask', 'img/ships/javelin_mask.png')
+            .add('ship_javelin_decal0', 'img/ships/javelin_decal0.png')
+            .add('ship_javelin_decal1', 'img/ships/javelin_decal1.png')
+            .add('ship_spider', 'img/ships/spider.png')
+            .add('ship_spider_mask', 'img/ships/spider_mask.png')
+            .add('ship_spider_decal0', 'img/ships/spider_decal0.png')
+            .add('ship_spider_decal1', 'img/ships/spider_decal1.png');
+
+        loader.load((_loader: any, resources: any) => {
+            Assets.pool['light'] = new PIXI.Sprite(resources.light.texture);
+            Assets.pool['rock'] = new PIXI.Sprite(resources.rock.texture);
+            Assets.pool['ship_warbird'] = new PIXI.Sprite(resources.ship_warbird.texture);
+            Assets.pool['ship_warbird_mask'] = new PIXI.Sprite(resources.ship_warbird_mask.texture);
+            Assets.pool['ship_warbird_decal0'] = new PIXI.Sprite(resources.ship_warbird_decal0.texture);
+            Assets.pool['ship_warbird_decal1'] = new PIXI.Sprite(resources.ship_warbird_decal1.texture);
+            Assets.pool['ship_javelin'] = new PIXI.Sprite(resources.ship_javelin.texture);
+            Assets.pool['ship_javelin_mask'] = new PIXI.Sprite(resources.ship_javelin_mask.texture);
+            Assets.pool['ship_javelin_decal0'] = new PIXI.Sprite(resources.ship_javelin_decal0.texture);
+            Assets.pool['ship_javelin_decal1'] = new PIXI.Sprite(resources.ship_javelin_decal1.texture);
+            Assets.pool['ship_spider'] = new PIXI.Sprite(resources.ship_spider.texture);
+            Assets.pool['ship_spider_mask'] = new PIXI.Sprite(resources.ship_spider_mask.texture);
+            Assets.pool['ship_spider_decal0'] = new PIXI.Sprite(resources.ship_spider_decal0.texture);
+            Assets.pool['ship_spider_decal1'] = new PIXI.Sprite(resources.ship_spider_decal1.texture);
+
+            this.emit('load');
+        });
     }
 }

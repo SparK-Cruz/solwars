@@ -1,13 +1,31 @@
+const PIXI = require('pixi.js');
 import { Renderable } from "../game_renderers/renderable";
 import { ClientInfo } from "../client";
 
 export class EnergyIndicator implements Renderable {
-    private ctx: CanvasRenderingContext2D;
-
+    private bar: any;
+    private container: any;
     private info: ClientInfo;
 
-    public constructor(private canvas: HTMLCanvasElement) {
-        this.ctx = this.canvas.getContext('2d');
+    public constructor(private app: any) {
+        const container = new PIXI.Container();
+
+        const frame = new PIXI.Graphics();
+        frame.lineStyle(1, 0x202020, 1, 1);
+        frame.drawRect(0, 0, 8, 230);
+
+        const bar = new PIXI.Graphics();
+        bar.beginFill(0x3399ff);
+        bar.drawRect(2, 2, 4, 226);
+        bar.endFill();
+
+        container.addChild(frame);
+        container.addChild(bar);
+
+        app.stage.addChild(container);
+
+        this.bar = bar;
+        this.container = container;
     }
 
     public update(info: ClientInfo) {
@@ -19,27 +37,16 @@ export class EnergyIndicator implements Renderable {
             return;
 
         const perc = Math.max(this.info.energy / this.info.maxEnergy, 0);
-        let color = "#3399ff";
+        let color = 0x3399ff;
         if (perc < 0.4) {
-            color = "#ff9933";
+            color = 0xff9933;
         }
 
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.rect(20, this.canvas.height - 250, 8, 230);
-        this.ctx.strokeStyle = "#202020";
-        this.ctx.stroke();
-        this.ctx.closePath();
-        this.ctx.restore();
+        this.bar.clear();
+        this.bar.beginFill(color);
+        this.bar.drawRect(2, 228 - 226 * perc, 4, 226 * perc);
+        this.bar.endFill();
 
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.rect(22, (this.canvas.height - 248) + 226 - 226 * perc, 4, 226 * perc);
-        this.ctx.fillStyle = color;
-        this.ctx.fill();
-        this.ctx.closePath();
-        this.ctx.restore();
-
-        return this.canvas;
+        this.container.position.set(20, this.app.view.height - 250);
     }
 }
