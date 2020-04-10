@@ -7,7 +7,7 @@ export class EnergyIndicator implements Renderable {
     private container: any;
     private info: ClientInfo;
 
-    public constructor(private app: any) {
+    public constructor(private parent: any) {
         const container = new PIXI.Container();
 
         const frame = new PIXI.Graphics();
@@ -22,7 +22,7 @@ export class EnergyIndicator implements Renderable {
         container.addChild(frame);
         container.addChild(bar);
 
-        app.stage.addChild(container);
+        parent.addChild(container);
 
         this.bar = bar;
         this.container = container;
@@ -47,6 +47,6 @@ export class EnergyIndicator implements Renderable {
         this.bar.drawRect(2, 228 - 226 * perc, 4, 226 * perc);
         this.bar.endFill();
 
-        this.container.position.set(20, this.app.view.height - 250);
+        this.container.position.set(20, this.parent.view.height - 250);
     }
 }

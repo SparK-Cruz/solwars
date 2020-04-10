@@ -18,7 +18,7 @@ export class NameRenderer implements Renderable {
     private info: ClientInfo;
     private pool: any[] = [];
 
-    public constructor(private app: any, private camera: Camera, private stage: Stage) {
+    public constructor(private parent: any, private camera: Camera, private stage: Stage) {
         this.container = new PIXI.Container();
         this.playerName = new PIXI.Text('', {
             fontFamily: 'monospace',
@@ -31,7 +31,7 @@ export class NameRenderer implements Renderable {
         this.container.position.set(0);
 
         this.container.addChild(this.playerName);
-        this.app.stage.addChild(this.container);
+        this.parent.addChild(this.container);
     }
 
     public update(info: ClientInfo) {
@@ -44,7 +44,7 @@ export class NameRenderer implements Renderable {
 
         const entities = this.stage.fetchAllEntities();
 
-        this.pool.slice(entities.length).forEach(t => t.visible = false);
+        this.pool.forEach(t => t.visible = false);
 
         let index = 0;
         for(let i in entities) {

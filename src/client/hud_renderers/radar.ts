@@ -18,7 +18,7 @@ export class Radar implements Renderable {
 
     private info: ClientInfo;
 
-    public constructor(private app: any, private camera: Camera, private stage: Stage) {
+    public constructor(private parent: any, private camera: Camera, private stage: Stage) {
         this.initialize();
     }
 
@@ -33,7 +33,7 @@ export class Radar implements Renderable {
         this.initializeFrame();
         this.initializeBlips();
 
-        this.app.stage.addChild(this.container);
+        this.parent.addChild(this.container);
     }
 
     private initializeCoord() {
@@ -53,19 +53,21 @@ export class Radar implements Renderable {
         const frame = new PIXI.Graphics();
         frame.lineStyle(2, 0x3399ff, 1, 1);
         frame.beginFill(0x000000, 0.6);
-        frame.arc(100, 100, 100, 0, Math.PI * 2);
+        frame.drawCircle(100, 100, 100);
         frame.position.set(0, 30);
         this.container.addChild(frame);
     }
 
     private initializeBlips() {
         const mask = new PIXI.Graphics();
-        mask.beginFill(0x000000);
-        mask.arc(100, 100, 100, 0, Math.PI * 2);
+        mask.beginFill(0xffffff, 1);
+        mask.drawCircle(100, 100, 100);
 
         this.blips = new PIXI.Graphics();
-        // this.blips.mask = mask;
+        this.blips.mask = mask;
+        this.container.addChild(mask);
 
+        mask.position.set(0, 30);
         this.blips.position.set(0, 30);
         this.container.addChild(this.blips);
     }
@@ -75,8 +77,8 @@ export class Radar implements Renderable {
             return;
 
         this.container.position.set(
-            this.app.view.width + POS.x,
-            this.app.view.height + POS.y
+            this.parent.view.width + POS.x,
+            this.parent.view.height + POS.y
         );
 
         this.drawCoordinates();
@@ -133,12 +135,10 @@ export class Radar implements Renderable {
             const pos = this.camera.translate(entity);
 
             this.blips.beginFill(style, alpha);
-            this.blips.arc(
+            this.blips.drawCircle(
                 pos.x * SCALE + 100,
                 pos.y * SCALE + 100,
-                size / 2,
-                0,
-                Math.PI * 2
+                size / 2
             );
             this.blips.endFill();
         }

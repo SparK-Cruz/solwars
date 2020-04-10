@@ -10,7 +10,7 @@ export class SpeedIndicator implements Renderable {
     private slowChevron: any;
     private fastChevron: any;
 
-    public constructor(private app: any, private camera: Camera) {
+    public constructor(private parent: any, private camera: Camera) {
         this.container = new PIXI.Container();
 
         this.slowChevron = this.drawChevron(0xffffff);
@@ -22,7 +22,7 @@ export class SpeedIndicator implements Renderable {
         this.slowChevron.position.set(0, -3);
         this.fastChevron.position.set(0, -9);
 
-        this.app.stage.addChild(this.container);
+        this.parent.addChild(this.container);
     }
 
     public update(info: ClientInfo) {

@@ -9,7 +9,7 @@ export class GunIndicator implements Renderable {
     private sprite: any;
     private style: any;
 
-    public constructor(private app: any, private camera: Camera) {
+    public constructor(private parent: any, private camera: Camera) {
         const {buffer, bfr} = R2d.buffer();
 
         buffer.width = 1;
@@ -28,7 +28,7 @@ export class GunIndicator implements Renderable {
             width: 3,
             height: 5,
         };
-        this.app.stage.addChild(this.sprite);
+        this.parent.addChild(this.sprite);
     }
 
     public update(info: ClientInfo) {

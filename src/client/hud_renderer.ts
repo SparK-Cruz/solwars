@@ -11,6 +11,8 @@ import { NameRenderer } from "./hud_renderers/name_renderer";
 import { RankingRenderer } from "./hud_renderers/ranking_renderer";
 
 export class HudRenderer implements Renderable {
+    private container: any;
+
     private energyIndicator: EnergyIndicator;
     private speedIndicator: SpeedIndicator;
     private gunIndicator: GunIndicator;
@@ -22,11 +24,16 @@ export class HudRenderer implements Renderable {
     private debug = new PIXI.Graphics();
 
     public constructor(private app: any, private camera: Camera, private stage: Stage) {
-        this.energyIndicator = new EnergyIndicator(app);
-        this.speedIndicator = new SpeedIndicator(app, camera);
-        this.gunIndicator = new GunIndicator(app, camera);
-        this.radar = new Radar(app, camera, stage);
-        this.nameRenderer = new NameRenderer(app, camera, stage);
+        this.container = new PIXI.Container();
+        this.container.position.set(0);
+        this.container.view = this.app.view;
+        this.app.stage.addChild(this.container);
+
+        this.energyIndicator = new EnergyIndicator(this.container);
+        this.speedIndicator = new SpeedIndicator(this.container, camera);
+        this.gunIndicator = new GunIndicator(this.container, camera);
+        this.radar = new Radar(this.container, camera, stage);
+        this.nameRenderer = new NameRenderer(this.container, camera, stage);
         // this.rankingRenderer = new RankingRenderer(canvas);
 
         this.debug.lineStyle(1, 0xffffff);
@@ -46,8 +53,11 @@ export class HudRenderer implements Renderable {
     }
 
     public render() {
-        if (!this.alive)
+        this.container.visible = this.alive;
+
+        if (!this.alive) {
             return;
+        }
 
         const shipPos = this.camera.addOffset({
             x: -16,
