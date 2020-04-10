@@ -29,13 +29,16 @@ export class Engine extends EventEmitter {
             resizeTo: window,
             view: game,
         });
+        const container = new PIXI.Container();
+        container.view = this.app.view;
+        this.app.stage.addChild(container);
 
         this.input = new Input(window);
         this.client = new Client(this.input);
         this.camera = new Camera();
-        this.gameRenderer = new GameRenderer(this.app, this.camera);
-        this.hudRenderer = new HudRenderer(this.app, this.camera, this.client.getStage());
-        this.fpsRenderer = new FpsRenderer(this.app);
+        this.gameRenderer = new GameRenderer(container, this.camera);
+        this.hudRenderer = new HudRenderer(container, this.camera, this.client.getStage());
+        this.fpsRenderer = new FpsRenderer(container);
 
         // this.app.ticker.addOnce(() => {
         //     // TODO set viewport follow object to camera.offset

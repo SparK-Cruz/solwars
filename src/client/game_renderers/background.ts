@@ -15,14 +15,14 @@ export class Background implements Renderable {
     ];
     private layers: any[] = [];
 
-    constructor(private app: any, private camera: Camera) {
+    constructor(parent: any, private camera: Camera) {
         let seed = 9876543210;
         RNG.random(seed);
 
         for (let i = this.buffers.length - 1; i >= 0; i--) {
             this.generate(this.buffers[i], STAR_COUNT[i]);
             this.layers[i] = new PIXI.TilingSprite(PIXI.Texture.from(this.buffers[i]), this.buffers[i].width, this.buffers[i].height);
-            app.stage.addChild(this.layers[i]);
+            parent.addChild(this.layers[i]);
         }
     }
 
@@ -56,7 +56,7 @@ export class Background implements Renderable {
         ctx.save();
         ctx.beginPath();
         ctx.fillStyle = 'rgba(255, 255, 255, ' + shine + ')';
-        ctx.rect(x,y,size,size);
+        ctx.arc(x,y,size / 2, 0, Math.PI * 2);
         ctx.fill();
         ctx.closePath();
         ctx.restore();

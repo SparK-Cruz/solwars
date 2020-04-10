@@ -3,7 +3,7 @@ const PIXI = require('pixi.js');
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { ClientInfo } from "../client";
-import { EntityType, Entity } from "../../space/entities";
+import { EntityType } from "../../space/entities";
 import { Stage } from ".././stage";
 
 const SCALE = 1/12;

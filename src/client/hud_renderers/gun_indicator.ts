@@ -2,15 +2,15 @@ const PIXI = require('pixi.js');
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { ClientInfo } from "../client";
-import { R2d } from "../game_renderers/r2d";
 
 export class GunIndicator implements Renderable {
     private info: ClientInfo;
     private sprite: any;
     private style: any;
 
-    public constructor(private parent: any, private camera: Camera) {
-        const {buffer, bfr} = R2d.buffer();
+    public constructor(parent: any, private camera: Camera) {
+        const buffer = document.createElement('canvas');
+        const bfr = buffer.getContext('2d');
 
         buffer.width = 1;
         buffer.height = 5;
@@ -28,7 +28,7 @@ export class GunIndicator implements Renderable {
             width: 3,
             height: 5,
         };
-        this.parent.addChild(this.sprite);
+        parent.addChild(this.sprite);
     }
 
     public update(info: ClientInfo) {

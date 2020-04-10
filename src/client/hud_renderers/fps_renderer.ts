@@ -24,7 +24,7 @@ export class FpsRenderer implements Renderable {
     private fpsText: any;
     private tickText: any;
 
-    public constructor(private app: any) {
+    public constructor(parent: any) {
         this.lastRender = Date.now();
 
         this.fpsText = new PIXI.Text('');
@@ -32,8 +32,8 @@ export class FpsRenderer implements Renderable {
         this.fpsText.position.set(2, 2);
         this.tickText.position.set(50, 2);
 
-        app.stage.addChild(this.fpsText);
-        app.stage.addChild(this.tickText);
+        parent.addChild(this.fpsText);
+        parent.addChild(this.tickText);
     }
 
     public update(ticks: number[]) {

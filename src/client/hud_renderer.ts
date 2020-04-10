@@ -23,11 +23,11 @@ export class HudRenderer implements Renderable {
     private alive = true;
     private debug = new PIXI.Graphics();
 
-    public constructor(private app: any, private camera: Camera, private stage: Stage) {
+    public constructor(parent: any, private camera: Camera, stage: Stage) {
         this.container = new PIXI.Container();
         this.container.position.set(0);
-        this.container.view = this.app.view;
-        this.app.stage.addChild(this.container);
+        this.container.view = parent.view;
+        parent.addChild(this.container);
 
         this.energyIndicator = new EnergyIndicator(this.container);
         this.speedIndicator = new SpeedIndicator(this.container, camera);
@@ -38,7 +38,7 @@ export class HudRenderer implements Renderable {
 
         this.debug.lineStyle(1, 0xffffff);
         this.debug.drawRect(0, 0, 32, 32);
-        app.stage.addChild(this.debug);
+        parent.addChild(this.debug);
     }
 
     public update(info: ClientInfo) {
