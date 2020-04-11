@@ -34,10 +34,10 @@ export namespace Model {
         [-3, -10],
       [-1, -13]
     ],
-    color: 'rgb(175, 175, 175)',
+    color: '#afafaf',
     decals: [{
       name: 'decal0',
-      color: 'rgb(213, 50, 36)'
+      color: '#d53224'
     }]
   }
 
@@ -68,10 +68,10 @@ export namespace Model {
         [-3, -8],
       [0, -13],
     ],
-    color: 'rgb(214, 152, 24)',
+    color: '#d69818',
     decals: [{
       name: 'decal0',
-      color: 'rgb(255, 200, 51)'
+      color: '#ffc833'
     }]
   }
 
@@ -100,10 +100,10 @@ export namespace Model {
           [-4, -4],
         [0, -14],
     ],
-    color: 'rgb(51, 127, 51)',
+    color: '#337733',
     decals: [{
         name: 'decal0',
-        color: 'rgb(255, 200, 51)'
+        color: '#ffc833'
       }]
   }
 

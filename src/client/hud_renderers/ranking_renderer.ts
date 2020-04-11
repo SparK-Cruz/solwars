@@ -1,55 +1,50 @@
+const PIXI = require('pixi.js');
 import { Renderable } from "../game_renderers/renderable";
 
-const pad = 20;
+const PAD = 20;
+const LIMIT = 10;
+const SLOT_SIZE = 16;
+const style = {
+    fontFamily: 'monospace',
+    fontSize: 12,
+    fill: 0x3399ff,
+};
 
 export class RankingRenderer implements Renderable {
-    private ctx: CanvasRenderingContext2D;
-    private ranking: {name: string, bounty: number}[];
+    private container: any;
+    private pool: any[] = [];
 
-    public constructor(public canvas: HTMLCanvasElement) {
-        this.ctx = canvas.getContext('2d');
+    public constructor(private parent: any) {
+        const container = new PIXI.Container();
+
+        const title = new PIXI.Text('Bounty List', style);
+        title.anchor.set(1, 0);
+        container.addChild(title);
+
+        for (let i = 0; i < LIMIT; i++) {
+            const text = new PIXI.Text('', style);
+            text.anchor.set(1, 0);
+            text.visible = false;
+            text.position.set(0, (i+1) * SLOT_SIZE);
+            container.addChild(text);
+
+            this.pool.push(text);
+        }
+
+        parent.addChild(container);
+        this.container = container;
     }
 
     public update(ranking: {name: string, bounty: number}[]) {
-        this.ranking = ranking;
+        this.pool.slice(ranking.length).forEach(t => { t.visible = false; });
+
+        ranking.forEach((entry, i) => {
+            this.pool[i].visible = true;
+            this.pool[i].text = `${entry.name} (${entry.bounty})`;
+        });
     }
 
     public render() {
-        if (!this.ranking)
-            return;
-
-        const pos = {
-            x: this.canvas.width - pad,
-            y: pad + 12,
-        };
-
-        this.ctx.save();
-        this.ctx.fillStyle = "#3399ff";
-        this.ctx.font = "12px monospace";
-
-        const text = 'Bounty List';
-
-        const textInfo = this.ctx.measureText(text);
-        const textPos = {
-            x: pos.x - textInfo.width,
-            y: pos.y,
-        };
-
-        this.ctx.fillText(text, textPos.x, textPos.y);
-
-        this.ranking.slice(0, 10).forEach((player, i) => {
-            const text = player.name + ' (' + player.bounty + ')';
-
-            const textInfo = this.ctx.measureText(text);
-            const textPos = {
-                x: pos.x - textInfo.width,
-                y: pos.y + 16 * (i + 1),
-            };
-
-            this.ctx.fillText(text, textPos.x, textPos.y);
-        });
-        this.ctx.restore();
-
-        return this.canvas;
+        this.container.position.set(this.parent.view.width - PAD, PAD);
     }
 }

@@ -21,7 +21,6 @@ export class HudRenderer implements Renderable {
     private rankingRenderer: RankingRenderer;
 
     private alive = true;
-    private debug = new PIXI.Graphics();
 
     public constructor(parent: any, private camera: Camera, stage: Stage) {
         this.container = new PIXI.Container();
@@ -34,11 +33,7 @@ export class HudRenderer implements Renderable {
         this.gunIndicator = new GunIndicator(this.container, camera);
         this.radar = new Radar(this.container, camera, stage);
         this.nameRenderer = new NameRenderer(this.container, camera, stage);
-        // this.rankingRenderer = new RankingRenderer(canvas);
-
-        this.debug.lineStyle(1, 0xffffff);
-        this.debug.drawRect(0, 0, 32, 32);
-        parent.addChild(this.debug);
+        this.rankingRenderer = new RankingRenderer(parent);
     }
 
     public update(info: ClientInfo) {
@@ -47,29 +42,23 @@ export class HudRenderer implements Renderable {
         this.gunIndicator.update(info);
         this.radar.update(info);
         this.nameRenderer.update(info);
-        // this.rankingRenderer.update(info.ranking);
+        this.rankingRenderer.update(info.ranking);
 
         this.alive = info.alive;
     }
 
     public render() {
         this.container.visible = this.alive;
+        this.rankingRenderer.render();
 
         if (!this.alive) {
             return;
         }
-
-        const shipPos = this.camera.addOffset({
-            x: -16,
-            y: -16,
-        });
-        this.debug.position.set(shipPos.x, shipPos.y);
 
         this.energyIndicator.render();
         this.speedIndicator.render();
         this.gunIndicator.render();
         this.radar.render();
         this.nameRenderer.render();
-        // this.rankingRenderer.render();
     }
 }

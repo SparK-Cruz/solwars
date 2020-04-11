@@ -1,5 +1,5 @@
 {
-    "TPS": 48,
+    "TPS": 64,
     "maxPlayers": 100,
     "bots": {
         "playerCap": 3,
@@ -20,7 +20,7 @@
         "warbird": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -29,7 +29,7 @@
         "javelin": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -38,7 +38,7 @@
         "spider": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -47,7 +47,7 @@
         "leviathan": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -56,7 +56,7 @@
         "terrier": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -65,7 +65,7 @@
         "weasel": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -74,7 +74,7 @@
         "lancaster": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -83,7 +83,7 @@
         "shark": {
             "speed": 4,
             "acceleration": 0.082,
-            "spin": 2.4,
+            "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
             "bullet": 0,
@@ -95,19 +95,19 @@
             "speed": 7,
             "energy": 400,
             "cooldown": 15,
-            "color": "rgb(255, 0, 0)"
+            "color": "#ff0000"
         },
         {
             "speed": 8,
             "energy": 700,
             "cooldown": 16,
-            "color": "rgb(200, 200, 0)"
+            "color": "#c8c800"
         },
         {
             "speed": 9,
             "energy": 1000,
             "cooldown": 17,
-            "color": "rgb(0, 0, 255)"
+            "color": "#0000ff"
         }
     ],
     "bombs": [
@@ -115,19 +115,19 @@
             "speed": 4,
             "energy": 600,
             "cooldown": 30,
-            "color": "rgb(255, 0, 0)"
+            "color": "#ff0000"
         },
         {
             "speed": 3,
             "energy": 700,
             "cooldown": 30,
-            "color": "rgb(255, 255, 0)"
+            "color": "#c8c800"
         },
         {
             "speed": 3,
             "energy": 800,
             "cooldown": 30,
-            "color": "rgb(0, 0, 255)"
+            "color": "#0000ff"
         }
     ]
 }

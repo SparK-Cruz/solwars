@@ -56,6 +56,6 @@ export class Stage extends EventEmitter {
     }
 
     public fetchAllEntities(): Entity[] {
-        return Object.values(this.entities);
+        return <Entity[]>Object.values(this.entities).filter((e: Entity) => e.type);
     }
 }

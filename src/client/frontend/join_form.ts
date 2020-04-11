@@ -1,9 +1,12 @@
+const PIXI = require('pixi.js');
 import { Engine } from "../engine";
 import { ShipRenderer } from "../game_renderers/entities/ship_renderer";
 import { Ship } from "../../space/entities/ship";
 import { Model } from "../../space/entities/ships/model";
 
-let shipRenderer = new ShipRenderer(new Ship(Model.Warbird));
+const previewContainer: any = new PIXI.Container();
+
+let shipRenderer: ShipRenderer = null
 let mainColor: HTMLInputElement = null;
 let accentColor: HTMLInputElement = null;
 
@@ -11,8 +14,6 @@ let validColor: string = null;
 let validDecal: string = null;
 
 const minimumColor: number = 96;
-
-let previewInterval: any = null;
 
 export class JoinForm {
     private static ships: string[] = [
@@ -43,8 +44,23 @@ export class JoinForm {
         nameField.focus();
         nameField.select();
 
+        const renderer = new PIXI.Application({
+            backgroundColor: 0x000000,
+            resolution: window.devicePixelRatio || 1,
+            width: 64,
+            height: 64,
+            view: preview,
+        });
+        previewContainer.position.set(32);
+        renderer.stage.addChild(previewContainer);
+        renderer.ticker.add((delta: number) => {
+            shipRenderer.ship.step(delta / 5);
+            shipRenderer.render();
+            previewContainer.angle = shipRenderer.ship.angle;
+        });
+
         engine.on('start', () => {
-            clearInterval(previewInterval);
+            renderer.stop();
             button.blur();
             nameField.blur();
             (<HTMLFieldSetElement>form.firstElementChild).disabled = true;
@@ -54,7 +70,7 @@ export class JoinForm {
             (<HTMLFieldSetElement>form.firstElementChild).disabled = false;
             nameField.focus();
             nameField.select();
-            this.previewLoop(preview.getContext('2d'));
+            renderer.start();
         });
 
         form.addEventListener('submit', e => {
@@ -103,19 +119,7 @@ export class JoinForm {
         });
 
         this.updateShipModel();
-        this.previewLoop(preview.getContext('2d'));
-    }
-
-    private static previewLoop(ctx: CanvasRenderingContext2D) {
-        previewInterval = setInterval(() => {
-            shipRenderer.ship.step(1);
-            ctx.clearRect(0, 0, 64, 64);
-            ctx.save();
-            ctx.translate(32, 32);
-            ctx.rotate(shipRenderer.ship.angle * Math.PI / 180);
-            ctx.drawImage(shipRenderer.render(), -16, -16);
-            ctx.restore();
-        }, 1000/32);
+        renderer.start();
     }
 
     private static updateShipModel() {
@@ -143,16 +147,23 @@ export class JoinForm {
         }
 
         shipInfo.innerHTML = `
-            ${model.make} ${model.name}
+            ${model.make} ${model.name}<br/>
+            "${model.id}"
         `;
 
-        const angle = shipRenderer.ship.angle;
+        previewContainer.removeChildren();
+
+        let angle = 0;
+        if (shipRenderer) {
+            angle = shipRenderer.ship.angle;
+        }
+
         const ship = new Ship(model);
         ship.control = 8;
         ship.angle = angle;
         if (validColor) ship.color = validColor;
         if (validDecal) ship.decals[0].color = validDecal;
-        shipRenderer = new ShipRenderer(ship);
+        shipRenderer = new ShipRenderer(previewContainer, ship);
     }
 
     private static filterColor(color: string): string {

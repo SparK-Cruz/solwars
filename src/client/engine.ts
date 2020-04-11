@@ -8,6 +8,7 @@ import { Assets } from './assets';
 import { GameRenderer } from './game_renderer';
 import { HudRenderer } from './hud_renderer';
 import { FpsRenderer } from './hud_renderers/fps_renderer';
+import { ToastRenderer, ToastTime } from './toast_renderer';
 
 export class Engine extends EventEmitter {
     private app: any;
@@ -17,7 +18,7 @@ export class Engine extends EventEmitter {
 
     private gameRenderer: GameRenderer;
     private hudRenderer: HudRenderer;
-    // private toastRenderer: ToastRenderer;
+    private toastRenderer: ToastRenderer;
     private fpsRenderer: FpsRenderer;
 
     public constructor(private game: HTMLCanvasElement) {
@@ -36,9 +37,10 @@ export class Engine extends EventEmitter {
         this.input = new Input(window);
         this.client = new Client(this.input);
         this.camera = new Camera();
-        this.gameRenderer = new GameRenderer(container, this.camera);
+        this.gameRenderer = new GameRenderer(container, this.camera, this.client.getStage());
         this.hudRenderer = new HudRenderer(container, this.camera, this.client.getStage());
         this.fpsRenderer = new FpsRenderer(container);
+        this.toastRenderer = new ToastRenderer(container);
 
         // this.app.ticker.addOnce(() => {
         //     // TODO set viewport follow object to camera.offset
@@ -54,6 +56,8 @@ export class Engine extends EventEmitter {
 
             this.fpsRenderer.update(this.client.fetchInfo().updates);
             this.fpsRenderer.render();
+
+            this.toastRenderer.render();
         });
 
         this.listenClient(this.client);
@@ -99,6 +103,7 @@ export class Engine extends EventEmitter {
 
         // stop renderers
         this.app.stop();
+        this.emit('stop');
     }
 
     private listenClient(client: Client) {
@@ -106,7 +111,7 @@ export class Engine extends EventEmitter {
             this.camera.trackable = ship;
         });
         client.on(ClientEvents.UPGRADE, (name: string) => {
-            // this.toastRenderer.toast(name, ToastTime.SHORT);
+            this.toastRenderer.toast(name, ToastTime.SHORT);
         });
     }
 

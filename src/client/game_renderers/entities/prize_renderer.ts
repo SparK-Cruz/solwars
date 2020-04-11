@@ -1,49 +1,34 @@
-import { EventEmitter } from 'events';
+const PIXI = require('pixi.js');
 import { Renderable } from "../renderable";
-import { R2d } from '../r2d';
+import { Prize } from '../../../space/entities/prize';
 
 const PRIZE_SIZE = 16;
 
-export class PrizeRenderer extends EventEmitter implements Renderable {
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private body: HTMLCanvasElement;
+export class PrizeRenderer implements Renderable {
+    private text: any;
 
-    public constructor(private prize: any) {
-        super();
+    public constructor(parent: any, private prize: Prize) {
+        const body = new PIXI.Graphics();
+        body.beginFill(0x007700);
+        body.drawRect(-PRIZE_SIZE/2, -PRIZE_SIZE/2, PRIZE_SIZE, PRIZE_SIZE);
+        body.endFill();
 
-        const {buffer, bfr} = R2d.buffer();
-        buffer.width = PRIZE_SIZE;
-        buffer.height = PRIZE_SIZE;
+        const text = new PIXI.Text('?', {
+            fontFamily: 'monospace',
+            fontSize: 12,
+            fontWeight: 'bold',
+            align: 'center',
+            fill: 0xffffff,
+        });
+        text.anchor.set(0.5);
 
-        this.canvas = buffer;
-        this.ctx = bfr;
+        parent.addChild(body);
+        parent.addChild(text);
 
-        this.body = this.draw();
+        this.text = text;
     }
 
-    public render(): HTMLCanvasElement {
-        this.ctx.clearRect(0, 0, PRIZE_SIZE, PRIZE_SIZE);
-        this.ctx.drawImage(this.body, 0, 0);
-
-        this.ctx.save();
-        this.ctx.font = "bold 10px monospace";
-        this.ctx.fillStyle = '#ffffff';
-        this.ctx.translate(PRIZE_SIZE/2, PRIZE_SIZE/2);
-        this.ctx.rotate(-this.prize.angle * Math.PI / 180);
-        const textInfo = this.ctx.measureText('?');
-        this.ctx.fillText('?', -textInfo.width/2, 4);
-        this.ctx.restore();
-
-        return this.canvas;
-    }
-
-    private draw(): HTMLCanvasElement {
-        const {buffer, bfr} = R2d.buffer(this.canvas);
-
-        bfr.fillStyle = '#007700';
-        bfr.fillRect(0, 0, PRIZE_SIZE, PRIZE_SIZE);
-
-        return buffer;
+    public render() {
+        this.text.angle = -this.prize.angle;
     }
 }

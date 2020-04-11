@@ -1,107 +1,64 @@
+const PIXI = require('pixi.js');
 import { Ship } from '../../../space/entities/ship';
-import { Control } from '../../../space/entities/ships/control';
 import { Renderable } from '../renderable';
-import { Assets, Asset } from '../../assets';
-import { R2d } from '../r2d';
+import { Assets } from '../../assets';
 
 export class ShipRenderer implements Renderable {
-  private canvas :HTMLCanvasElement;
-  private ctx :CanvasRenderingContext2D;
-  private body :HTMLCanvasElement;
-  private bdy :CanvasRenderingContext2D;
-  private light :HTMLImageElement;
+    private container: any;
+    private mask: any = null;
+    private body: any = new PIXI.Container();
 
-  constructor(public ship :Ship) {
-    this.canvas = document.createElement('canvas');
-    this.ctx = this.canvas.getContext('2d');
+    constructor(parent: any, public ship :Ship) {
+        this.container = new PIXI.Container();
 
-    const files = [
-      'img/ships/'+this.ship.model+'.png',
-      'img/ships/'+this.ship.model+'_mask.png'
-    ];
+        const bodySprite = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model].texture);
+        this.mask = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_mask'].texture);
 
-    const colors = [
-      this.ship.color
-    ];
+        const sprites = [bodySprite];
 
-    for (let i = 0; i < this.ship.decals.length; i++) {
-      files.push('img/ships/'+this.ship.model+'_'+this.ship.decals[i].name+'.png');
-      colors.push(this.ship.decals[i].color);
+        const colors = [
+            parseInt(this.ship.color.replace('#', '0x'))
+        ];
+
+        for (let i = 0; i < this.ship.decals.length; i++) {
+            sprites.push(new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_'+this.ship.decals[i].name].texture));
+            colors.push(parseInt(this.ship.decals[i].color.replace('#', '0x')));
+        }
+
+        this.draw(sprites, colors);
+        this.container.addChild(this.body);
+        this.container.addChild(this.mask);
+        this.container.position.set(
+            -bodySprite.width / 2,
+            -bodySprite.height / 2,
+        );
+
+        parent.addChild(this.container);
     }
 
-    Assets.fetchAll(files, (sprites :Asset[]) => {
-      this.draw(sprites, colors);
-    });
-
-    Assets.fetch('img/light.png').once('load', (sprite :Asset) => {
-      this.light = sprite.content;
-    });
-  }
-
-  public render() :HTMLCanvasElement {
-    if (this.body && this.light) {
-      this.ctx.drawImage(R2d.multiplyImage(this.body, this.light, this.ship.angle), 0, 0);
+    public render() :any {
+        // global light
     }
 
-    return this.canvas;
-  }
+    private draw(sprites :any[], colors :number[]) {
+        const main = sprites.shift();
 
-  public shouldDrawTrail() :boolean {
-    return Control.thrusting(this.ship.control) !== 0;
-  }
-  public getTrailOffset() :{x :number, y :number} {
-    let offset = 0;
+        this.body.addChild(main);
+        this.paint(main, colors.shift(), this.mask);
 
-    if (Control.thrusting(this.ship.control) > 0)
-      offset = this.canvas.height / 2 + 1;
-
-    if (Control.thrusting(this.ship.control) < 0)
-      offset = -this.canvas.height / 4;
-
-    return {
-      x: -offset * Math.sin(this.ship.angle * Math.PI / 180),
-      y: offset * Math.cos(this.ship.angle * Math.PI / 180)
+        while (sprites.length > 0) {
+            const decal = sprites.shift();
+            const color = colors.shift();
+            this.paint(main, color, decal);
+            this.body.addChild(decal);
+        }
     }
-  }
-  public getTrailDriftSpeed() :{x :number, y :number} {
-    const speed = 80 * this.ship.power * Control.thrusting(this.ship.control);
 
-    return {
-      x: -speed * Math.sin(this.ship.angle * Math.PI / 180) + this.ship.vx,
-      y: speed * Math.cos(this.ship.angle * Math.PI / 180) + this.ship.vy
+    private paint(sprite: any, color: number, mask: any) {
+        const paint = new PIXI.Sprite(sprite.texture);
+        paint.tint = color;
+        paint.mask = mask;
+
+        this.body.addChild(paint);
     }
-  }
-
-  private draw(sprites :Asset[], colors :string[]) {
-    this.body = document.createElement('canvas');
-    this.bdy = this.body.getContext('2d');
-
-    const body :HTMLImageElement = sprites.shift().content;
-    const mask :HTMLImageElement = sprites.shift().content;
-
-    this.drawBody(body);
-    this.paintBaseColor(body, colors.shift(), mask);
-
-    while (sprites.length > 0) {
-      const decal = sprites.shift();
-      const color = colors.shift();
-      this.paintDecal(body, decal.content, color, mask);
-    }
-  }
-  private drawBody(sprite :HTMLImageElement) {
-    this.canvas.width = sprite.width;
-    this.canvas.height = sprite.height;
-    this.body.width = sprite.width;
-    this.body.height = sprite.height;
-
-    this.bdy.drawImage(sprite, 0, 0);
-  }
-
-  private paintBaseColor(sprite :HTMLImageElement, color :string, maskImage :HTMLImageElement) {
-    this.bdy.drawImage(R2d.applyMask(R2d.multiplyColor(sprite, color), maskImage), 0, 0);
-  }
-
-  private paintDecal(sprite :HTMLImageElement, decal :HTMLImageElement, color :string, maskImage :HTMLImageElement) {
-    this.bdy.drawImage(R2d.applyMask(R2d.applyMask(R2d.multiplyColor(sprite, color), decal), maskImage), 0, 0);
-  }
 }

@@ -3,6 +3,8 @@ import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
 import { ClientInfo } from "../client";
 
+const PAD = 70;
+
 export class GunIndicator implements Renderable {
     private info: ClientInfo;
     private sprite: any;
@@ -46,8 +48,8 @@ export class GunIndicator implements Renderable {
         this.sprite.clear();
         this.sprite.lineTextureStyle(this.style);
         this.sprite.position.set(pos.x, pos.y);
-        this.sprite.moveTo(0, 150);
-        this.sprite.lineTo(0, 150 + len);
+        this.sprite.moveTo(0, PAD);
+        this.sprite.lineTo(0, PAD + len);
         this.sprite.angle = this.info.angle + 180;
     }
 }

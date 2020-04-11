@@ -1,3 +1,4 @@
+const PIXI = require('pixi.js');
 import { Renderable } from "./renderable";
 import { Camera } from "../camera";
 import { Stage } from ".././stage";
@@ -14,18 +15,26 @@ import { PrizeRenderer } from "./entities/prize_renderer";
 import { Prize } from "../../space/entities/prize";
 
 export class EntityRenderer implements Renderable {
-    private ctx: CanvasRenderingContext2D;
     private cache: any = {};
+    private container: any;
 
-    public constructor(private canvas: HTMLCanvasElement, private camera: Camera, private stage: Stage) {
-        this.ctx = canvas.getContext('2d');
+    public constructor(parent: any, private camera: Camera, private stage: Stage) {
+        this.container = new PIXI.Container();
 
         this.stage.on('despawn', (id: number) => {
+            if (!this.cache.hasOwnProperty(id)) {
+                return;
+            }
+
+            this.container.removeChild(this.cache[id].container);
             delete this.cache[id];
         });
         this.stage.on('clear', (id: number) => {
+            this.container.removeChildren();
             this.cache = {};
         });
+
+        parent.addChild(this.container);
     }
 
     public render() {
@@ -35,55 +44,62 @@ export class EntityRenderer implements Renderable {
         for (const i in entities) {
             const entity = entities[i];
 
-            const renderer = this.fetchRenderer(entity);
-            this.renderEntity(entity, renderer, offset);
+            const pair = this.fetchPair(entity);
+            this.renderEntity(entity, pair, offset);
         }
-
-        return this.canvas;
     }
 
-    private renderEntity(entity: Entity, renderer: Renderable, offset: {x: number, y: number}) {
-        const image = renderer.render();
+    private renderEntity(entity: Entity, pair: RenderPair, offset: {x: number, y: number}) {
+        if (!pair) return;
 
-        const center = {
-            x: image.width / 2,
-            y: image.height / 2,
-        };
-
-        this.ctx.save();
-        this.ctx.translate(entity.x - offset.x, entity.y - offset.y);
-        this.ctx.rotate(entity.angle * Math.PI / 180);
-        this.ctx.drawImage(image, -center.x, -center.y);
-        this.ctx.restore();
+        pair.renderer.render();
+        pair.container.visible = true;
+        pair.container.angle = entity.angle;
+        pair.container.position.set(entity.x - offset.x, entity.y - offset.y);
     }
 
-    private fetchRenderer(entity: Entity): Renderable {
+    private fetchPair(entity: Entity): RenderPair {
         if (this.cache.hasOwnProperty(entity.id)) {
             return this.cache[entity.id];
         }
 
-        const renderer = this.createRenderer(entity);
-        this.cache[entity.id] = renderer;
-
-        return renderer;
+        const pair = this.createPair(entity);
+        if (pair) {
+            this.cache[entity.id] = pair;
+        }
+        return pair;
     }
 
-    private createRenderer(entity: Entity): Renderable {
+    private createPair(entity: Entity): RenderPair {
+        const container = new PIXI.Container();
+        this.container.addChild(container);
+
+        const pair = (renderer: Renderable) => ({
+            container,
+            renderer,
+        });
+
         switch(entity.type.name) {
             case EntityType.Ship.name:
-                return new ShipRenderer(<Ship>entity);
+                return pair(new ShipRenderer(container, <Ship>entity));
             case EntityType.Bullet.name:
-                return new BulletRenderer(<Bullet>entity);
+                return pair(new BulletRenderer(container, <Bullet>entity));
             case EntityType.ShipDebris.name:
-                return new ShipDebrisRenderer(<ShipDebris>entity);
+                return pair(new ShipDebrisRenderer(container, <ShipDebris>entity));
             case EntityType.Rock.name:
-                return new RockRenderer(<Rock>entity);
+                return pair(new RockRenderer(container, <Rock>entity));
             case EntityType.Prize.name:
-                return new PrizeRenderer(<Prize>entity);
+                return pair(new PrizeRenderer(container, <Prize>entity));
             default:
                 console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
+                break;
         }
 
-        return {render:() => { return null; }};
+        return null;
     }
+}
+
+interface RenderPair {
+    renderer: Renderable;
+    container: any;
 }

@@ -27,7 +27,7 @@ export class NameRenderer implements Renderable {
             align: 'center',
         });
 
-        this.playerName.position.set(20);
+        this.playerName.position.set(20)
         this.container.position.set(0);
 
         this.container.addChild(this.playerName);
@@ -69,8 +69,8 @@ export class NameRenderer implements Renderable {
 
             const entityPos = this.camera.translate(entity);
             let pos = {
-                x: entityPos.x - text.width / 2 + this.camera.offset.x,
-                y: entityPos.y + 40 + this.camera.offset.y,
+                x: entityPos.x + this.camera.offset.x,
+                y: entityPos.y + 32 + this.camera.offset.y,
             };
 
             text.text = name;
@@ -84,6 +84,7 @@ export class NameRenderer implements Renderable {
         }
 
         const text = new PIXI.Text('', style);
+        text.anchor.set(0.5, 0);
         this.pool.push(text);
         this.container.addChild(text);
         return text;

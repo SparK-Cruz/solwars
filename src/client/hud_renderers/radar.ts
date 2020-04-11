@@ -5,6 +5,7 @@ import { Camera } from "../camera";
 import { ClientInfo } from "../client";
 import { EntityType } from "../../space/entities";
 import { Stage } from ".././stage";
+import { Ship } from "../../space/entities/ship";
 
 const SCALE = 1/12;
 const REGION_SCALE = 1/512;
@@ -94,7 +95,8 @@ export class Radar implements Renderable {
             Math.abs(Math.floor(this.info.position.y * REGION_SCALE)),
         ].join('');
 
-        this.coordText.position.set(100 - this.coordText.width / 2, 0);
+        this.coordText.anchor.set(0.5, 0);
+        this.coordText.position.set(100, 0);
         this.coordText.text = positionText;
     }
 
@@ -115,6 +117,7 @@ export class Radar implements Renderable {
 
             if (entity.id == this.info.id) {
                 style = 0xffffff;
+                size = 5;
             }
             switch(entity.type.name) {
                 case EntityType.ShipDebris.name:
@@ -123,7 +126,7 @@ export class Radar implements Renderable {
                     size = 2;
                     break;
                 case EntityType.Rock.name:
-                    style = 0xeeeeee;
+                    style = 0xaaaaaa;
                     size = (<any>entity).size * SCALE;
                     break;
                 case EntityType.Prize.name:

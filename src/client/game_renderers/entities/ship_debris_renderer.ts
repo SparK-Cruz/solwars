@@ -1,39 +1,19 @@
+const PIXI = require('pixi.js');
 import { ShipDebris } from '../../../space/entities/ship_debris';
 import { Renderable } from '../renderable';
 
 export class ShipDebrisRenderer implements Renderable {
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
-    private alpha: number;
-
-    constructor(public debris: ShipDebris) {
-        this.canvas = document.createElement('canvas');
-        this.ctx = this.canvas.getContext('2d');
-
-        this.canvas.width = 20;
-        this.canvas.height = 20;
-
-        this.alpha = Math.random() * 0.5 + 0.2;
-        this.draw(this.alpha);
-    }
-
-    public render(): HTMLCanvasElement {
-        return this.canvas;
-    }
-
-    private draw(alpha: number) {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.save();
-        this.ctx.beginPath();
-        this.ctx.translate(this.canvas.width/2, this.canvas.height/2);
-        this.ctx.moveTo(0, 0);
-        this.debris.collisionMap.forEach(point => {
-            this.ctx.lineTo(point[0], point[1]);
+    constructor(parent: any, public debris: ShipDebris) {
+        const gfx = new PIXI.Graphics();
+        gfx.beginFill(parseInt(debris.color.replace('#', '0x')));
+        gfx.moveTo(debris.collisionMap[0][0], debris.collisionMap[0][1]);
+        debris.collisionMap.slice(1).forEach(point => {
+            gfx.lineTo(point[0], point[1]);
         });
-        this.ctx.fillStyle = this.debris.color;
-        this.ctx.fill();
-        this.ctx.fillStyle = `rgba(0,0,0,${alpha})`;
-        this.ctx.fill();
-        this.ctx.restore();
+        gfx.endFill();
+
+        parent.addChild(gfx);
     }
+
+    public render() {}
 }

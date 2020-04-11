@@ -207,8 +207,8 @@ export class Ship extends EventEmitter implements entities.Entity {
     }
 
     private die(killer: any) {
-        const debris = 7;
-        const size = 6;
+        const debris = 14;
+        const size = 3;
         const parent = {
                 id: this.id,
                 x: this.x,
