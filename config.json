@@ -1,10 +1,10 @@
 {
-    "TPS": 64,
+    "TPS": 60,
     "maxPlayers": 100,
     "bots": {
-        "playerCap": 3,
+        "playerCap": 5,
         "ship": {
-            "model": "javelin",
+            "model": "warbird",
             "color": "#3399ff",
             "decals": [
                 {
