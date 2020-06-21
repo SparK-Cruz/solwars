@@ -72,8 +72,8 @@
             "size": 64,
             "sides": 18,
             "mass": 400,
-            "count": 250,
-            "radius": 5200,
+            "count": 220,
+            "radius": 3200,
             "spread": 1500
         },
         {
@@ -81,8 +81,8 @@
             "type": {"name": "prize"},
             "x": 0,
             "y": 0,
-            "radius": 5700,
-            "delay": 250,
+            "radius": 3500,
+            "delay": 64,
             "maxPrizes": 200
         }
     ]
