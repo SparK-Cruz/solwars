@@ -35,7 +35,7 @@ export class PrizeSpawner extends EventEmitter implements Entity {
         if (this.prizeCount >= this.maxPrizes)
             return;
 
-        if (this.timer % (this.delay * delta) !== 0)
+        if (this.timer % this.delay !== 0)
             return;
 
         this.spawn();
