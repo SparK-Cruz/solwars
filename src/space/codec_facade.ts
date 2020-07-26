@@ -322,6 +322,7 @@ export class CodecFacade {
     private decodeBin(bin: string): string {
         const result = LZString.decompress(bin);
         if (result == null) {
+            console.log(bin);
             console.log(typeof LZString, typeof LZString.decompress, typeof bin, typeof result);
         }
         return result;
