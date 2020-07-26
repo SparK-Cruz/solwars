@@ -59,10 +59,10 @@ export class Client extends EventEmitter {
         this.options = options;
 
         if (!this.socket) {
-            let address = '';
-            if (!(<any>process).browser) {
-                address = 'http://127.0.0.1:'+(process.env.PORT || Config.serverPort);
-            }
+            let address = ':27001';
+            // if (!(<any>process).browser) {
+            //     address = 'http://127.0.0.1:'+(process.env.PORT || Config.serverPort);
+            // }
             this.socket = socketio(address, {autoConnect: false});
 
             this.bindEvents(this.socket);
