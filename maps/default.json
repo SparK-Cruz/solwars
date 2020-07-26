@@ -69,12 +69,12 @@
             "type": {"name": "rock"},
             "x": 0,
             "y": 0,
-            "size": 64,
-            "sides": 18,
-            "mass": 400,
-            "count": 230,
-            "radius": 3200,
-            "spread": 2000
+            "size": 72,
+            "sides": 16,
+            "mass": 500,
+            "count": 190,
+            "radius": 3400,
+            "spread": 2500
         },
         {
             "spawner": true,
