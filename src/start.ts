@@ -18,9 +18,7 @@ Config.read(() => {
 
     const port = process.env.PORT || STATIC_PORT;
 
-    const gameServer = new Server();
-    const room = new Room(gameServer);
-    gameServer.listen(27001);
+    const room = new Room(server);
     server.listen(port);
     room.open();
 
