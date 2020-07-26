@@ -40,9 +40,10 @@ interface BotShip {
 }
 
 export class Config {
+    public static serverPort: number;
+    public static networkCompression: boolean;
     public static TPS: number;
     public static maxPlayers: number;
-    public static serverPort: number;
     public static ships: ShipsConfig;
     public static bullets: BulletConfig[];
     public static bots: BotsConfig;

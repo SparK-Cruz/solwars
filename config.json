@@ -1,4 +1,6 @@
 {
+    "serverPort": 80,
+    "networkCompression": false,
     "TPS": 60,
     "maxPlayers": 100,
     "bots": {
@@ -15,7 +17,6 @@
         },
         "prefix": "BOT "
     },
-    "serverPort": 80,
     "ships": {
         "warbird": {
             "speed": 4,

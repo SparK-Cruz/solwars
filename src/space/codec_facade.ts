@@ -6,6 +6,7 @@ import { ShipDebris } from './entities/ship_debris';
 import { Rock } from './entities/rock';
 import { EntitySpawner } from './entity_spawner';
 import { Prize } from './entities/prize';
+import { Config } from './config';
 
 interface SavedState {
     tick: number,
@@ -192,12 +193,7 @@ export class CodecFacade {
 
     public decode(state :string): SavedState {
         // TODO PSON / binary
-        const json = flatstr(this.decodeBin(state));
-        const decoded = <SavedState>JSON.parse(json);
-        if (decoded == null) {
-            console.log(json);
-        }
-        return decoded;
+        return <SavedState>JSON.parse(flatstr(this.decodeBin(state)));
     }
 
     public encodeEntity(entity :any, force: boolean = false) {
@@ -315,19 +311,16 @@ export class CodecFacade {
     }
 
     private encodeBin(json: string): string {
-        return LZString.compress(json);
+        if (!Config.networkCompression)
+            return json;
 
-        // return json;
+        return LZString.compress(json);
     }
     private decodeBin(bin: string): string {
-        const result = LZString.decompress(bin);
-        if (result == null) {
-            console.log(bin);
-            console.log(typeof LZString, typeof LZString.decompress, typeof bin, typeof result);
-        }
-        return result;
+        if (!Config.networkCompression)
+            return bin;
 
-        // return bin;
+        return LZString.decompress(bin);
     }
 }
 
