@@ -310,10 +310,14 @@ export class CodecFacade {
     }
 
     private encodeBin(json: string): string {
-        return LZString.compress(json);
+        // return LZString.compress(json);
+
+        return json;
     }
     private decodeBin(bin: string): string {
-        return LZString.decompress(bin);
+        // return LZString.decompress(bin);
+
+        return bin;
     }
 }
 
