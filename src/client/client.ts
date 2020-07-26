@@ -155,8 +155,8 @@ export class Client extends EventEmitter {
 
         this.input.change((state: number) => {
             socket.emit(CodecEvents.SEND_INPUT, state);
-            if (this.ship)
-                this.ship.control = state;
+            // if (this.ship)
+            //     this.ship.control = state;
         });
     }
 
