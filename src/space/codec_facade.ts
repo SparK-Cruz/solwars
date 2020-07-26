@@ -192,7 +192,12 @@ export class CodecFacade {
 
     public decode(state :string): SavedState {
         // TODO PSON / binary
-        return <SavedState>JSON.parse(flatstr(this.decodeBin(state)));
+        const json = flatstr(this.decodeBin(state));
+        const decoded = <SavedState>JSON.parse(json);
+        if (decoded == null) {
+            console.log(json);
+        }
+        return decoded;
     }
 
     public encodeEntity(entity :any, force: boolean = false) {
