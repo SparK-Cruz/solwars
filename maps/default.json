@@ -81,9 +81,9 @@
             "type": {"name": "prize"},
             "x": 0,
             "y": 0,
-            "radius": 2500,
-            "delay": 64,
-            "maxPrizes": 300
+            "radius": 2000,
+            "delay": 320,
+            "maxPrizes": 50
         }
     ]
 }
