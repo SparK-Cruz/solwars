@@ -82,8 +82,8 @@
             "x": 0,
             "y": 0,
             "radius": 3000,
-            "delay": 640,
-            "maxPrizes": 20
+            "delay": 320,
+            "maxPrizes": 30
         }
     ]
 }
