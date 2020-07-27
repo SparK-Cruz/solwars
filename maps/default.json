@@ -71,19 +71,19 @@
             "y": 0,
             "size": 72,
             "sides": 16,
-            "mass": 500,
+            "mass": 700,
             "count": 190,
-            "radius": 3400,
-            "spread": 2500
+            "radius": 3500,
+            "spread": 2700
         },
         {
             "spawner": true,
             "type": {"name": "prize"},
             "x": 0,
             "y": 0,
-            "radius": 2000,
-            "delay": 320,
-            "maxPrizes": 50
+            "radius": 3000,
+            "delay": 640,
+            "maxPrizes": 20
         }
     ]
 }
