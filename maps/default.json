@@ -72,9 +72,9 @@
             "size": 72,
             "sides": 16,
             "mass": 700,
-            "count": 190,
-            "radius": 3500,
-            "spread": 2700
+            "count": 210,
+            "radius": 3200,
+            "spread": 2800
         },
         {
             "spawner": true,
