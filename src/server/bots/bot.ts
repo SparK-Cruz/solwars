@@ -126,6 +126,8 @@ export class Bot extends Player {
             this.mapping.press(Mapping.BACKWARD);
         if (distance > delta + DISTANCE_BAND)
             this.mapping.press(Mapping.FORWARD);
+        if (distance > delta + DISTANCE_BAND * 2)
+            this.mapping.press(Mapping.AFTERBURNER);
     }
 
     private stepShoot(energy: number, distance: number, angleDiff: number) {
