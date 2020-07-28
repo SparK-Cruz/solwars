@@ -26,7 +26,7 @@ export class Engine extends EventEmitter {
 
         this.app = new PIXI.Application({
             backgroundColor: 0x000000,
-            resolution: window.devicePixelRatio || 1,
+            resolution: 1,
             resizeTo: window,
             view: game,
         });

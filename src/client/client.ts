@@ -39,8 +39,7 @@ export class Client extends EventEmitter {
             model: null,
         },
         turnSpeed: 0,
-        tickRate: 64,
-        shootCost: 150,
+        tickRate: 64
     };
 
     // TODO implement logger and debugger
@@ -209,7 +208,6 @@ export class Client extends EventEmitter {
         this.staticInfo.ship.model = model.name;
         this.staticInfo.turnSpeed = data.ship.turnSpeed;
         this.staticInfo.tickRate = data.tps;
-        this.staticInfo.shootCost = data.ship.shootCost;
     }
 }
 
@@ -227,8 +225,7 @@ interface StaticInfo {
         make: string,
         model: string,
     },
-    turnSpeed: number,
-    shootCost: number,
+    turnSpeed: number
 }
 
 export interface ClientInfo extends StaticInfo {

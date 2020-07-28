@@ -22,6 +22,7 @@ interface ShipsConfig {
 
 interface BulletConfig {
     speed: number,
+    cost: number,
     energy: number,
     cooldown: number,
     color: string,

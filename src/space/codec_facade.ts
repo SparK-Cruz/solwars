@@ -117,9 +117,6 @@ const stringify = fastjson({
                                 },
                             },
                         },
-                        shootCost: {
-                            type: 'number',
-                        },
                         parent: {
                             type: 'object',
                             properties: {
@@ -295,7 +292,6 @@ export class CodecFacade {
             //ship
             model: entity.model,
             decals: entity.decals,
-            shootCost: entity.shootCost,
             //bullet
             parent: entity.parent,
             bulletType: entity.bulletType,

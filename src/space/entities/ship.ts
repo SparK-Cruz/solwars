@@ -9,12 +9,12 @@ function inRads(degrees :number) :number {
     return degrees * Math.PI / 180;
 }
 
-const INERTIAL_DUMP = 0.005;
+const INERTIAL_DUMP = 0.001;
 
 // the more delta aproaches zero
 // the more we correct the dump
 // this rate is maximum correction
-const DUMP_CORRECTION = 0.0127;
+const DUMP_CORRECTION = 0.00635;
 
 export class Ship extends EventEmitter implements entities.Entity {
     type = entities.EntityType.Ship;
@@ -111,8 +111,8 @@ export class Ship extends EventEmitter implements entities.Entity {
         return this.damage + this.afterburnerCost * delta < this.health;
     }
 
-    private canShoot() {
-        return (this.damage + this.shootCost < this.health && !this.gunsCooldown);
+    private canShoot(cost: number) {
+        return (this.damage + cost < this.health && !this.gunsCooldown);
     }
 
     private readControls(delta: number) {
@@ -149,8 +149,13 @@ export class Ship extends EventEmitter implements entities.Entity {
         this.vangle = turn * this.turnSpeed;
     }
     private readShoot() {
+        let bulletTraits = null;
+        if (Config.bullets) {
+            bulletTraits = Config.bullets[this.bullet];
+        }
+
         if (!Control.shooting(this.control)
-            || !this.canShoot())
+            || !this.canShoot(bulletTraits.cost))
             return;
 
         const linearOffset = 16;
@@ -159,12 +164,11 @@ export class Ship extends EventEmitter implements entities.Entity {
             y: -linearOffset * Math.cos(inRads(this.angle)),
         };
 
-        if (Config.bullets) {
-                const bulletTraits = Config.bullets[this.bullet];
-                this.gunsCooldown += bulletTraits.cooldown;
+        if (bulletTraits) {
+            this.gunsCooldown += bulletTraits.cooldown;
         }
 
-        this.damage += this.shootCost;
+        this.damage += bulletTraits.cost;
         this.emit(entities.EntityEvent.Spawn, entities.EntityType.Bullet, this.bullet, this, offset);
     }
 

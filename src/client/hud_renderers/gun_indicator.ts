@@ -41,8 +41,7 @@ export class GunIndicator implements Renderable {
         if (!this.info)
             return;
 
-        const bullets = Math.floor(this.info.energy / this.info.shootCost);
-        const len = bullets * 5;
+        const len = 15;
         const pos = this.camera.addOffset({x: 0, y: 0});
 
         this.sprite.clear();

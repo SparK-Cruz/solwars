@@ -15,6 +15,12 @@ const IDEAL_BULLET_SPEED = 7;
 const ANGLE_TOLERANCE = 4;
 const ENERGY_RESERVE = 0.55;
 
+const shipModelIds = [
+    'warbird',
+    'javelin',
+    'spider'
+];
+
 export class Bot extends Player {
     public get isBot(): boolean {
         return true;
@@ -67,7 +73,7 @@ export class Bot extends Player {
     protected fetchPlayerShip(name: string, cache: Ship = null) {
         let onSuccess = (ship :Ship) => {};
         setTimeout(() => {
-            const ship = new Ship(Model.byId[Config.bots.ship.model]);
+            const ship = new Ship(Model.byId[this.randomShipModel()]);
             ship.decals = Config.bots.ship.decals;
             ship.color = Config.bots.ship.color;
             onSuccess(ship);
@@ -83,6 +89,15 @@ export class Bot extends Player {
             }
         };
         return callbacks;
+    }
+
+    private randomShipModel() {
+        if (Config.bots.ship.model) {
+            return Config.bots.ship.model;
+        }
+
+        const randomizedIds = shipModelIds.sort((a, b) => Math.round(Math.random() * 2 - 1));
+        return randomizedIds[0];
     }
 
     private onRespawn() {
