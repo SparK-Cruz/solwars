@@ -9,7 +9,7 @@ function inRads(degrees :number) :number {
     return degrees * Math.PI / 180;
 }
 
-const INERTIAL_DUMP = 0.001;
+const INERTIAL_DUMP = 0.0028;
 
 // the more delta aproaches zero
 // the more we correct the dump
