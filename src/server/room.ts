@@ -10,7 +10,7 @@ import { Ship } from '../space/entities/ship';
 
 const Collisions = require('collisions').Collisions;
 
-const UPDATE_SKIP = 3;
+const UPDATE_SKIP = 2;
 const TPS_TARGET = 64;
 let TPS = 64;
 

@@ -1,7 +1,7 @@
 {
     "serverPort": 80,
     "networkCompression": false,
-    "TPS": 60,
+    "TPS": 70,
     "maxPlayers": 100,
     "bots": {
         "playerCap": 5,
