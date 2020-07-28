@@ -38,7 +38,7 @@ export class RankingRenderer implements Renderable {
     public update(ranking: {name: string, bounty: number}[]) {
         this.pool.slice(ranking.length).forEach(t => { t.visible = false; });
 
-        ranking.forEach((entry, i) => {
+        ranking.slice(0, Math.min(LIMIT, ranking.length)).forEach((entry, i) => {
             this.pool[i].visible = true;
             this.pool[i].text = `${entry.name} (${entry.bounty})`;
         });

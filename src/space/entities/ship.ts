@@ -149,10 +149,10 @@ export class Ship extends EventEmitter implements entities.Entity {
         this.vangle = turn * this.turnSpeed;
     }
     private readShoot() {
-        let bulletTraits = null;
-        if (Config.bullets) {
-            bulletTraits = Config.bullets[this.bullet];
-        }
+        if (!Config.bullets)
+            return;
+
+        const bulletTraits = Config.bullets[this.bullet];
 
         if (!Control.shooting(this.control)
             || !this.canShoot(bulletTraits.cost))
