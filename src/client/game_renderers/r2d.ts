@@ -18,7 +18,6 @@ export namespace R2d {
         mask.bfr.save();
         mask.bfr.drawImage(source, 0, 0);
         mask.bfr.globalCompositeOperation = 'multiply';
-        // mask.bfr.translate(center.x, center.y);
         mask.bfr.drawImage(light.buffer, 0, 0, buffer.width, buffer.height);
         mask.bfr.restore();
 

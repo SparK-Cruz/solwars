@@ -2,11 +2,11 @@ import * as socketio from 'socket.io-client';
 
 import { Stage } from './stage';
 import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
-import { Ship } from '../space/entities/ship';
+import { Ship, ShipEvents } from '../space/entities/ship';
 import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
-import { Config } from '../space/config';
+import { EntityEvent } from '../space/entities';
 
 export interface ClientOptions {
     name: string,
@@ -141,21 +141,29 @@ export class Client extends EventEmitter {
             this.onServerRemoveObject(data);
         });
 
+        socket.on(CodecEvents.COLLISION, (data: any) => {
+            this.onCollision(data);
+        });
+
+        socket.on(CodecEvents.DIE, (death: any) => {
+            this.onDie(death);
+        });
+
         socket.on(CodecEvents.DEATH, (death: any) => {
             this.onDeath(death);
         });
+
         socket.on(CodecEvents.RESPAWN, () => {
             this.onRespawn();
         });
 
         socket.on(CodecEvents.UPGRADE, (name: string) => {
             this.emit(ClientEvents.UPGRADE, name);
+            this.ship.emit(ShipEvents.Upgrade);
         });
 
         this.input.change((state: number) => {
             socket.emit(CodecEvents.SEND_INPUT, state);
-            // if (this.ship)
-            //     this.ship.control = state;
         });
     }
 
@@ -191,10 +199,29 @@ export class Client extends EventEmitter {
         this.stage.remove(data);
     }
 
-    private onDeath(death: PlayerDeath) {
+    private onCollision(data: any) {
+        if (this.stage.entities[parseInt(data)] && this.stage.entities[parseInt(data)].emit) {
+            this.stage.entities[parseInt(data)].emit(EntityEvent.Collide);
+        }
+    }
+
+    private onDie(death: PlayerDeath) {
         console.log(`You died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
         this.ship.alive = false;
+        this.ship.emit(EntityEvent.Die);
     }
+
+    private onDeath(death: PlayerDeath) {
+        if (death.ship == this.ship.id)
+            return;
+
+        console.log(`${death.name} died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
+
+        const ship = this.stage.entities[death.ship];
+        if (!ship) return;
+        ship.emit(EntityEvent.Die);
+    }
+
     private onRespawn() {
         // Get a new ship
         this.socket.emit(CodecEvents.JOIN_GAME, this.options);

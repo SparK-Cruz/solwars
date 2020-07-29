@@ -114,9 +114,9 @@
         },
         {
             "speed": 12,
-            "cost": 320,
-            "energy": 1000,
-            "cooldown": 25,
+            "cost": 200,
+            "energy": 900,
+            "cooldown": 5,
             "color": "#c800c8"
         }
     ],

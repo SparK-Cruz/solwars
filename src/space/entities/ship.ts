@@ -259,5 +259,5 @@ export class Ship extends EventEmitter implements entities.Entity {
 }
 
 export namespace ShipEvents {
-        export const Upgrade = 'upgrade';
+    export const Upgrade = 'upgrade';
 }

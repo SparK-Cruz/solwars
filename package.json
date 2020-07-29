@@ -7,10 +7,11 @@
     "start": "node dist/start.js",
     "build": "tsc && npm run build-frontend && npm run build-assets",
     "build-frontend": "browserify dist/client/frontend.js > dist/client/dist_frontend.js",
-    "build-assets": "npm run build-html && npm run build-img && npm run build-css",
+    "build-assets": "npm run build-html && npm run build-img && npm run build-css && npm run build-sfx",
     "build-html": "cp src/client/*.html dist/client/",
     "build-img": "cp -r src/client/img dist/client/",
-    "build-css": "cp src/client/frontend/*.css dist/client/frontend/"
+    "build-css": "cp src/client/frontend/*.css dist/client/frontend/",
+    "build-sfx": "cp -r src/client/sfx dist/client"
   },
   "keywords": [
     "space",
@@ -22,23 +23,23 @@
   "author": "Spark Cruz <spark.crz@gmail.com>",
   "license": "UNLICENSED",
   "devDependencies": {
-    "@types/express": "^4.11.1",
-    "@types/socket.io": "^1.4.33",
-    "@types/socket.io-client": "^1.4.32",
+    "@types/express": "^4.17.7",
+    "@types/socket.io": "^1.4.41",
+    "@types/socket.io-client": "^1.4.33",
     "browserify": "^14.5.0",
     "tsc": "^1.20150623.0",
     "typescript": "^2.8.3"
   },
   "dependencies": {
-    "@types/jsonfile": "^5.0.0",
+    "@types/jsonfile": "^5.0.1",
     "collisions": "file:lib/collisions",
     "express": "^4.16.3",
-    "fast-json-stringify": "^1.18.0",
+    "fast-json-stringify": "^1.21.0",
     "flatstr": "^1.0.12",
     "jsonfile": "^4.0.0",
     "long": "^4.0.0",
     "lz-string": "^1.4.4",
-    "pixi.js": "^5.2.1",
+    "pixi.js": "^5.3.2",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
     "uglify-es": "^3.3.9"

@@ -49,6 +49,7 @@ export namespace EntityEvent {
     export const Spawn = "spawn";
     export const Despawn = "despawn";
     export const Die = "die";
+    export const Collide = "collide";
 }
 
 export interface EntityType {

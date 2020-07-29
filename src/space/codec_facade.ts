@@ -20,6 +20,8 @@ export module DeathCauses {
 }
 
 export interface PlayerDeath {
+    name: string,
+    ship: number,
     cause: string,
     bounty: number,
     killer: Entity,
@@ -260,6 +262,7 @@ export class CodecFacade {
         return {
             newSector: false,
             id: entity.id,
+            name: entity.name,
             x: entity.x,
             y: entity.y,
             vx: entity.vx,
@@ -326,7 +329,9 @@ export namespace CodecEvents {
     export const ACCEPT = "accept";
     export const STEP = "step";
     export const REMOVE_OBJECT = "removal";
+    export const COLLISION = "collision";
     export const DEATH = "death";
+    export const DIE = "die";
     export const RESPAWN = "respawn";
     export const UPGRADE = "upgrade";
 

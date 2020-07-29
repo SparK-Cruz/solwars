@@ -62,6 +62,7 @@ export class Bullet extends EventEmitter implements Entity {
         }
 
         this.energy = 0;
+        this.emit(EntityEvent.Collide, this);
     }
 
     private updatePhysics(delta: number): void {

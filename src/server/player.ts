@@ -23,17 +23,25 @@ export class Player extends EventEmitter {
     public ship: Ship = null;
     public id: number;
 
-    public constructor(public socket :SocketIO.Socket, public room :Room) {
+    public constructor(public socket: SocketIO.Socket, public room: Room) {
         super();
         this.setupListeners();
     }
 
-    public sendState(state :string) {
+    public sendState(state: string) {
         this.socket.emit(CodecEvents.STEP, state);
     }
 
-    public sendRemoval(id :number) {
+    public sendRemoval(id: number) {
         this.socket.emit(CodecEvents.REMOVE_OBJECT, id);
+    }
+
+    public sendCollision(id: number) {
+        this.socket.emit(CodecEvents.COLLISION, id);
+    }
+
+    public sendDeath(death: PlayerDeath) {
+        this.socket.emit(CodecEvents.DEATH, death);
     }
 
     private setupListeners() {
@@ -130,6 +138,8 @@ export class Player extends EventEmitter {
 
     private onDie(killer: Entity) {
         const death: PlayerDeath = {
+            name: this.name,
+            ship: this.ship.id,
             cause: DeathCauses.Collision,
             bounty: this.bounty,
             killer: killer,
@@ -141,14 +151,13 @@ export class Player extends EventEmitter {
             death.killer = (<Bullet>killer).parent;
         }
 
-        this.ship.emit(EntityEvent.Despawn, this.ship);
-
         setTimeout(() => {
             this.socket.emit(CodecEvents.RESPAWN);
         }, 5000);
 
-        this.socket.emit(CodecEvents.DEATH, death);
+        this.socket.emit(CodecEvents.DIE, death);
         this.emit(PlayerEvents.Die, death);
+        this.ship.emit(EntityEvent.Despawn, this.ship);
     }
 
     private randomShades(brightness: number) {

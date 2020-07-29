@@ -9,6 +9,7 @@ import { GameRenderer } from './game_renderer';
 import { HudRenderer } from './hud_renderer';
 import { FpsRenderer } from './hud_renderers/fps_renderer';
 import { ToastRenderer, ToastTime } from './toast_renderer';
+import { AudioRenderer } from './audio_renderers/audio_renderer';
 
 export class Engine extends EventEmitter {
     private app: any;
@@ -20,6 +21,7 @@ export class Engine extends EventEmitter {
     private hudRenderer: HudRenderer;
     private toastRenderer: ToastRenderer;
     private fpsRenderer: FpsRenderer;
+    private audioRenderer: AudioRenderer;
 
     public constructor(private game: HTMLCanvasElement) {
         super();
@@ -42,9 +44,8 @@ export class Engine extends EventEmitter {
         this.fpsRenderer = new FpsRenderer(container);
         this.toastRenderer = new ToastRenderer(container);
 
-        // this.app.ticker.addOnce(() => {
-        //     // TODO set viewport follow object to camera.offset
-        // });
+        this.audioRenderer = new AudioRenderer(this.camera, this.client.getStage());
+
         this.app.ticker.maxFPS = 0;
         this.app.ticker.add(() => {
             if (!this.running) return;
@@ -58,10 +59,13 @@ export class Engine extends EventEmitter {
             this.fpsRenderer.render();
 
             this.toastRenderer.render();
+
+            this.audioRenderer.render();
         });
 
         this.listenClient(this.client);
         this.preloadAssets();
+        this.preloadAudio();
 
         window.onresize = () => {
             this.camera.setResolution(this.game.width, this.game.height);
@@ -158,6 +162,22 @@ export class Engine extends EventEmitter {
             Assets.pool['ship_spider_decal1'] = new PIXI.Sprite(resources.ship_spider_decal1.texture);
 
             this.emit('load');
+        });
+    }
+
+    private preloadAudio() {
+        const audio = new Audio();
+        [
+            'sfx/bullet_0.mp3',
+            'sfx/bullet_1.mp3',
+            'sfx/bullet_2.mp3',
+            'sfx/bullet_3.mp3',
+            'sfx/bullet_impact.mp3',
+            'sfx/ship_death.mp3',
+            'sfx/pick_item.mp3',
+        ].forEach((file) => {
+            audio.src = file;
+            audio.load();
         });
     }
 }

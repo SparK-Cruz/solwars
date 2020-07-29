@@ -64,6 +64,7 @@ export class Stage extends EventEmitter {
 
         (<any>entity).on(EntityEvent.Spawn, this.onSpawnChildEntity);
         (<any>entity).on(EntityEvent.Despawn, this.onDespawnEntity);
+        (<any>entity).on(EntityEvent.Collide, this.onCollideEntity);
 
         this.addStepper(entity);
     }
@@ -82,6 +83,7 @@ export class Stage extends EventEmitter {
 
         (<any>entity).off(EntityEvent.Spawn, this.onSpawnChildEntity);
         (<any>entity).off(EntityEvent.Despawn, this.onDespawnEntity);
+        (<any>entity).off(EntityEvent.Collide, this.onCollideEntity);
     }
 
     public addAll(entities :Entity[]) {
@@ -196,5 +198,9 @@ export class Stage extends EventEmitter {
     private onDespawnEntity = (entity: Entity) => {
         this.remove(entity);
         this.emit(EntityEvent.Despawn, entity.id);
+    }
+
+    private onCollideEntity = (entity: Entity) => {
+        this.emit(EntityEvent.Collide, entity.id);
     }
 }

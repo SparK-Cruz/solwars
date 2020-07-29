@@ -81,6 +81,10 @@ export class Room {
         this.broadcastRemoval(id);
     }
 
+    private onEntityCollide = (id: number) => {
+        this.broadcastCollision(id);
+    }
+
     private onPlayerShip(player :Player, ship: Ship) {
         ship.name = player.name + ' (' + player.bounty + ')';
         player.ship = ship;
@@ -100,7 +104,8 @@ export class Room {
 
         player.bounty = 1;
 
-        // broadcast message to chat area saying whom killed who by what
+        console.log(`${death.name} died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
+        this.broadcastDeath(death);
     }
     private onPlayerDisconnect(player :Player) {
         console.log(player.name + ' has left the game');
@@ -137,9 +142,21 @@ export class Room {
         });
     }
 
-    private broadcastRemoval(entityId :number) {
+    private broadcastRemoval(entityId: number) {
         this.players.forEach((client) => {
             client.sendRemoval(entityId);
+        });
+    }
+
+    private broadcastCollision(entityId: number) {
+        this.players.forEach((client) => {
+            client.sendCollision(entityId);
+        });
+    }
+
+    private broadcastDeath(death: PlayerDeath) {
+        this.players.forEach((client) => {
+            client.sendDeath(death);
         });
     }
 
@@ -154,6 +171,7 @@ export class Room {
 
     private setupListeners() {
         this.stage.on(EntityEvent.Despawn, this.onEntityDespawn);
+        this.stage.on(EntityEvent.Collide, this.onEntityCollide);
 
         this.lastId = 0;
         this.io.sockets.on(CodecEvents.CONNECTION, (socket :SocketIO.Socket) => {
