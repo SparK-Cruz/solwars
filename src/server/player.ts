@@ -109,10 +109,10 @@ export class Player extends EventEmitter {
             }
             Object.assign(options, data);
 
-            if (options.color && options.decal) {
+            if (options.color)
                 ship.color = options.color;
+            if (options.decal)
                 ship.decals[0].color = options.decal;
-            }
 
             onSuccess(ship);
         }, 0);
