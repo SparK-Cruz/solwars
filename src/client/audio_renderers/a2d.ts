@@ -8,7 +8,7 @@ export namespace A2d {
         source.rolloffFactor = 0.5;
 
         // TODO: read user sfx volume option
-        gain.gain.value = 1;
+        gain.gain.value = 0.5;
 
         source.connect(gain);
         gain.connect(context.destination);
