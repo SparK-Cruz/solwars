@@ -36,7 +36,7 @@ interface BotsConfig {
 
 interface BotShip {
     model: string,
-    decals: {name: string, color: string}[],
+    decal: {name: string, color: string},
     color: string,
 }
 

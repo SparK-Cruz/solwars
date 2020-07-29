@@ -74,8 +74,7 @@ export class Bot extends Player {
         let onSuccess = (ship :Ship) => {};
         setTimeout(() => {
             const ship = new Ship(Model.byId[this.randomShipModel()]);
-            ship.decals = Config.bots.ship.decals;
-            ship.color = Config.bots.ship.color;
+            ship.decals.push(Config.bots.ship.decal);
             onSuccess(ship);
         }, 0);
 

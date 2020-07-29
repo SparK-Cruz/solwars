@@ -6,13 +6,10 @@
     "bots": {
         "playerCap": 5,
         "ship": {
-            "color": "#3399ff",
-            "decals": [
-                {
-                    "name": "decal1",
-                    "color": "#ffffff"
-                }
-            ]
+            "decal": {
+                "name": "decal1",
+                "color": "#ffffff"
+            }
         },
         "prefix": "BOT "
     },
