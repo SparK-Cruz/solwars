@@ -2,7 +2,7 @@
 const express = require('express');
 import { Server } from 'http';
 import { Room } from './server/room';
-import { Config } from './space/config';
+import { Config, BotsConfig } from './space/config';
 
 // test stuff
 import { BotManager } from './server/bots/bot_manager';
@@ -25,11 +25,12 @@ Config.read(() => {
     console.log('Serving on port '+port);
 
     // BOTs
-    let bots = Config.bots.playerCap;
-    if (typeof process.argv[2] != 'undefined') {
-        bots = parseInt(process.argv[2]);
-    }
+    if (typeof process.argv[2] != 'undefined'
+        && process.argv[2] === 'no-bots')
+        return;
 
     const botman = new BotManager(room);
-    botman.setPlayerCap(bots);
+    Config.bots.forEach((config: BotsConfig) => {
+        botman.add(config.count, config);
+    });
 });

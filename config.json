@@ -3,16 +3,62 @@
     "networkCompression": false,
     "TPS": 64,
     "maxPlayers": 100,
-    "bots": {
-        "playerCap": 5,
-        "ship": {
-            "decal": {
-                "name": "decal1",
-                "color": "#ffffff"
-            }
+    "bots": [
+        {
+            "count": 3,
+            "ship": {
+                "color": "#3399ff",
+                "decals": [
+                    {
+                        "name": "decal0",
+                        "color": "#3399ff"
+                    },
+                    {
+                        "name": "decal1",
+                        "color": "#ffffff"
+                    }
+                ]
+            },
+            "prefix": "BOT ",
+            "faction": "bot_blues"
         },
-        "prefix": "BOT "
-    },
+        {
+            "count": 3,
+            "ship": {
+                "color": "#aa0000",
+                "decals": [
+                    {
+                        "name": "decal0",
+                        "color": "#aa0000"
+                    },
+                    {
+                        "name": "decal1",
+                        "color": "#ffffff"
+                    }
+                ]
+            },
+            "prefix": "BOT ",
+            "faction": "bot_reds"
+        },
+        {
+            "count": 3,
+            "ship": {
+                "color": "#aa00ff",
+                "decals": [
+                    {
+                        "name": "decal0",
+                        "color": "#aa00ff"
+                    },
+                    {
+                        "name": "decal1",
+                        "color": "#ffffff"
+                    }
+                ]
+            },
+            "prefix": "BOT ",
+            "faction": "bot_purples"
+        }
+    ],
     "ships": {
         "warbird": {
             "speed": 5.5,

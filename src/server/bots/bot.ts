@@ -6,7 +6,7 @@ import { Ship } from '../../space/entities/ship';
 import { Model } from '../../space/entities/ships/model';
 import { Mapping } from '../../space/entities/ships/mapping';
 import { Control } from '../../space/entities/ships/control';
-import { Config } from '../../space/config';
+import { BotsConfig } from '../../space/config';
 
 const MIN_DISTANCE = 150;
 const MAX_DISTANCE = 400;
@@ -32,7 +32,7 @@ export class Bot extends Player {
     private lastInput: number = 0;
     private respawnListener = () => { this.onRespawn(); };
 
-    public constructor(name :string, room: Room) {
+    public constructor(name: string, room: Room, private config: BotsConfig) {
         super(<any>new FakeSocket(), room);
         this.socket.on(CodecEvents.RESPAWN, this.respawnListener);
 
@@ -73,8 +73,11 @@ export class Bot extends Player {
     protected fetchPlayerShip(name: string, cache: Ship = null) {
         let onSuccess = (ship :Ship) => {};
         setTimeout(() => {
-            const ship = new Ship(Model.byId[this.randomShipModel()]);
-            ship.decals.push(Config.bots.ship.decal);
+            const ship = new Ship(Model.byId[this.fetchShipModel()]);
+            ship.decals.push(...this.config.ship.decals);
+            if (this.config.ship.color)
+                ship.color = this.config.ship.color;
+            (<any>ship).aiFaction = this.config.faction;
             onSuccess(ship);
         }, 0);
 
@@ -90,13 +93,9 @@ export class Bot extends Player {
         return callbacks;
     }
 
-    private randomShipModel() {
-        if (Config.bots.ship.model) {
-            return Config.bots.ship.model;
-        }
-
+    private fetchShipModel() {
         const randomizedIds = shipModelIds.sort((a, b) => Math.round(Math.random() * 2 - 1));
-        return randomizedIds[0];
+        return this.config.ship.model || randomizedIds[0];
     }
 
     private onRespawn() {

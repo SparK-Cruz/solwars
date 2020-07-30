@@ -3,48 +3,8 @@ import { Bot } from "./bot";
 import { Ship } from "../../space/entities/ship";
 import { Stage } from "../../space/stage";
 import { EntityType, Entity } from "../../space/entities";
-import { Config } from "../../space/config";
-
-const botNames = [
-    'Albert',
-    'Allen',
-    'Bert',
-    'Bob',
-    'Cecil',
-    'Clarence',
-    'Elliot',
-    'Elmer',
-    'Ernie',
-    'Eugene',
-    'Fergus',
-    'Ferris',
-    'Frank',
-    'Frasier',
-    'Fred',
-    'George',
-    'Graham',
-    'Harvey',
-    'Irwin',
-    'Larry',
-    'Lester',
-    'Marvin',
-    'Neil',
-    'Niles',
-    'Oliver',
-    'Opie',
-    'Ryan',
-    'Toby',
-    'Ulric',
-    'Ulysses',
-    'Uri',
-    'Waldo',
-    'Wally',
-    'Walt',
-    'Wesley',
-    'Yanni',
-    'Yogi',
-    'Yuri',
-].sort((a, b) => Math.round(Math.random() * 2 - 1));
+import { BotsConfig } from "../../space/config";
+import { BotNamePool } from "./bot_name_pool";
 
 const INPUT_TPS = 16;
 const TARGET_LOOKUP_INTERVAL = 5000;
@@ -56,19 +16,24 @@ export class BotManager {
 
     private playerCap = 0;
 
-    public constructor(private room: Room) {
-        this.prefix = Config.bots.prefix;
+    public constructor(private room: Room, private config: BotsConfig = null) {
+        if (config)
+            this.prefix = config.prefix;
+
         this.stage = room.getStage();
         this.setupLoops();
     }
 
-    public add(number: number) {
+    public add(number: number, config: BotsConfig = null) {
         if (number < 0)
             return;
 
+        if (!config && !this.config)
+            return;
+
         for(let i=0; i<number; i++) {
-            const name = this.prefix + botNames[this.bots.length];
-            const bot = new Bot(name, this.room);
+            const name = ((config && config.prefix) || this.prefix) + BotNamePool.get();
+            const bot = new Bot(name, this.room, config || this.config);
             this.room.setupPlayer(bot);
             this.bots.push(bot);
         }
@@ -136,6 +101,9 @@ export class BotManager {
                 for (const j in ships) {
                     const other = ships[parseInt(j)];
                     if (bot.ship.id === other.id)
+                        continue;
+
+                    if ((<any>bot.ship).aiFaction && (<any>bot.ship).aiFaction === (<any>other).aiFaction)
                         continue;
 
                     const otherDistance = this.calculateDistanceBetween(bot.ship, other);

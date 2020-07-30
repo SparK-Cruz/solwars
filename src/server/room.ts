@@ -89,7 +89,7 @@ export class Room {
         ship.name = player.name + ' (' + player.bounty + ')';
         player.ship = ship;
 
-        const spawnRadius = 512 * this.players.length;
+        const spawnRadius = 5000;
         player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
         player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
         this.stage.add(player.ship);

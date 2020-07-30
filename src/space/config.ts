@@ -1,6 +1,6 @@
 import * as json from 'jsonfile';
 
-interface ShipConfig {
+export interface ShipConfig {
     speed: number,
     acceleration: number,
     spin: number,
@@ -9,7 +9,7 @@ interface ShipConfig {
     bomb: number,
 }
 
-interface ShipsConfig {
+export interface ShipsConfig {
     warbird: ShipConfig,
     javelin: ShipConfig,
     spider: ShipConfig,
@@ -20,7 +20,7 @@ interface ShipsConfig {
     shark: ShipConfig,
 }
 
-interface BulletConfig {
+export interface BulletConfig {
     speed: number,
     cost: number,
     energy: number,
@@ -28,15 +28,16 @@ interface BulletConfig {
     color: string,
 }
 
-interface BotsConfig {
-    playerCap: number,
+export interface BotsConfig {
+    count: number,
     ship: BotShip,
     prefix: string,
+    faction: string,
 }
 
-interface BotShip {
+export interface BotShip {
     model: string,
-    decal: {name: string, color: string},
+    decals: {name: string, color: string}[],
     color: string,
 }
 
@@ -47,7 +48,7 @@ export class Config {
     public static maxPlayers: number;
     public static ships: ShipsConfig;
     public static bullets: BulletConfig[];
-    public static bots: BotsConfig;
+    public static bots: BotsConfig[];
 
     public static read(callback: Function) {
         json.readFile('./config.json', (err: any, contents: any) => {
