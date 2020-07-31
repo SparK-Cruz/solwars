@@ -104,7 +104,7 @@ export class Client extends EventEmitter {
         if (this.compensator)
             return;
 
-        const step = 64;
+        const step = 21;
         const target = 64;
 
         this.compensator = setInterval(() => {
