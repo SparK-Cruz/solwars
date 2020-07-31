@@ -104,7 +104,7 @@ export namespace Model {
     decals: [{
         name: 'decal0',
         color: '#ffc833'
-      }]
+    }]
   }
 
   export const Leviathan :Model = {
@@ -112,9 +112,37 @@ export namespace Model {
     name: 'Ut-59',
     make: 'Ivangrad',
     description: 'A powerful defense bomber.',
-    polygon: [[-16, 12], [0, -16], [16, 12]],
-    color: 'rgb(255, 255, 255)',
-    decals: []
+    polygon: [
+        [1, -15],
+          [3, -13],
+            [3, -10],
+              [7, -10],
+                [13, -5],
+                  [13, 2],
+                    [8, 6],
+                      [11, 8],
+                        [11, 12],
+                          [4, 15],
+                            [2, 12],
+                              [1, 8],
+                              [0, 8],
+                            [-1, 12],
+                          [-3, 15],
+                        [-10, 12],
+                      [-10, 8],
+                    [-7, 6],
+                  [-12, 2],
+                [-12, -5],
+              [-6, -10],
+            [-2, -10],
+          [-2, -13],
+        [0, -15],
+    ],
+    color: '#727291',
+    decals: [{
+        name: 'decal0',
+        color: '#ffc833'
+    }]
   }
 
   export const Terrier :Model = {

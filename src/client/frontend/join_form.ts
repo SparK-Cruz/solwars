@@ -20,6 +20,7 @@ export class JoinForm {
         'warbird',
         'javelin',
         'spider',
+        'leviathan',
     ];
     private static currentShip: number = 0;
 

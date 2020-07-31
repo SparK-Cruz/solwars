@@ -18,7 +18,8 @@ const ENERGY_RESERVE = 0.55;
 const shipModelIds = [
     'warbird',
     'javelin',
-    'spider'
+    'spider',
+    'leviathan'
 ];
 
 export class Bot extends Player {

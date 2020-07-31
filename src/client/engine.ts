@@ -143,7 +143,11 @@ export class Engine extends EventEmitter {
             .add('ship_spider', 'img/ships/spider.png')
             .add('ship_spider_mask', 'img/ships/spider_mask.png')
             .add('ship_spider_decal0', 'img/ships/spider_decal0.png')
-            .add('ship_spider_decal1', 'img/ships/spider_decal1.png');
+            .add('ship_spider_decal1', 'img/ships/spider_decal1.png')
+            .add('ship_leviathan', 'img/ships/leviathan.png')
+            .add('ship_leviathan_mask', 'img/ships/leviathan_mask.png')
+            .add('ship_leviathan_decal0', 'img/ships/leviathan_decal0.png')
+            .add('ship_leviathan_decal1', 'img/ships/leviathan_decal1.png');
 
         loader.load((_loader: any, resources: any) => {
             Assets.pool['light'] = new PIXI.Sprite(resources.light.texture);
@@ -160,6 +164,10 @@ export class Engine extends EventEmitter {
             Assets.pool['ship_spider_mask'] = new PIXI.Sprite(resources.ship_spider_mask.texture);
             Assets.pool['ship_spider_decal0'] = new PIXI.Sprite(resources.ship_spider_decal0.texture);
             Assets.pool['ship_spider_decal1'] = new PIXI.Sprite(resources.ship_spider_decal1.texture);
+            Assets.pool['ship_leviathan'] = new PIXI.Sprite(resources.ship_leviathan.texture);
+            Assets.pool['ship_leviathan_mask'] = new PIXI.Sprite(resources.ship_leviathan_mask.texture);
+            Assets.pool['ship_leviathan_decal0'] = new PIXI.Sprite(resources.ship_leviathan_decal0.texture);
+            Assets.pool['ship_leviathan_decal1'] = new PIXI.Sprite(resources.ship_leviathan_decal1.texture);
 
             this.emit('load');
         });

@@ -95,7 +95,12 @@ export class Player extends EventEmitter {
             let model = ShipModel.byId[data.model] || ShipModel.Warbird;
 
             // this validation is temporary until we have all ships
-            const models = [ShipModel.Warbird.id, ShipModel.Javelin.id, ShipModel.Spider.id];
+            const models = [
+                ShipModel.Warbird.id,
+                ShipModel.Javelin.id,
+                ShipModel.Spider.id,
+                ShipModel.Leviathan.id,
+            ];
             if (!models.includes(model.id)) {
                 model = ShipModel.Warbird;
             }
