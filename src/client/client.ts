@@ -104,12 +104,9 @@ export class Client extends EventEmitter {
         if (this.compensator)
             return;
 
-        const step = 21;
-        const target = 64;
-
         this.compensator = setInterval(() => {
-            this.stage.step(target/step);
-        }, 1000/step);
+            this.stage.step();
+        }, 1000/32);
     }
 
     private stopCompensatingLag() {
