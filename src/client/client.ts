@@ -63,13 +63,13 @@ export class Client extends EventEmitter {
             this.bindEvents(this.socket);
         }
 
-        // this.startCompensatingLag();
+        this.startCompensatingLag();
         this.socket.open();
     }
 
     public disconnect() {
         this.remoteId = null;
-        // this.stopCompensatingLag();
+        this.stopCompensatingLag();
         this.stage.clear();
         this.socket.disconnect();
     }
@@ -104,9 +104,12 @@ export class Client extends EventEmitter {
         if (this.compensator)
             return;
 
+        const step = 64;
+        const target = 64;
+
         this.compensator = setInterval(() => {
-            this.stage.step();
-        }, 1000/64);
+            this.stage.step(target/step);
+        }, 1000/step);
     }
 
     private stopCompensatingLag() {

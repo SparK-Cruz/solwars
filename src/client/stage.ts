@@ -1,18 +1,24 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType } from '../space/entities';
+import { Entity } from '../space/entities';
 
 const SEEN_BUFFER_SIZE = 100;
+
+function validOrDefault(value: any, defaultValue: any): any {
+    return typeof value != 'undefined'
+        ? value
+        : defaultValue;
+}
 
 export class Stage extends EventEmitter {
     public tick: number;
     public entities: any = {};
     private seen: number[] = [];
 
-    public step() {
+    public step(factor: number = 1) {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
         Object.values(this.entities).forEach((e: Entity) => {
-            if (e.step) e.step(1);
+            if (e.step) e.step(factor);
         });
     }
 
@@ -30,33 +36,33 @@ export class Stage extends EventEmitter {
             const props = <any>entity;
             const current = <any>this.entities[entity.id];
             Object.assign(this.entities[entity.id], {
-                id: props.id || current.id,
-                name: props.name || current.name, // ship
-                x: props.x || current.x,
-                y: props.y || current.y,
-                vx: props.vx || current.vx,
-                vy: props.vy || current.vy,
-                vmax: props.vmax || current.vmax, // ship
-                angle: props.angle || current.angle,
-                vangle: props.vangle || current.vangle,
-                control: props.control || current.control, // ship
-                damage: props.damage || current.damage,
-                health: props.health || current.health,
-                color: props.color || current.color,
+                id: validOrDefault(props.id, current.id),
+                name: validOrDefault(props.name, current.name), // ship
+                x: validOrDefault(props.x, current.x),
+                y: validOrDefault(props.y, current.y),
+                vx: validOrDefault(props.vx, current.vx),
+                vy: validOrDefault(props.vy, current.vy),
+                vmax: validOrDefault(props.vmax, current.vmax), // ship
+                angle: validOrDefault(props.angle, current.angle),
+                vangle: validOrDefault(props.vangle, current.vangle),
+                control: validOrDefault(props.control, current.control), // ship
+                damage: validOrDefault(props.damage, current.damage),
+                health: validOrDefault(props.health, current.health),
+                color: validOrDefault(props.color, current.color),
                 //ship
-                model: props.model || current.model,
-                decals: props.decals || current.decals,
+                model: validOrDefault(props.model, current.model),
+                decals: validOrDefault(props.decals, current.decals),
                 //bullet
-                parent: props.parent || current.parent,
-                bulletType: props.bulletType || current.bulletType,
+                parent: validOrDefault(props.parent, current.parent),
+                bulletType: validOrDefault(props.bulletType, current.bulletType),
                 //ship debris
-                options: props.options || current.options,
-                size: props.size || current.size,
-                energy: props.energy || current.energy,
+                options: validOrDefault(props.options, current.options),
+                size: validOrDefault(props.size, current.size),
+                energy: validOrDefault(props.energy, current.energy),
                 //rock
-                sides: props.sides || current.sides,
+                sides: validOrDefault(props.sides, current.sides),
                 // all
-                type: props.type || current.type,
+                type: validOrDefault(props.type, current.type),
             });
             return;
         }
