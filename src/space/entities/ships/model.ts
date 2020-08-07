@@ -6,6 +6,7 @@ export interface Model {
   polygon :number[][];
   color :string;
   decals :{name: string, color: string}[]
+  guns?: {x: number, y: number}[]
 }
 
 export namespace Model {
@@ -150,9 +151,33 @@ export namespace Model {
     name: 'Nu-34',
     make: 'Blight Aerospace',
     description: 'Heavily armed attack fighter.',
-    polygon: [[-16, 12], [0, -16], [16, 12]],
-    color: 'rgb(255, 255, 255)',
-    decals: []
+    polygon: [
+        [1, -13],
+          [3, -7],
+            [10, 3],
+              [11, -2],
+                [13, 4],
+                  [13, 11],
+                    [10, 13],
+                      [1, 14],
+                      [0, 14],
+                    [-9, 13],
+                  [-12, 11],
+                [-12, 4],
+              [-10, -2],
+            [-9, 3],
+          [-2, -7],
+        [0, -13],
+    ],
+    color: '#a12b2a',
+    decals: [{
+        name: 'decal0',
+        color: '#861615'
+    }],
+    guns: [
+        {x: 11, y: 16},
+        {x: -10, y: 16},
+    ]
   }
 
   export const Weasel :Model = {

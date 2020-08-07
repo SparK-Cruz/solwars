@@ -100,6 +100,7 @@ export class Player extends EventEmitter {
                 ShipModel.Javelin.id,
                 ShipModel.Spider.id,
                 ShipModel.Leviathan.id,
+                ShipModel.Terrier.id,
             ];
             if (!models.includes(model.id)) {
                 model = ShipModel.Warbird;

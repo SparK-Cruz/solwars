@@ -19,7 +19,8 @@ const shipModelIds = [
     'warbird',
     'javelin',
     'spider',
-    'leviathan'
+    'leviathan',
+    'terrier',
 ];
 
 export class Bot extends Player {

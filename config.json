@@ -84,7 +84,7 @@
             "spin": 1.9,
             "energy": 1100,
             "regeneration": 1.7,
-            "bullet": 0,
+            "bullet": 1,
             "bomb": 0
         },
         "leviathan": {
@@ -97,11 +97,11 @@
             "bomb": 0
         },
         "terrier": {
-            "speed": 4,
+            "speed": 4.2,
             "acceleration": 0.082,
-            "spin": 2.1,
-            "energy": 950,
-            "regeneration": 1.8,
+            "spin": 1.5,
+            "energy": 1200,
+            "regeneration": 1.6,
             "bullet": 0,
             "bomb": 0
         },

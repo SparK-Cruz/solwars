@@ -39,6 +39,13 @@ export class Ship extends EventEmitter implements entities.Entity {
         {name: 'decal0', color: '#ff5544'}
     ];
 
+    guns: {x: number, y: number, cooldown: number}[] = [{
+        x: 0,
+        y: 16,
+        cooldown: 0,
+    }];
+    nextGun = 0;
+
     vmax = 5;
     turnSpeed = 3.8;
     power = 0.05;
@@ -56,8 +63,6 @@ export class Ship extends EventEmitter implements entities.Entity {
     bullet = 0;
     bomb = 0;
 
-    gunsCooldown = 0;
-
     afterburnerCost = 6;
     shootCost = 150;
 
@@ -68,6 +73,13 @@ export class Ship extends EventEmitter implements entities.Entity {
         this.color = model.color;
         this.decals = JSON.parse(JSON.stringify(model.decals));
         this.collisionMap = model.polygon;
+
+        if (model.guns) {
+            this.guns = JSON.parse(JSON.stringify(model.guns));
+            for (const i in this.guns) {
+                this.guns[i].cooldown = 0;
+            }
+        }
 
         if (!Config.ships) return;
 
@@ -112,7 +124,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     }
 
     private canShoot(cost: number) {
-        return (this.damage + cost < this.health && !this.gunsCooldown);
+        return (this.damage + cost < this.health && !this.guns[this.nextGun].cooldown);
     }
 
     private readControls(delta: number) {
@@ -158,14 +170,21 @@ export class Ship extends EventEmitter implements entities.Entity {
             || !this.canShoot(bulletTraits.cost))
             return;
 
-        const linearOffset = 16;
+        const gun = this.guns[this.nextGun];
+
         const offset = {
-            x: linearOffset * Math.sin(inRads(this.angle)),
-            y: -linearOffset * Math.cos(inRads(this.angle)),
+            x: gun.y * Math.sin(inRads(this.angle))
+                + gun.x * Math.sin(inRads(this.angle + 90)),
+            y: -gun.y * Math.cos(inRads(this.angle))
+                - gun.x * Math.cos(inRads(this.angle + 90)),
         };
 
         if (bulletTraits) {
-            this.gunsCooldown += bulletTraits.cooldown;
+            gun.cooldown += bulletTraits.cooldown;
+        }
+
+        if (this.guns.length == ++this.nextGun) {
+            this.nextGun = 0;
         }
 
         this.damage += bulletTraits.cost;
@@ -249,12 +268,14 @@ export class Ship extends EventEmitter implements entities.Entity {
     }
 
     private updateGuns(delta: number) {
-        if (this.gunsCooldown <= 0) {
-            this.gunsCooldown = 0;
-            return;
-        }
+        for (const i in this.guns) {
+            if (this.guns[i].cooldown <= 0) {
+                this.guns[i].cooldown = 0;
+                continue;
+            }
 
-        this.gunsCooldown -= 1 * delta;
+            this.guns[i].cooldown -= 1 * delta;
+        }
     }
 }
 
