@@ -5,7 +5,7 @@
     "maxPlayers": 100,
     "bots": [
         {
-            "count": 3,
+            "count": 2,
             "ship": {
                 "color": "#3399ff",
                 "decals": [
@@ -23,7 +23,7 @@
             "faction": "bot_blues"
         },
         {
-            "count": 3,
+            "count": 2,
             "ship": {
                 "color": "#aa0000",
                 "decals": [
@@ -41,7 +41,7 @@
             "faction": "bot_reds"
         },
         {
-            "count": 3,
+            "count": 2,
             "ship": {
                 "color": "#aa00ff",
                 "decals": [
