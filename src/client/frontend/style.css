@@ -7,7 +7,7 @@ body {
 
 /* LOADING */
 #loading {
-    background: url('../img/loading.gif') center center no-repeat;
+    background: url("../img/loading.gif") center center no-repeat;
     min-height: 440px;
 }
 
@@ -17,9 +17,9 @@ body {
     padding: 0px;
     font-family: sans-serif;
 }
-#frontend header {
+/* #frontend header {
     text-align: center;
-}
+} */
 #frontend header h1 {
     margin: 5px auto;
     line-height: 44px;
@@ -115,7 +115,7 @@ form input.btn {
 }
 #join-form .color:before {
     position: absolute;
-    content: '#';
+    content: "#";
     bottom: 10px;
     left: 10px;
     width: 20px;
@@ -129,10 +129,10 @@ form input.btn {
 #keys-form .template {
     display: none;
 }
-#keys-form input[type=text]:focus {
+#keys-form input[type="text"]:focus {
     border-color: #f93;
 }
-#keys-form input[type=submit]:disabled {
+#keys-form input[type="submit"]:disabled {
     background-color: #666666;
     border-color: #666666;
 }

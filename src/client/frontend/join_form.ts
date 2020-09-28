@@ -1,5 +1,5 @@
 const PIXI = require('pixi.js');
-import { Engine } from "../engine";
+import { EventEmitter } from 'events';
 import { ShipRenderer } from "../game_renderers/entities/ship_renderer";
 import { Ship } from "../../space/entities/ship";
 import { Model } from "../../space/entities/ships/model";
@@ -14,18 +14,20 @@ let validColor: string = null;
 let validDecal: string = null;
 
 const minimumColor: number = 96;
+const ships: string[] = [
+    'warbird',
+    'javelin',
+    'spider',
+    'leviathan',
+    'terrier',
+];
 
-export class JoinForm {
-    private static ships: string[] = [
-        'warbird',
-        'javelin',
-        'spider',
-        'leviathan',
-        'terrier',
-    ];
-    private static currentShip: number = 0;
+export class JoinForm extends EventEmitter {
+    private currentShip: number = 0;
 
-    public static bind(engine: Engine) {
+    public constructor() {
+        super();
+
         const defaultName = 'Anon' + (100 + Math.round(Math.random() * 899));
         const form = <HTMLFormElement>document.getElementById('join-form');
         const nameField = <HTMLInputElement>document.getElementById('player-name');
@@ -39,7 +41,7 @@ export class JoinForm {
         nameField.setAttribute('placeholder', defaultName);
         nameField.value = localStorage.getItem('name');
 
-        this.currentShip = Math.min(this.ships.length -1, Math.max(0, parseInt(localStorage.getItem('model') || '0')));
+        this.currentShip = Math.min(ships.length - 1, Math.max(0, parseInt(localStorage.getItem('model') || '0')));
         mainColor.value = localStorage.getItem('color') || '';
         accentColor.value = localStorage.getItem('decal') || '';
 
@@ -61,19 +63,19 @@ export class JoinForm {
             previewContainer.angle = shipRenderer.ship.angle;
         });
 
-        engine.on('start', () => {
+        (<any>this).hide = () => {
             renderer.stop();
             button.blur();
             nameField.blur();
             (<HTMLFieldSetElement>form.firstElementChild).disabled = true;
-        });
+        };
 
-        engine.on('stop', () => {
+        (<any>this).show = () => {
             (<HTMLFieldSetElement>form.firstElementChild).disabled = false;
             nameField.focus();
             nameField.select();
             renderer.start();
-        });
+        };
 
         form.addEventListener('submit', e => {
             e.preventDefault();
@@ -87,28 +89,25 @@ export class JoinForm {
             localStorage.setItem('color', validColor || '');
             localStorage.setItem('decal', validDecal || '');
 
-            engine.start({
+            this.emit('join', {
                 name,
-                model: this.ships[this.currentShip],
+                model: ships[this.currentShip],
                 color,
                 decal,
-            }, (data: any) => {
-                if (data.error)
-                    alert(data.error);
             });
         });
 
         nextShip.addEventListener('click', e => {
             e.preventDefault();
 
-            this.currentShip = (this.currentShip + 1) % this.ships.length;
+            this.currentShip = (this.currentShip + 1) % ships.length;
             this.updateShipModel();
         });
 
         prevShip.addEventListener('click', e => {
             e.preventDefault();
 
-            this.currentShip = (this.currentShip - 1 + this.ships.length) % this.ships.length;
+            this.currentShip = (this.currentShip - 1 + ships.length) % ships.length;
             this.updateShipModel();
         });
 
@@ -124,9 +123,9 @@ export class JoinForm {
         renderer.start();
     }
 
-    private static updateShipModel() {
+    private updateShipModel() {
         const shipInfo = <HTMLParagraphElement>document.getElementById('ship-info');
-        const model = Model.byId[this.ships[this.currentShip]];
+        const model = Model.byId[ships[this.currentShip]];
         validColor = null;
         validDecal = null;
 
@@ -168,7 +167,7 @@ export class JoinForm {
         shipRenderer = new ShipRenderer(previewContainer, ship);
     }
 
-    private static filterColor(color: string): string {
+    private filterColor(color: string): string {
         const hex = color.replace(/[^0-9a-fA-F]/g, '');
         if (hex.length !== 6) return;
 
@@ -180,15 +179,15 @@ export class JoinForm {
 
         if (total < minimumColor) {
             const diff = minimumColor - total;
-            r += Math.ceil((r || 0.33)/total * diff);
-            g += Math.ceil((g || 0.33)/total * diff);
-            b += Math.ceil((b || 0.33)/total * diff);
+            r += Math.ceil((r || 0.33) / total * diff);
+            g += Math.ceil((g || 0.33) / total * diff);
+            b += Math.ceil((b || 0.33) / total * diff);
         }
 
         return this.padHex(r.toString(16)) + this.padHex(g.toString(16)) + this.padHex(b.toString(16));
     }
 
-    private static padHex(string: string) {
+    private padHex(string: string) {
         if (string.length < 2)
             return '0' + string;
         return string;

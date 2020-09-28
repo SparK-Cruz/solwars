@@ -1,33 +1,42 @@
-import { Engine } from "./engine";
 import { JoinForm } from "./frontend/join_form";
 import { KeysForm } from "./frontend/keys_form";
 
-const loading = <HTMLElement>document.getElementById('loading');
-const frontend = <HTMLElement>document.getElementById('frontend');
-const game = <HTMLCanvasElement>document.getElementById('game');
-const engine = new Engine(game);
+import { AssetManager } from './assets';
+import e = require("express");
 
-window.addEventListener('keydown', e => {
-    if (!engine.running
-        || e.which != 27
-        || !confirm('Leave Game?'))
-        return;
+const assman = new AssetManager();
+const loading = <HTMLElement>document.getElementById("loading");
+const frontend = <HTMLElement>document.getElementById("frontend");
 
-    e.preventDefault();
+let joinForm: JoinForm = null;
+let keysForm: KeysForm = null;
 
-    engine.stop();
+function customEvent(name: string, data: any) {
+    const e = <any>new Event(name);
+    e.data = data;
+    return e;
+}
+
+assman.on("load", () => {
+    frontend.style.display = "block";
+    loading.style.display = "none";
+
+    joinForm = new JoinForm();
+    keysForm = new KeysForm();
+
+    joinForm.on('join', (e) => {
+        window.dispatchEvent(customEvent('joingame', e));
+    })
 });
 
-engine.on('load', () => {
-    frontend.style.display = 'block';
-    loading.style.display = 'none';
+window.addEventListener('gamestart', () => {
+    frontend.style.display = "none";
+    (<any>joinForm).hide();
+});
 
-    JoinForm.bind(engine);
-    KeysForm.bind();
+window.addEventListener('gamestop', () => {
+    frontend.style.display = "block";
+    (<any>joinForm).show();
 });
-engine.on('start', () => {
-    frontend.style.display = 'none';
-});
-engine.on('stop', () => {
-    frontend.style.display = 'block';
-});
+
+assman.preload();
