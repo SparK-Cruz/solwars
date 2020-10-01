@@ -51,8 +51,8 @@ export class JoinForm extends EventEmitter {
         const renderer = new PIXI.Application({
             backgroundColor: 0x000000,
             resolution: window.devicePixelRatio || 1,
-            width: 64,
-            height: 64,
+            width: 66,
+            height: 66,
             view: preview,
         });
         previewContainer.position.set(32);

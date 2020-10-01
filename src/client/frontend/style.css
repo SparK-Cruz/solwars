@@ -93,8 +93,8 @@ form input.btn {
 }
 #join-form #ship-preview {
     display: block;
-    width: 64px;
-    height: 64px;
+    width: 96px;
+    height: 96px;
     margin: 0 auto;
 }
 #join-form #prev-ship-btn {
