@@ -8,7 +8,6 @@ export default Vue.extend({
         <section id="layout">
             <header><h1><span>SubSpace</span>Sol Wars</h1></header>
             <JoinForm />
-            <!-- router-view></router-view -->
         </section>
     `,
     components: {
@@ -17,8 +16,6 @@ export default Vue.extend({
 });
 
 // todo:
-// * add vue-router
-// * create ship select component
 // * create input select component
 // * create key bind input component
 // * add joypad support
