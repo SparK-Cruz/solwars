@@ -2,18 +2,29 @@ const PIXI = require('pixi.js');
 import { EventEmitter } from 'events';
 
 export class AssetManager extends EventEmitter {
-    private static loaded = false;
+    private static instance: AssetManager = null;
+    public static getInstance() {
+        if (this.instance)
+            return this.instance;
+
+        return this.instance = new AssetManager();
+    }
+    private loaded = false;
 
     public preload() {
-        if (AssetManager.loaded)
-            return;
+        if (this.loaded) {
+            return false;
+        }
+
+        this.loaded = true;
 
         this.preloadAudio(() => {
             this.preloadImages(() => {
-                AssetManager.loaded = true;
                 this.emit('load');
             });
         });
+
+        return true;
     }
 
     private preloadImages(callback: Function) {

@@ -11,7 +11,12 @@ import { FpsRenderer } from './hud_renderers/fps_renderer';
 import { ToastRenderer, ToastTime } from './toast_renderer';
 import { AudioRenderer } from './audio_renderers/audio_renderer';
 
-const assman = new AssetManager();
+const assman = AssetManager.getInstance();
+const adjustViewportSize = function () {
+    const ratio = 4 / 5;
+    this.width = window.innerWidth * ratio;
+    this.height = window.innerHeight * ratio;
+};
 
 export class Engine extends EventEmitter {
     private app: any;
@@ -31,9 +36,15 @@ export class Engine extends EventEmitter {
         this.app = new PIXI.Application({
             backgroundColor: 0x000000,
             resolution: 1,
-            resizeTo: window,
             view: game,
         });
+        const resizePixi = () => {
+            adjustViewportSize.call(game);
+            this.app.renderer.resize(game.width, game.height);
+        };
+        window.addEventListener('resize', resizePixi);
+        resizePixi();
+
         const container = new PIXI.Container();
         container.view = this.app.view;
         this.app.stage.addChild(container);

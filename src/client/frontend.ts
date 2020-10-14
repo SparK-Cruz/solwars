@@ -1,42 +1,25 @@
-import { JoinForm } from "./frontend/join_form";
-import { KeysForm } from "./frontend/keys_form";
+const Vue = require('vue/dist/vue');
+import Layout from './frontend/layout';
 
-import { AssetManager } from './assets';
-import e = require("express");
+const binder = {
+    isGameRunning: false,
+};
 
-const assman = new AssetManager();
-const loading = <HTMLElement>document.getElementById("loading");
-const frontend = <HTMLElement>document.getElementById("frontend");
-
-let joinForm: JoinForm = null;
-let keysForm: KeysForm = null;
-
-function customEvent(name: string, data: any) {
-    const e = <any>new Event(name);
-    e.data = data;
-    return e;
-}
-
-assman.on("load", () => {
-    frontend.style.display = "block";
-    loading.style.display = "none";
-
-    joinForm = new JoinForm();
-    keysForm = new KeysForm();
-
-    joinForm.on('join', (e) => {
-        window.dispatchEvent(customEvent('joingame', e));
-    })
+const app = new Vue({
+    el: '#app',
+    template: `
+        <Layout v-if="!binder.isGameRunning" />
+    `,
+    components: { Layout },
+    data: {
+        binder
+    }
 });
 
 window.addEventListener('gamestart', () => {
-    frontend.style.display = "none";
-    (<any>joinForm).hide();
+    binder.isGameRunning = true;
 });
 
 window.addEventListener('gamestop', () => {
-    frontend.style.display = "block";
-    (<any>joinForm).show();
+    binder.isGameRunning = false;
 });
-
-assman.preload();

@@ -1,85 +1,108 @@
 <!DOCTYPE html>
 <html>
-  <body bgcolor="#000000">
-    <canvas></canvas>
+
+<head>
+    <style>
+        canvas {
+            animation-name: spin;
+            animation-duration: 5s;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body bgcolor="#000000">
+    <canvas width="32" height="32"></canvas>
     <script>
-      var canvas = document.getElementsByTagName('canvas')[0];
-      var buffer = document.createElement('canvas');
-      var mask = document.createElement('canvas');
-      var ctx = canvas.getContext('2d');
-      var bfr = buffer.getContext('2d');
-      var msk = mask.getContext('2d');
+        var canvas = document.getElementsByTagName('canvas')[0];
+        var buffer = document.createElement('canvas');
+        var mask = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var bfr = buffer.getContext('2d');
+        var msk = mask.getContext('2d');
 
-      var sourceImage = new Image();
-      var maskImage = new Image();
-      var decalImage = new Image();
+        var sourceImage = new Image();
+        var maskImage = new Image();
+        var decalImage = new Image();
 
-      var loadCount = 3;
+        var loadCount = 3;
 
-      sourceImage.onload = function() {
-        if (!--loadCount)
-          paintIt();
-      };
-      maskImage.onload = function() {
-        if (!--loadCount)
-          paintIt();
-      };
-      decalImage.onload = function() {
-        if (!--loadCount)
-          paintIt();
-      }
+        sourceImage.onload = function () {
+            if (!--loadCount)
+                paintIt();
+        };
+        maskImage.onload = function () {
+            if (!--loadCount)
+                paintIt();
+        };
+        decalImage.onload = function () {
+            if (!--loadCount)
+                paintIt();
+        }
 
-      sourceImage.src = '../src/client/img/warbird.png';
-      maskImage.src = '../src/client/img/warbird_mask.png';
-      decalImage.src = '../src/client/img/warbird_decal1.png';
+        sourceImage.src = '../src/client/img/ships/warbird.png';
+        maskImage.src = '../src/client/img/ships/warbird_mask.png';
+        decalImage.src = '../src/client/img/ships/warbird_decal0.png';
 
-      function paintIt() {
-        ctx.save();
-        ctx.drawImage(sourceImage, 0, 0);
-        ctx.restore();
+        function paintIt() {
+            ctx.save();
+            ctx.drawImage(sourceImage, 0, 0);
+            ctx.restore();
 
-        ctx.save();
+            ctx.save();
 
-        // Base Paint
-        bfr.save();
-        bfr.drawImage(sourceImage, 0, 0);
-        bfr.globalCompositeOperation = 'multiply';
-        bfr.fillStyle = '#3399ff';
-        bfr.fillRect(0, 0, 128, 128);
-        bfr.restore();
+            // Base Paint
+            bfr.save();
+            bfr.drawImage(sourceImage, 0, 0);
+            bfr.globalCompositeOperation = 'multiply';
+            bfr.fillStyle = '#3399ff';
+            bfr.fillRect(0, 0, 128, 128);
+            bfr.restore();
 
-        msk.save();
-        msk.drawImage(buffer, 0, 0);
-        msk.globalCompositeOperation = 'destination-in';
-        msk.drawImage(maskImage, 0, 0);
-        msk.restore();
+            msk.save();
+            msk.drawImage(buffer, 0, 0);
+            msk.globalCompositeOperation = 'destination-in';
+            msk.drawImage(maskImage, 0, 0);
+            msk.restore();
 
-        ctx.drawImage(mask, 0, 0);
+            ctx.drawImage(mask, 0, 0);
 
-        // Decal 1
-        bfr.clearRect(0, 0, 128, 128);
-        bfr.save();
-        bfr.drawImage(sourceImage, 0, 0);
-        bfr.globalCompositeOperation = 'multiply';
-        bfr.fillStyle = '#ffffff';
-        bfr.fillRect(0, 0, 128, 128);
-        bfr.restore();
+            // Decal 1
+            bfr.clearRect(0, 0, 128, 128);
+            bfr.save();
+            bfr.drawImage(sourceImage, 0, 0);
+            bfr.globalCompositeOperation = 'multiply';
+            bfr.fillStyle = '#ffffff';
+            bfr.fillRect(0, 0, 128, 128);
+            bfr.restore();
 
-        msk.save();
-        msk.drawImage(buffer, 0, 0);
-        msk.globalCompositeOperation = 'destination-in';
-        msk.drawImage(decalImage, 0, 0);
-        msk.restore();
-        msk.save();
-        msk.globalCompositeOperation = 'destination-in';
-        msk.drawImage(maskImage, 0, 0);
-        msk.restore();
+            msk.save();
+            msk.drawImage(buffer, 0, 0);
+            msk.globalCompositeOperation = 'destination-in';
+            msk.drawImage(decalImage, 0, 0);
+            msk.restore();
+            msk.save();
+            msk.globalCompositeOperation = 'destination-in';
+            msk.drawImage(maskImage, 0, 0);
+            msk.restore();
 
-        ctx.drawImage(mask, 0, 0);
+            ctx.drawImage(mask, 0, 0);
 
-        // Done
-        ctx.restore();
-      }
+            // Done
+            ctx.restore();
+        }
     </script>
-  </body>
+</body>
+
 </html>

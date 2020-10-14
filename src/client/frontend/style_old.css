@@ -1,0 +1,150 @@
+body {
+    margin: 0px;
+    padding: 0px;
+    color: #39f;
+    background-color: black;
+}
+
+/* LOADING */
+#loading {
+    background: url("../img/loading.gif") center center no-repeat;
+    min-height: 440px;
+}
+
+/* FRONTEND */
+#frontend {
+    display: block;
+    padding: 0px;
+    font-family: sans-serif;
+}
+/* #frontend header {
+    text-align: center;
+} */
+#frontend header h1 {
+    margin: 5px auto;
+    line-height: 44px;
+    font-size: 81px;
+    width: max-content;
+}
+#frontend header h1 span {
+    display: block;
+    width: inherit;
+    text-align: left;
+    font-size: 16px;
+    font-weight: normal;
+    margin-bottom: 0px;
+}
+
+/* FORMS */
+#forms {
+    display: block;
+    width: 760px;
+    margin: 20px auto;
+    height: 1px;
+}
+form {
+    display: block;
+    width: 270px;
+    padding: 50px;
+    border: 2px solid #202020;
+    border-radius: 10px;
+}
+form fieldset {
+    border: none;
+}
+form div {
+    width: 250px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+form label {
+    width: 250px;
+    margin-bottom: 4px;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+form input {
+    border: 2px solid #39f;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding: 10px 10px;
+    width: 250px;
+    color: #39f;
+    background-color: #000000;
+    font-weight: bold;
+}
+form input::placeholder {
+    color: #069;
+}
+form input.btn {
+    text-decoration: none;
+    text-transform: uppercase;
+    color: black;
+    background-color: #39f;
+}
+
+/* JOIN FORM */
+#join-form {
+    float: left;
+}
+#join-form #ship {
+    position: relative;
+}
+#join-form #ship-preview {
+    display: block;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto;
+}
+#join-form #prev-ship-btn {
+    margin-right: 26px;
+}
+#join-form #prev-ship-btn,
+#join-form #next-ship-btn {
+    display: block;
+    width: 111px;
+    float: left;
+    margin-bottom: 10px;
+}
+#join-form .color {
+    position: relative;
+}
+#join-form .color input {
+    padding-left: 25px;
+}
+#join-form .color:before {
+    position: absolute;
+    content: "#";
+    bottom: 10px;
+    left: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+/* KEYS FORM */
+#keys-form {
+    float: right;
+}
+#keys-form .template {
+    display: none;
+}
+#keys-form input[type="text"]:focus {
+    border-color: #f93;
+}
+#keys-form input[type="submit"]:disabled {
+    background-color: #666666;
+    border-color: #666666;
+}
+
+/* GAME */
+canvas#game,
+canvas#hud {
+    position: absolute;
+    display: none;
+    top: 0px;
+    left: 0px;
+    z-index: 100;
+    margin: 0px;
+    padding: 0px;
+}
