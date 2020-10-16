@@ -1,20 +1,20 @@
 export class Mapping {
-    static FORWARD = 1;       //00000001
-    static BACKWARD = 2;      //00000010
-    static LEFT = 4;          //00000100
-    static RIGHT = 8;         //00001000
-    static STRAFE_LEFT = 16;  //00010000
-    static STRAFE_RIGHT = 32; //00100000
-    static SHOOT = 64;        //01000000
-    static AFTERBURNER = 128; //10000000
+    static FORWARD = 1;           //00000001
+    static BACKWARD = 1 << 1;     //00000010
+    static LEFT = 1 << 2;         //00000100
+    static RIGHT = 1 << 3;        //00001000
+    static STRAFE_LEFT = 1 << 4;  //00010000
+    static STRAFE_RIGHT = 1 << 5; //00100000
+    static SHOOT = 1 << 6;        //01000000
+    static AFTERBURNER = 1 << 7;  //10000000
 
     public state = 0;
 
-    public press(flag :number) {
+    public press(flag: number) {
         this.state |= flag;
         return this;
     }
-    public release(flag :number) {
+    public release(flag: number) {
         this.state &= ~flag;
         return this;
     }

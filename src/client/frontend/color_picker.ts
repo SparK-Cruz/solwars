@@ -32,9 +32,11 @@ const widths = range(0, res).map(d => {
 
 const colors = document.createElement('canvas');
 
+const widthSet = widths.slice(Math.ceil(res / 2));
+
 const stage = {
-    width: widths.reduce((a: number, w: number, i: number) => a + (w / 2) + (widths[i - 1] || 0) / 2, widths[res - 1] / 2 + widths[0]),
-    height: 2 * res * size.y,
+    width: widthSet.reduce((a: number, w: number) => a + w, size.x * 2),
+    height: 13 * size.y + 2 * size.y,
 };
 
 const center = {
@@ -77,6 +79,17 @@ const draw = (canvas: HTMLCanvasElement) => {
     ctx.fillStyle = '#ffffff45';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    const offsets = [0, widths[5], widths.slice(4).reduce((a, b) => a + b)].map((w, i) => ({ x: size.x + rad + w - stage.width, y: size.y * 4 - size.y / 2 * (2 - i) }));
+    [].push.apply(offsets, range(3, 6).map(d => {
+        const widthSet = widths.slice(Math.ceil(res / 2), d + 1);
+        return {
+            x: -widthSet.reduce((a, w, i) => a + (w / 2) + (i > 0 ? widthSet[i - 1] : 0) / 2, size.x),
+            y: -size.y * 1.5,
+        };
+    }));
+
+    console.log(offsets);
+
     for (let r = 0; r < res; r++) {
         for (let g = 0; g < res; g++) {
             for (let b = 0; b < res; b++) {
@@ -91,8 +104,7 @@ const draw = (canvas: HTMLCanvasElement) => {
                         center,
                     );
 
-                let offset = - widths.slice(0, d + 1).reduce((a, w, i) => a + (w / 2) + (widths[i - 1] || 0) / 2);
-                ctx.drawImage(drawHex(c2h(color.map(c => c * step))), pos.x + offset, pos.y);
+                ctx.drawImage(drawHex(c2h(color.map(c => c * step))), pos.x + offsets[d].x, pos.y + offsets[d].y);
             }
         }
     }
