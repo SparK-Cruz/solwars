@@ -1,17 +1,31 @@
 import { Engine } from './engine';
+import { IS_MOBILE } from './environment';
 
 const game = <HTMLCanvasElement>document.getElementById("game");
 const engine = new Engine(game);
 
 window.addEventListener("keydown", (e) => {
-    if (!engine.running || e.which != 27 || !confirm("Leave Game?")) return;
+    if (!engine.running || e.code != 'Escape')
+        return;
 
     e.preventDefault();
+    engine.stop();
+});
+
+document.addEventListener("fullscreenchange", (e) => {
+    if (document.fullscreenElement)
+        return;
 
     engine.stop();
 });
+
 engine.on("start", () => {
     window.dispatchEvent(new Event('gamestart'));
+
+    if (!IS_MOBILE)
+        return;
+
+    game.requestFullscreen();
 });
 engine.on("stop", () => {
     window.dispatchEvent(new Event('gamestop'));

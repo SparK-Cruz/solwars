@@ -57,7 +57,6 @@ export default Vue.extend({
             this.$refs.inputEditorModal.open();
             this.$nextTick(() => {
                 this.$refs.editorContainer.style.width = this.$el.offsetWidth + 'px';
-                this.$refs.editorContainer.style.height = this.$el.offsetHeight + 'px';
             });
         }
     },
