@@ -1,7 +1,5 @@
 import { Model } from "../../space/entities/ships/model";
 
-const Vue = require('vue/dist/vue');
-
 const defaultName = 'Anon' + (100 + Math.round(Math.random() * 899));
 
 const ships = Model.all.filter(s => !s.disabled);
@@ -20,7 +18,7 @@ export default {
         secondaryColor: <string>null,
     },
     load() {
-        this.data.name = localStorage.getItem('name');
+        this.data.name = localStorage.getItem('name') || "";
         this.data.shipIndex = validStoredShip();
         this.data.primaryColor = localStorage.getItem('color') || 'default';
         this.data.secondaryColor = localStorage.getItem('decal') || 'default';
@@ -34,7 +32,7 @@ export default {
         };
     },
     save() {
-        localStorage.setItem('name', this.data.name);
+        localStorage.setItem('name', this.data.name || "");
         localStorage.setItem('model', this.data.shipIndex.toString());
         localStorage.setItem('color', prepareColor(this.data.primaryColor));
         localStorage.setItem('decal', prepareColor(this.data.secondaryColor));

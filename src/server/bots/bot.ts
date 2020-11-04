@@ -38,7 +38,7 @@ export class Bot extends Player {
         super(<any>new FakeSocket(), room);
         this.socket.on(CodecEvents.RESPAWN, this.respawnListener);
 
-        this.socket.emit(CodecEvents.JOIN_GAME, {name: name});
+        this.socket.emit(CodecEvents.JOIN_GAME, { name: name });
     }
 
     public setTarget(ship: Ship) {
@@ -73,7 +73,7 @@ export class Bot extends Player {
     }
 
     protected fetchPlayerShip(name: string, cache: Ship = null) {
-        let onSuccess = (ship :Ship) => {};
+        let onSuccess = (ship: Ship) => { };
         setTimeout(() => {
             const ship = new Ship(Model.byId[this.fetchShipModel()]);
             ship.decals.push(...this.config.ship.decals);
@@ -84,11 +84,11 @@ export class Bot extends Player {
         }, 0);
 
         const callbacks = {
-            then: (callback :(ship :Ship) => void) => {
+            then: (callback: (ship: Ship) => void) => {
                 onSuccess = callback;
                 return callbacks;
             },
-            error: (callback :(reason :string) => void) => {
+            error: (callback: (reason: string) => void) => {
                 return callbacks;
             }
         };
@@ -101,7 +101,7 @@ export class Bot extends Player {
     }
 
     private onRespawn() {
-        this.socket.emit(CodecEvents.JOIN_GAME, {name: this.name});
+        this.socket.emit(CodecEvents.JOIN_GAME, { name: this.name });
     }
 
     private updateControl(number: number) {

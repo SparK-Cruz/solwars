@@ -255,26 +255,26 @@ label {
 #input-editor #keyboard-editor .buttons {
     grid-column: 1 / span 2;
 }
-#input-editor .keyboard-input p {
+#input-editor .controller-input p {
     border: 2px solid #39f;
     border-radius: 5px;
     margin: 0px;
     padding: 7px 10px;
     cursor: pointer;
 }
-#input-editor .keyboard-input p .tag {
+#input-editor .controller-input p .tag {
     margin-right: 19px;
     display: inline-block;
 }
-#input-editor .keyboard-input p .tag:hover {
+#input-editor .controller-input p .tag:hover {
     color: #f93;
     margin-right: 5px;
 }
-#input-editor .keyboard-input p .tag:hover:after {
+#input-editor .controller-input p .tag:hover:after {
     color: #f93;
     content: ' ×';
 }
-#input-editor .keyboard-input p input {
+#input-editor .controller-input p input {
     border: none;
     padding: 0px;
 }

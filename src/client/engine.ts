@@ -1,7 +1,7 @@
 const PIXI = require('pixi.js');
 import { EventEmitter } from 'events';
 
-import { Input } from './input';
+import { KeyboardInput } from './keyboard_input';
 import { Client, ClientOptions, ClientEvents } from './client';
 import { Camera } from './camera';
 import { AssetManager } from './assets';
@@ -10,6 +10,8 @@ import { HudRenderer } from './hud_renderer';
 import { FpsRenderer } from './hud_renderers/fps_renderer';
 import { ToastRenderer, ToastTime } from './toast_renderer';
 import { AudioRenderer } from './audio_renderers/audio_renderer';
+import { Input, Inputable } from './input';
+import { GamepadInput } from './gamepad_input';
 
 const assman = AssetManager.getInstance();
 const adjustViewportSize = function () {
@@ -20,7 +22,7 @@ const adjustViewportSize = function () {
 
 export class Engine extends EventEmitter {
     private app: any;
-    private input: Input;
+    private input: Inputable;
     private client: Client;
     private camera: Camera;
 
@@ -49,7 +51,10 @@ export class Engine extends EventEmitter {
         container.view = this.app.view;
         this.app.stage.addChild(container);
 
-        this.input = new Input(window);
+        this.input = new Input(
+            new KeyboardInput(window),
+            new GamepadInput(window),
+        );
         this.client = new Client(this.input);
         this.camera = new Camera();
         this.gameRenderer = new GameRenderer(container, this.camera, this.client.getStage());

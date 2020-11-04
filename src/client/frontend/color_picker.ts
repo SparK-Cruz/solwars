@@ -88,8 +88,6 @@ const draw = (canvas: HTMLCanvasElement) => {
         };
     }));
 
-    console.log(offsets);
-
     for (let r = 0; r < res; r++) {
         for (let g = 0; g < res; g++) {
             for (let b = 0; b < res; b++) {

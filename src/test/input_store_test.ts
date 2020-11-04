@@ -1,5 +1,5 @@
-import subject from '../client/frontend/input_store';
-import { KeyMapper } from "../client/key_mapper";
+import subject from '../client/input_store';
+import { KeyMapper } from "../client/frontend/key_mapper";
 import { Mapping } from "../space/entities/ships/mapping";
 
 subject.data.keyMapping = {

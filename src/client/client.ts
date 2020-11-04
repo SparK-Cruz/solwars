@@ -3,10 +3,10 @@ import * as socketio from 'socket.io-client';
 import { Stage } from './stage';
 import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
 import { Ship, ShipEvents } from '../space/entities/ship';
-import { Input } from './input';
 import { EventEmitter } from 'events';
 import { Model as ShipModel } from '../space/entities/ships/model';
 import { EntityEvent } from '../space/entities';
+import { Inputable } from './input';
 
 export interface ClientOptions {
     name: string,
@@ -23,7 +23,7 @@ export class Client extends EventEmitter {
     private stage: Stage = null;
     private codec: CodecFacade = null;
     private ship: Ship = null;
-    private ranking: {name: string, bounty: number}[] = [];
+    private ranking: { name: string, bounty: number }[] = [];
 
     private socket: SocketIOClient.Socket;
     private compensator: NodeJS.Timeout;
@@ -43,7 +43,7 @@ export class Client extends EventEmitter {
     };
 
     // TODO implement logger and debugger
-    public constructor(private input: Input) {
+    public constructor(private input: Inputable) {
         super();
 
         this.stage = new Stage();
@@ -58,7 +58,7 @@ export class Client extends EventEmitter {
         this.options = options;
 
         if (!this.socket) {
-            this.socket = socketio('', {autoConnect: false});
+            this.socket = socketio('', { autoConnect: false });
 
             this.bindEvents(this.socket);
         }
@@ -106,7 +106,7 @@ export class Client extends EventEmitter {
 
         this.compensator = setInterval(() => {
             this.stage.step();
-        }, 1000/32);
+        }, 1000 / 32);
     }
 
     private stopCompensatingLag() {
@@ -265,6 +265,6 @@ export interface ClientInfo extends StaticInfo {
     speed: { x: number, y: number };
     position: { x: number, y: number };
     control: number;
-    ranking: {name: string, bounty: number}[];
+    ranking: { name: string, bounty: number }[];
     updates: number[];
 }

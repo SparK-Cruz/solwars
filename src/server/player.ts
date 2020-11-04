@@ -45,10 +45,10 @@ export class Player extends EventEmitter {
     }
 
     private setupListeners() {
-        this.socket.on(CodecEvents.JOIN_GAME, (data :any) => {
+        this.socket.on(CodecEvents.JOIN_GAME, (data: any) => {
             this.onJoin(data);
         });
-        this.socket.on(CodecEvents.SEND_INPUT, (data :any) => {
+        this.socket.on(CodecEvents.SEND_INPUT, (data: any) => {
             this.onInput(data);
         });
         this.socket.once(CodecEvents.DISCONNECT, () => {
@@ -59,7 +59,7 @@ export class Player extends EventEmitter {
         });
     }
 
-    private onJoin(data :any) {
+    private onJoin(data: any) {
         this.name = data.name;
         const upgradeListener = (name: string) => {
             this.bounty += 10;
@@ -84,9 +84,9 @@ export class Player extends EventEmitter {
             });
     }
 
-    protected fetchPlayerShip(data :any, cache: Ship) {
-        let onSuccess = (ship :Ship) => {};
-        let onError = (reason :string) => {};
+    protected fetchPlayerShip(data: any, cache: Ship) {
+        let onSuccess = (ship: Ship) => { };
+        let onError = (reason: string) => { };
 
         // Will be async in the future, so let's emulate it!
         // Otherwise there's not enough time to set the callbacks
@@ -111,7 +111,7 @@ export class Player extends EventEmitter {
             // Customize ship here
             const options: any = {};
             if (cache) {
-                Object.assign(options, {color: cache.color, decal: cache.decals[0].color});
+                Object.assign(options, { color: cache.color, decal: cache.decals[0].color });
             }
             Object.assign(options, data);
 
@@ -124,11 +124,11 @@ export class Player extends EventEmitter {
         }, 0);
 
         const callbacks = {
-            then: (callback :(ship :Ship) => void) => {
+            then: (callback: (ship: Ship) => void) => {
                 onSuccess = callback;
                 return callbacks;
             },
-            error: (callback :(reason :string) => void) => {
+            error: (callback: (reason: string) => void) => {
                 onError = callback;
                 return callbacks;
             }
@@ -136,7 +136,7 @@ export class Player extends EventEmitter {
         return callbacks;
     }
 
-    private onInput(data :any) {
+    private onInput(data: any) {
         if (!this.ship) return;
 
         this.ship.control = data;
