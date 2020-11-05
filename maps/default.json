@@ -71,6 +71,17 @@
             "bullet": 0,
             "health": 1200,
             "regen": 1200
+        },
+        {
+            "type": {
+                "name": "gravityWell"
+            },
+            "x": 0,
+            "y": 0,
+            "mass": 1000,
+            "radius": 2000,
+            "teleport": 3000,
+            "pull": 0.01
         }
     ],
     "npe": [
@@ -98,17 +109,6 @@
             "radius": 3000,
             "delay": 320,
             "maxPrizes": 30
-        },
-        {
-            "type": {
-                "name": "gravityWell"
-            },
-            "x": 0,
-            "y": 0,
-            "mass": 1000,
-            "radius": 2000,
-            "teleport": 3000,
-            "pull": 0.01
         }
     ]
 }
