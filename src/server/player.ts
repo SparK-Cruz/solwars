@@ -44,6 +44,10 @@ export class Player extends EventEmitter {
         this.socket.emit(CodecEvents.DEATH, death);
     }
 
+    public updateShipName() {
+        this.ship.name = this.name + ' (' + this.bounty + ')';
+    }
+
     private setupListeners() {
         this.socket.on(CodecEvents.JOIN_GAME, (data: any) => {
             this.onJoin(data);
@@ -63,6 +67,7 @@ export class Player extends EventEmitter {
         this.name = data.name;
         const upgradeListener = (name: string) => {
             this.bounty += 10;
+            this.updateShipName();
             this.socket.emit(CodecEvents.UPGRADE, name);
         };
         this.fetchPlayerShip(data, this.ship)
@@ -148,13 +153,13 @@ export class Player extends EventEmitter {
             ship: this.ship.id,
             cause: DeathCauses.Collision,
             bounty: this.bounty,
-            killer: killer,
+            killer: this.room.codec.encodeEntity(killer, true),
             type: killer.type,
         };
 
         if (killer.type.name == EntityType.Bullet.name) {
             death.cause = DeathCauses.Bullet;
-            death.killer = (<Bullet>killer).parent;
+            death.killer = this.room.codec.encodeEntity((<Bullet>killer).parent, true);
         }
 
         setTimeout(() => {

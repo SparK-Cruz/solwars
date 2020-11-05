@@ -23,10 +23,10 @@ export class Prize extends EventEmitter implements Entity {
 
     public x: number;
     public y: number;
-    public vx :number = 0;
-    public vy :number = 0;
-    public angle :number = 0;
-    public vangle :number = 2;
+    public vx: number = 0;
+    public vy: number = 0;
+    public angle: number = 0;
+    public vangle: number = 2;
 
     public constructor(private effect: PrizeEffect = null, private parent: PrizeSpawner = null) {
         super();

@@ -17,13 +17,13 @@ let TPS = 64;
 const playerSkipFactor = Math.ceil(TPS / (TPS_TARGET / UPDATE_SKIP));
 
 export class Room {
-    public codec :CodecFacade;
+    public codec: CodecFacade;
 
-    private io :SocketIO.Server;
-    private stage :Stage;
+    private io: SocketIO.Server;
+    private stage: Stage;
 
-    private players :Player[] = [];
-    private ranking :Player[] = null;
+    private players: Player[] = [];
+    private ranking: Player[] = null;
 
     private deltaTick: number = 1;
 
@@ -40,7 +40,7 @@ export class Room {
         this.codec = new CodecFacade();
 
         TPS = Config.TPS;
-        this.deltaTick = TPS_TARGET/TPS;
+        this.deltaTick = TPS_TARGET / TPS;
 
         this.setupListeners();
     }
@@ -53,7 +53,7 @@ export class Room {
         setTimeout(() => {
             this.tick();
             this.open();
-        }, 1000/TPS);
+        }, 1000 / TPS);
     }
 
     public setupPlayer(player: Player) {
@@ -85,21 +85,22 @@ export class Room {
         this.broadcastCollision(id);
     }
 
-    private onPlayerShip(player :Player, ship: Ship) {
-        ship.name = player.name + ' (' + player.bounty + ')';
+    private onPlayerShip(player: Player, ship: Ship) {
         player.ship = ship;
+        player.updateShipName();
 
         const spawnRadius = 5000;
         player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
         player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
         this.stage.add(player.ship);
     }
-    private onPlayerDie(player :Player, death: PlayerDeath) {
+    private onPlayerDie(player: Player, death: PlayerDeath) {
         const killer: Player = this.players.find(p => p.ship && p.ship.id == death.killer.id);
 
         if (typeof killer != 'undefined') {
             killer.bounty += player.bounty;
             killer.ship.name = killer.name + ' (' + killer.bounty + ')';
+            killer.ship.newSector = 1;
         }
 
         player.bounty = 1;
@@ -107,7 +108,7 @@ export class Room {
         console.log(`${death.name} died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
         this.broadcastDeath(death);
     }
-    private onPlayerDisconnect(player :Player) {
+    private onPlayerDisconnect(player: Player) {
         console.log(player.name + ' has left the game');
         this.players = this.players.filter((member) => member.id !== player.id);
 
@@ -130,15 +131,17 @@ export class Room {
             if (!player.ship)
                 return;
 
-            player.sendState(this.codec.encode(
-                {
-                    tick: this.stage.tick,
-                    entities: this.stage.fetchEntitiesAround(player.ship),
-                    ranking: ranking,
-                },
-                // if player ship is new to the sector, force full entity encoding
-                player.ship.newSector > 0
-            ));
+            setTimeout(() => {
+                player.sendState(this.codec.encode(
+                    {
+                        tick: this.stage.tick,
+                        entities: this.stage.fetchEntitiesAround(player.ship),
+                        ranking: ranking,
+                    },
+                    // if player ship is new to the sector, force full entity encoding
+                    player.ship.newSector > 0
+                ));
+            }, 0);
         });
     }
 
@@ -174,7 +177,7 @@ export class Room {
         this.stage.on(EntityEvent.Collide, this.onEntityCollide);
 
         this.lastId = 0;
-        this.io.sockets.on(CodecEvents.CONNECTION, (socket :SocketIO.Socket) => {
+        this.io.sockets.on(CodecEvents.CONNECTION, (socket: SocketIO.Socket) => {
             if (this.players.length > Config.maxPlayers) {
                 socket.disconnect(true);
                 return;

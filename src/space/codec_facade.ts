@@ -25,7 +25,7 @@ export interface PlayerDeath {
     ship: number,
     cause: string,
     bounty: number,
-    killer: Entity,
+    killer: any,
     type: EntityType,
 }
 
@@ -200,6 +200,8 @@ export class CodecFacade {
         if (entity.spawner) {
             return null;
         }
+
+        entity = Object.assign({}, entity, { stage: null });
 
         if (entity.newSector || force) {
             return this.fullEncode(entity);

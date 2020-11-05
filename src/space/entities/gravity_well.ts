@@ -5,6 +5,8 @@ import { Stage } from "../stage";
 export class GravityWell extends EventEmitter implements Entity {
     type = EntityType.GravityWell;
 
+    name = 'a backhole';
+
     id: number;
     sectorKey: string;
     newSector: number;
@@ -17,9 +19,6 @@ export class GravityWell extends EventEmitter implements Entity {
     mass: number = 1000;
     x: number;
     y: number;
-    vx?: number;
-    vy?: number;
-    angle?: number;
 
     radius: number;
     teleport: number;
@@ -31,6 +30,8 @@ export class GravityWell extends EventEmitter implements Entity {
         this.updatePhisics(delta);
     }
     collide(entity: Entity, result: any): void {
+        return;
+
         if (typeof (<any>entity).addDamage !== 'undefined') {
             (<any>entity).addDamage((<any>entity).health, this);
             return;
@@ -54,12 +55,19 @@ export class GravityWell extends EventEmitter implements Entity {
         entities
             .reduce((a, c) => a.concat(Object.values(c)), [])
             .forEach(e => {
-                const d = Math.sqrt(Math.pow(this.x - e.x, 2) + Math.pow(this.y - e.y, 2));
+                if (e.id === this.id) return;
+                if (e.type.name == EntityType.Rock.name) return;
+
+                let d = Math.sqrt(Math.pow(this.x - e.x, 2) + Math.pow(this.y - e.y, 2));
                 if (d > this.radius)
                     return;
 
+                if (d < 1) {
+                    return;
+                }
+
                 const alpha = Math.atan2(this.y - e.y, this.x - e.x) - Math.PI / 2;
-                const pull = this.mass * e.mass / Math.pow(d, 2) * this.pull;
+                const pull = this.mass / d * this.pull;
 
                 e.vx -= pull * Math.sin(alpha);
                 e.vy += pull * Math.cos(alpha);

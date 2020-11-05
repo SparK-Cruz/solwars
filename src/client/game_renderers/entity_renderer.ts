@@ -22,6 +22,7 @@ export class EntityRenderer implements Renderable {
 
     public constructor(parent: any, private camera: Camera, private stage: Stage) {
         this.container = new PIXI.Container();
+        this.container.sortableChildren = true;
 
         this.stage.on('despawn', (id: number) => {
             if (!this.cache.hasOwnProperty(id)) {
@@ -56,7 +57,7 @@ export class EntityRenderer implements Renderable {
 
         pair.renderer.render();
         pair.container.visible = true;
-        pair.container.angle = entity.angle;
+        pair.container.angle = entity.angle || 0;
         pair.container.position.set(entity.x - offset.x, entity.y - offset.y);
     }
 
@@ -76,6 +77,11 @@ export class EntityRenderer implements Renderable {
     }
 
     private createPair(entity: Entity): RenderPair {
+        if (typeof entity.type == 'undefined') {
+            console.log(entity);
+            return null;
+        }
+
         const container = new PIXI.Container();
         this.container.addChild(container);
 
@@ -84,23 +90,24 @@ export class EntityRenderer implements Renderable {
             renderer,
         });
 
-        if (typeof entity.type == 'undefined') {
-            console.log(entity);
-            return null;
-        }
-
         switch (entity.type.name) {
             case EntityType.Ship.name:
+                container.zIndex = 60;
                 return pair(new ShipRenderer(container, <Ship>entity));
             case EntityType.Bullet.name:
+                container.zIndex = 50;
                 return pair(new BulletRenderer(container, <Bullet>entity));
             case EntityType.ShipDebris.name:
+                container.zIndex = 40;
                 return pair(new ShipDebrisRenderer(container, <ShipDebris>entity));
             case EntityType.Rock.name:
+                container.zIndex = 30;
                 return pair(new RockRenderer(container, <Rock>entity));
             case EntityType.Prize.name:
+                container.zIndex = 20;
                 return pair(new PrizeRenderer(container, <Prize>entity));
             case EntityType.GravityWell.name:
+                container.zIndex = 10;
                 return pair(new GravityWellRenderer(container, <GravityWell>entity));
             default:
                 console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
