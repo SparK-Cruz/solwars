@@ -1,7 +1,9 @@
 {
     "temp": [
         {
-            "type": {"name": "ship"},
+            "type": {
+                "name": "ship"
+            },
             "model": "warbird",
             "name": "DON'T DO DRUGS",
             "x": 0,
@@ -15,7 +17,9 @@
         },
         {
             "spawner": true,
-            "type": {"name": "rock"},
+            "type": {
+                "name": "rock"
+            },
             "size": 10,
             "sides": 8,
             "mass": 60,
@@ -24,7 +28,9 @@
             "spread": 500
         },
         {
-            "type": {"name": "ship"},
+            "type": {
+                "name": "ship"
+            },
             "model": "warbird",
             "name": "HA-46",
             "x": 0,
@@ -37,7 +43,9 @@
             "regen": 1200
         },
         {
-            "type": {"name": "ship"},
+            "type": {
+                "name": "ship"
+            },
             "model": "javelin",
             "name": "FC-12/0",
             "x": 32,
@@ -50,7 +58,9 @@
             "regen": 1200
         },
         {
-            "type": {"name": "ship"},
+            "type": {
+                "name": "ship"
+            },
             "model": "spider",
             "name": "RSC17",
             "x": 64,
@@ -61,12 +71,25 @@
             "bullet": 0,
             "health": 1200,
             "regen": 1200
+        },
+        {
+            "type": {
+                "name": "gravityWell"
+            },
+            "x": 0,
+            "y": 0,
+            "mass": 500,
+            "radius": 2000,
+            "teleport": 3000,
+            "pull": 0.1
         }
     ],
     "npe": [
         {
             "spawner": true,
-            "type": {"name": "rock"},
+            "type": {
+                "name": "rock"
+            },
             "x": 0,
             "y": 0,
             "size": 72,
@@ -78,7 +101,9 @@
         },
         {
             "spawner": true,
-            "type": {"name": "prize"},
+            "type": {
+                "name": "prize"
+            },
             "x": 0,
             "y": 0,
             "radius": 3000,

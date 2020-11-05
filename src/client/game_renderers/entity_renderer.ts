@@ -13,6 +13,8 @@ import { RockRenderer } from "./entities/rock_renderer";
 import { Rock } from "../../space/entities/rock";
 import { PrizeRenderer } from "./entities/prize_renderer";
 import { Prize } from "../../space/entities/prize";
+import { GravityWell } from "../../space/entities/gravity_well";
+import { GravityWellRenderer } from "./entities/gravity_well_renderer";
 
 export class EntityRenderer implements Renderable {
     private cache: any = {};
@@ -49,7 +51,7 @@ export class EntityRenderer implements Renderable {
         }
     }
 
-    private renderEntity(entity: Entity, pair: RenderPair, offset: {x: number, y: number}) {
+    private renderEntity(entity: Entity, pair: RenderPair, offset: { x: number, y: number }) {
         if (!pair) return;
 
         pair.renderer.render();
@@ -59,15 +61,18 @@ export class EntityRenderer implements Renderable {
     }
 
     private fetchPair(entity: Entity): RenderPair {
-        if (this.cache.hasOwnProperty(entity.id)) {
+        if (this.cache.hasOwnProperty(entity.id)
+            && this.cache[entity.id]) {
             return this.cache[entity.id];
         }
 
-        const pair = this.createPair(entity);
-        if (pair) {
-            this.cache[entity.id] = pair;
+        try {
+            const pair = this.createPair(entity);
+            return this.cache[entity.id] = pair;
+        } catch (error) {
+            console.error('Failed to create renderer for entity (' + entity.id + '): ' + entity.type.name);
+            return null;
         }
-        return pair;
     }
 
     private createPair(entity: Entity): RenderPair {
@@ -79,7 +84,12 @@ export class EntityRenderer implements Renderable {
             renderer,
         });
 
-        switch(entity.type.name) {
+        if (typeof entity.type == 'undefined') {
+            console.log(entity);
+            return null;
+        }
+
+        switch (entity.type.name) {
             case EntityType.Ship.name:
                 return pair(new ShipRenderer(container, <Ship>entity));
             case EntityType.Bullet.name:
@@ -90,6 +100,8 @@ export class EntityRenderer implements Renderable {
                 return pair(new RockRenderer(container, <Rock>entity));
             case EntityType.Prize.name:
                 return pair(new PrizeRenderer(container, <Prize>entity));
+            case EntityType.GravityWell.name:
+                return pair(new GravityWellRenderer(container, <GravityWell>entity));
             default:
                 console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
                 break;

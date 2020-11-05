@@ -218,7 +218,7 @@ export class Client extends EventEmitter {
         console.log(`${death.name} died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
 
         const ship = this.stage.entities[death.ship];
-        if (!ship) return;
+        if (!ship || !ship.emit) return;
         ship.emit(EntityEvent.Die);
     }
 

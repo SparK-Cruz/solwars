@@ -31,7 +31,7 @@ export class BotManager {
         if (!config && !this.config)
             return;
 
-        for(let i=0; i<number; i++) {
+        for (let i = 0; i < number; i++) {
             const name = ((config && config.prefix) || this.prefix) + BotNamePool.get();
             const bot = new Bot(name, this.room, config || this.config);
             this.room.setupPlayer(bot);
@@ -81,7 +81,7 @@ export class BotManager {
     private setupLoops() {
         setInterval(() => {
             this.step();
-        }, 1000/INPUT_TPS);
+        }, 1000 / INPUT_TPS);
 
         setInterval(() => {
             this.checkPlayerCap();
@@ -119,14 +119,13 @@ export class BotManager {
         }, TARGET_LOOKUP_INTERVAL);
     }
 
-    private findShipsAround(coords: {x: number, y: number}): Ship[] {
-        const sectors = this.stage.fetchEntitiesAround(coords);
-        const entities: Entity[] = [];
-        sectors.forEach(s => { entities.push(...Object.values(s)) });
+    private findShipsAround(coords: { x: number, y: number }): Ship[] {
+        const entities: Entity[] = this.stage.fetchEntitiesAround(coords)
+            .reduce((a, s) => a.concat(Object.values(s)), []);
         return <Ship[]>entities.filter((e: Entity) => e.type.name === EntityType.Ship.name);
     }
 
-    private calculateDistanceBetween(pointA: {x: number, y: number}, pointB: {x: number, y: number}): number {
+    private calculateDistanceBetween(pointA: { x: number, y: number }, pointB: { x: number, y: number }): number {
         return Math.sqrt(
             Math.pow(pointB.x - pointA.x, 2) +
             Math.pow(pointB.y - pointA.y, 2)

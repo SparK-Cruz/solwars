@@ -27,8 +27,8 @@ export class GamepadInput implements Inputable {
             this.gamepadListener.on('buttonChange', this.buttonChange);
 
             this.disabler = () => {
-                this.gamepadListener.off('buttonChange', this.buttonChange);
-                this.gamepadListener.off('axisMove', this.axisMove);
+                this.gamepadListener.removeListener('buttonChange', this.buttonChange);
+                this.gamepadListener.removeListener('axisMove', this.axisMove);
                 this.gamepadListener.disable();
             };
         };

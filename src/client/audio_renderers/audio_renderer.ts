@@ -27,12 +27,15 @@ export class AudioRenderer implements Renderable {
     private onEntitySpawn(entity: Entity) {
         const renderer: any = this.setupRenderer(entity);
         renderer &&
-        renderer.onSpawn &&
-        renderer.onSpawn();
+            renderer.onSpawn &&
+            renderer.onSpawn();
     }
 
     private setupRenderer(entity: Entity) {
-        switch(entity.type.name) {
+        if (typeof entity.type === 'undefined')
+            return null;
+
+        switch (entity.type.name) {
             case EntityType.Ship.name:
                 return new ShipAudioRenderer(this.context, entity);
             case EntityType.Bullet.name:

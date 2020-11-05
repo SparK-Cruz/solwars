@@ -12,19 +12,19 @@ import { PrizeSpawner } from './entity_spawner/prize_spawner';
 export class Stage extends EventEmitter {
     public tick = 0;
 
-    private shapes :any = {};
-    private collisionResult :any = null;
+    private shapes: any = {};
+    private collisionResult: any = null;
 
     private sectors = new EntityPoolGrid();
 
     private steppers: Entity[] = [];
 
-    public constructor(public collisionSystem :any) {
+    public constructor(public collisionSystem: any) {
         super();
         this.collisionResult = this.collisionSystem.createResult();
 
         this.on('step', (delta) => {
-            for(let i=0; i<this.steppers.length; i++) {
+            for (let i = 0; i < this.steppers.length; i++) {
                 if (!(this.steppers[i]))
                     continue;
 
@@ -42,17 +42,27 @@ export class Stage extends EventEmitter {
                 return;
 
             const codec = new CodecFacade();
-            for(let i in contents.npe) {
+            for (let i in contents.npe) {
                 if (contents.npe[i].spawner) {
                     this.add(codec.decodeSpawner(contents.npe[i]));
                     continue;
                 }
-                this.add(codec.decodeEntity(<Entity>contents.npe[i]));
+                const entity = codec.decodeEntity(<Entity>contents.npe[i]);
+                this.add(entity);
+                if (entity.hasOwnProperty('stage')) {
+                    (<any>entity).stage = this;
+                }
             }
         });
     }
 
-    public add(entity :Entity) {
+    public moveEntity(entity: Entity, position: { x: number, y: number }) {
+        entity.x = position.x;
+        entity.y = position.y;
+        this.sectors.updateGrid(entity);
+    }
+
+    public add(entity: Entity) {
         this.sectors.add(entity);
 
         const shape = this.addOrFetchCollisionShape(entity);
@@ -69,7 +79,7 @@ export class Stage extends EventEmitter {
         this.addStepper(entity);
     }
 
-    public remove(entity :Entity) {
+    public remove(entity: Entity) {
         this.removeStepper(entity);
         this.sectors.remove(entity.id);
 
@@ -86,11 +96,11 @@ export class Stage extends EventEmitter {
         (<any>entity).off(EntityEvent.Collide, this.onCollideEntity);
     }
 
-    public addAll(entities :Entity[]) {
+    public addAll(entities: Entity[]) {
         entities.forEach(entity => this.add(entity));
     }
 
-    public step(delta: number) :number {
+    public step(delta: number): number {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
         this.emit('step', delta);
@@ -108,7 +118,7 @@ export class Stage extends EventEmitter {
         return this.tick;
     }
 
-    public fetchEntitiesAround(point :{x :number, y :number}) :Entity[][] {
+    public fetchEntitiesAround(point: { x: number, y: number }): Entity[][] {
         return this.sectors.fetchAroundCoord(point);
     }
 
@@ -117,7 +127,7 @@ export class Stage extends EventEmitter {
     }
 
     private removeStepper(listener: Entity) {
-        for(let i = this.steppers.length - 1; i >= 0; i--) {
+        for (let i = this.steppers.length - 1; i >= 0; i--) {
             if (this.steppers[i].id != listener.id)
                 continue;
 
@@ -146,7 +156,7 @@ export class Stage extends EventEmitter {
     }
 
     private checkCollisionsBroad() {
-        for(let i in this.shapes) {
+        for (let i in this.shapes) {
             const shape = this.shapes[i];
             const potentials = shape.potentials();
             if (!potentials.length)
@@ -166,9 +176,9 @@ export class Stage extends EventEmitter {
         }
     }
 
-    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity, offset: {x: number, y: number} = null) => {
+    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity, offset: { x: number, y: number } = null) => {
         let entity: Entity = null;
-        switch(entityType.name) {
+        switch (entityType.name) {
             case EntityType.Bullet.name:
                 entity = new Bullet(entityModel, parent);
                 break;
@@ -181,7 +191,7 @@ export class Stage extends EventEmitter {
                 break;
             case EntityType.Prize.name:
                 entity = new Prize(entityModel, <PrizeSpawner>parent);
-                Object.assign(entity, {x: parent.x, y: parent.y});
+                Object.assign(entity, { x: parent.x, y: parent.y });
                 break;
             // case EntityType.Ship.name:
             // ships aren't child entities yet... we still don't have carriers nor turrets...

@@ -59,7 +59,7 @@ const titleCase = (name: string): string => {
     return name.toLowerCase().split('_').map((w: string) => w.split('').map((l, i) => i == 0 ? l.toUpperCase() : l).join('')).join(' ');
 }
 
-const serializeKeyboardMapping = (mapping: Action[]): string => {
+const serializeKeyboardMapping = (mapping: Action[]): any => {
     return mapping
         .map(a => a.keys.reduce(
             (o: any, k: string) => o[k] = a.code, {}
@@ -68,8 +68,8 @@ const serializeKeyboardMapping = (mapping: Action[]): string => {
             (o, b) => Object.assign(o, b), {}
         );
 };
-const serializeGamepadMapping = (mapping: Action[]): string => {
-    return mapping.map(a => )
+const serializeGamepadMapping = (mapping: Action[]): any => {
+    return {};
 };
 
 const deserializeKeyboardMapping = (obj: any): Action[] => {

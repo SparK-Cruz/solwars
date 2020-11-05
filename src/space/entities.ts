@@ -17,7 +17,7 @@ export interface Entity {
 }
 
 export namespace Entity {
-    function angleDiff(x1 :number, y1 :number, x2 :number, y2 :number) {
+    function angleDiff(x1: number, y1: number, x2: number, y2: number) {
         const a1 = Math.atan2(y1, x1);
         const a2 = Math.atan2(y2, x2);
 
@@ -53,35 +53,36 @@ export namespace EntityEvent {
 }
 
 export interface EntityType {
-    name :string
+    name: string
 }
 
 export namespace EntityType {
-    export const None = {name: 'none'};
-    export const Ship = {name: 'ship'};
-    export const Bullet = {name: 'bullet'};
-    export const ShipDebris = {name: 'shipDebris'};
-    export const Rock = {name: 'rock'};
-    export const Prize = {name: 'prize'};
+    export const None = { name: 'none' };
+    export const Ship = { name: 'ship' };
+    export const Bullet = { name: 'bullet' };
+    export const ShipDebris = { name: 'shipDebris' };
+    export const Rock = { name: 'rock' };
+    export const Prize = { name: 'prize' };
+    export const GravityWell = { name: 'gravityWell' };
 }
 
 const SCALE = 1280;
 const FRESHNESS = 4;
 
 export class EntityPoolGrid {
-    private grid :any = {};
+    private grid: any = {};
     private lastId = 0;
 
-    public constructor() {}
+    public constructor() { }
 
-    public add(entity :Entity) {
+    public add(entity: Entity) {
         if (!entity.id)
             entity.id = ++this.lastId;
 
         return this.updateGrid(entity);
     }
 
-    public updateGrid(entity :Entity) {
+    public updateGrid(entity: Entity) {
         if (!entity) return;
 
         const name = this.localCellKey(this.localCell(entity));
@@ -98,7 +99,7 @@ export class EntityPoolGrid {
         }
 
         if (entity.sectorKey) {
-            entity.newSector = Math.max(0, entity.newSector -1);
+            entity.newSector = Math.max(0, entity.newSector - 1);
             return;
         }
 
@@ -107,13 +108,13 @@ export class EntityPoolGrid {
         entity.newSector = FRESHNESS;
     }
 
-    public remove(id :number) {
+    public remove(id: number) {
         for (const coord in this.grid) {
             this.grid[coord].remove(id);
         }
     }
 
-    public allEntities() :Entity[] {
+    public allEntities(): Entity[] {
         const entities: Entity[] = [];
         Object.values(this.grid).forEach((cell: EntityPool) => {
             [].push.apply(entities, Object.values(cell.entities));
@@ -121,7 +122,7 @@ export class EntityPoolGrid {
         return entities;
     }
 
-    public fetchAroundCoord(point: {x: number, y: number}): any[] {
+    public fetchAroundCoord(point: { x: number, y: number }): any[] {
         const pools: any[] = [];
         const scaled = this.localCell(point);
         for (let i = 0; i < 9; i++) {
@@ -130,7 +131,7 @@ export class EntityPoolGrid {
                 y: Math.floor(i / 3) - 1,
             };
 
-            const cellKey = this.localCellKey({x: scaled.x + offset.x, y: scaled.y + offset.y});
+            const cellKey = this.localCellKey({ x: scaled.x + offset.x, y: scaled.y + offset.y });
             const cell = this.grid[cellKey];
 
             if (!cell) continue;
@@ -141,20 +142,20 @@ export class EntityPoolGrid {
         return pools;
     }
 
-    private localCell(point: {x: number, y: number}): {x: number, y: number} {
+    private localCell(point: { x: number, y: number }): { x: number, y: number } {
         return {
             x: Math.floor(point.x / SCALE),
             y: Math.floor(point.y / SCALE),
         };
     }
 
-    private localCellKey(point :{x :number, y :number}) {
+    private localCellKey(point: { x: number, y: number }) {
         return Object.values(point).join('_');
     }
 }
 
 class EntityPool {
-    private pool :any = {};
+    private pool: any = {};
     private count = 0;
 
     public get length() {
@@ -164,9 +165,9 @@ class EntityPool {
         return this.pool;
     }
 
-    public constructor(public name ?:string) {}
+    public constructor(public name?: string) { }
 
-    public add(entity :Entity) {
+    public add(entity: Entity) {
         if (!entity.id) {
             return;
         }
@@ -177,14 +178,14 @@ class EntityPool {
         this.pool[entity.id] = entity;
     }
 
-    public find(id :number) :Entity {
+    public find(id: number): Entity {
         if (!this.pool.hasOwnProperty(id))
             return null;
 
         return this.pool[id];
     }
 
-    public remove(id :number): number {
+    public remove(id: number): number {
         if (!this.pool.hasOwnProperty(id))
             return;
 

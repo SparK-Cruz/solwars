@@ -7,11 +7,12 @@ import { Rock } from './entities/rock';
 import { EntitySpawner } from './entity_spawner';
 import { Prize } from './entities/prize';
 import { Config } from './config';
+import { GravityWell } from './entities/gravity_well';
 
 interface SavedState {
     tick: number,
     entities: any[],
-    ranking: {name: string, bounty: number}[],
+    ranking: { name: string, bounty: number }[],
 }
 
 export module DeathCauses {
@@ -177,12 +178,12 @@ const stringify = fastjson({
 });
 
 export class CodecFacade {
-    public constructor() {}
+    public constructor() { }
 
     public encode(state: SavedState, force: boolean = false): string {
         const stream = {
             tick: state.tick,
-            ranking: state.ranking.map(p => {return {name: p.name, bounty: p.bounty}}),
+            ranking: state.ranking.map(p => { return { name: p.name, bounty: p.bounty } }),
             entities: state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e))
         };
 
@@ -190,12 +191,12 @@ export class CodecFacade {
         return this.encodeBin(flatstr(stringify(stream)));
     }
 
-    public decode(state :string): SavedState {
+    public decode(state: string): SavedState {
         // TODO PSON / binary
         return <SavedState>JSON.parse(flatstr(this.decodeBin(state)));
     }
 
-    public encodeEntity(entity :any, force: boolean = false) {
+    public encodeEntity(entity: any, force: boolean = false) {
         if (entity.spawner) {
             return null;
         }
@@ -208,7 +209,7 @@ export class CodecFacade {
     }
 
     public decodeEntity(data: Entity) {
-        switch(data.type.name) {
+        switch (data.type.name) {
             case EntityType.Ship.name:
                 return this.decodeShip(<Ship>data);
             case EntityType.Bullet.name:
@@ -219,6 +220,8 @@ export class CodecFacade {
                 return this.decodeRock(<Rock>data);
             case EntityType.Prize.name:
                 return this.decodePrize(<Prize>data);
+            case EntityType.GravityWell.name:
+                return this.decodeGravityWell(<GravityWell>data);
         }
     }
 
@@ -256,6 +259,12 @@ export class CodecFacade {
         const prize = new Prize();
         Object.assign(prize, data);
         return prize;
+    }
+
+    private decodeGravityWell(data: GravityWell) {
+        const well = new GravityWell();
+        Object.assign(well, data);
+        return well;
     }
 
     private lightEncode(entity: any) {

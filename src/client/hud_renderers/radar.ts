@@ -7,9 +7,9 @@ import { EntityType } from "../../space/entities";
 import { Stage } from ".././stage";
 import { Ship } from "../../space/entities/ship";
 
-const SCALE = 1/12;
-const REGION_SCALE = 1/512;
-const POS = {x: -220, y: -250};
+const SCALE = 1 / 12;
+const REGION_SCALE = 1 / 512;
+const POS = { x: -220, y: -250 };
 
 export class Radar implements Renderable {
     private container: any;
@@ -105,7 +105,7 @@ export class Radar implements Renderable {
 
         const entities = this.stage.fetchAllEntities();
 
-        for(let i in entities) {
+        for (let i in entities) {
             const entity = entities[i];
             if (entity.type.name === EntityType.Bullet.name) {
                 continue;
@@ -119,7 +119,7 @@ export class Radar implements Renderable {
                 style = 0xffffff;
                 size = 5;
             }
-            switch(entity.type.name) {
+            switch (entity.type.name) {
                 case EntityType.ShipDebris.name:
                     style = 0xff9933;
                     alpha = 0.2;
@@ -133,6 +133,9 @@ export class Radar implements Renderable {
                     style = 0x00ff00;
                     size = 3;
                     break;
+                case EntityType.GravityWell.name:
+                    style = 0x666699;
+                    size = 5;
             }
 
             const pos = this.camera.translate(entity);

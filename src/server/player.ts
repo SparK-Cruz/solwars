@@ -165,18 +165,4 @@ export class Player extends EventEmitter {
         this.emit(PlayerEvents.Die, death);
         this.ship.emit(EntityEvent.Despawn, this.ship);
     }
-
-    private randomShades(brightness: number) {
-        const maxColor = brightness * 3;
-        const darken = 0.58;
-
-        const r = Math.floor(Math.random() * 255);
-        const g = Math.floor(Math.random() * Math.min(255, maxColor - r));
-        const b = maxColor - r - g;
-
-        return {
-            color: `rgb(${r}, ${g}, ${b})`,
-            shade: `rgb(${r * darken}, ${g * darken}, ${b * darken})`,
-        };
-    }
 }
