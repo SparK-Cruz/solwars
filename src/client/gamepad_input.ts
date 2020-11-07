@@ -1,5 +1,5 @@
 import { Inputable } from './input';
-import { GamepadListener } from './gamepad_listener';
+import { AxisInfo, ButtonInfo, GamepadListener } from './gamepad_listener';
 import { Mapping } from '../space/entities/ships/mapping';
 import InputStore from './input_store';
 
@@ -15,20 +15,25 @@ export class GamepadInput implements Inputable {
 
     map: any = InputStore.data.padMapping;
 
+    private axisMoveListener: any = null;
+    private buttonChangeListener: any = null;
+
     public constructor(emmiter: any) {
-        this.gamepadListener = new GamepadListener(emmiter);
+        this.gamepadListener = GamepadListener.getInstance(emmiter);
+        this.axisMoveListener = this.axisMove.bind(this);
+        this.buttonChangeListener = this.buttonChange.bind(this);
 
         this.enabler = () => {
             if (this.disabler)
                 return;
 
             this.gamepadListener.enable();
-            this.gamepadListener.on('axisMove', this.axisMove);
-            this.gamepadListener.on('buttonChange', this.buttonChange);
+            this.gamepadListener.on('axisMove', this.axisMoveListener);
+            this.gamepadListener.on('buttonChange', this.buttonChangeListener);
 
             this.disabler = () => {
-                this.gamepadListener.removeListener('buttonChange', this.buttonChange);
-                this.gamepadListener.removeListener('axisMove', this.axisMove);
+                this.gamepadListener.removeListener('buttonChange', this.buttonChangeListener);
+                this.gamepadListener.removeListener('axisMove', this.axisMoveListener);
                 this.gamepadListener.disable();
             };
         };
@@ -42,17 +47,17 @@ export class GamepadInput implements Inputable {
         this.disabler && this.disabler();
     }
 
-    private buttonChange(pad: number, button: number, value: boolean): void {
-        if (typeof this.map[pad].buttons[button] == 'undefined')
+    private buttonChange(info: ButtonInfo): void {
+        if (typeof this.map[info.pad].buttons[info.button] == 'undefined')
             return;
 
-        if (this.mapping[value ? 'press' : 'release'](this.map[pad].buttons[button]))
+        if (this.mapping[info.state ? 'press' : 'release'](this.map[info.pad].buttons[info.button]))
             this.updateControl(this.mapping.state);
     }
 
-    private axisMove(pad: number, axis: number, value: number): void {
-        this.axisMoveHigh(pad, axis, value);
-        this.axisMoveLow(pad, axis, value);
+    private axisMove(info: AxisInfo): void {
+        this.axisMoveHigh(info.pad, info.axis, info.state);
+        this.axisMoveLow(info.pad, info.axis, info.state);
     }
 
     private axisMoveHigh(pad: number, axis: number, value: number): void {

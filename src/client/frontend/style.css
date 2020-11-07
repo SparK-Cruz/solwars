@@ -247,12 +247,14 @@ label {
 #input-editor {
     padding: 10px;
 }
-#input-editor #keyboard-editor {
+#input-editor #keyboard-editor,
+#input-editor #gamepad-editor {
     display: grid;
     grid-template-columns: 1fr 1fr;
     column-gap: 10px;
 }
-#input-editor #keyboard-editor .buttons {
+#input-editor #keyboard-editor .buttons,
+#input-editor #gamepad-editor .buttons {
     grid-column: 1 / span 2;
 }
 #input-editor .controller-input p {

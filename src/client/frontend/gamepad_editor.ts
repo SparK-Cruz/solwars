@@ -28,7 +28,7 @@ export default Vue.extend({
     methods: {
         refresh() {
             InputStore.save();
-            this.actions = InputStore.export().keyMapping;
+            this.actions = InputStore.export().padMapping;
             this.isDefault = InputStore.isGamepadDefault();
         },
         restore() {

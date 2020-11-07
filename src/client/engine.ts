@@ -15,7 +15,7 @@ import { GamepadInput } from './gamepad_input';
 
 const assman = AssetManager.getInstance();
 const adjustViewportSize = function () {
-    const ratio = 4 / 5;
+    const ratio = 3 / 5;
     this.width = window.innerWidth * ratio;
     this.height = window.innerHeight * ratio;
 };

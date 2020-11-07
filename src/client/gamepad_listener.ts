@@ -24,6 +24,8 @@ function translatePad(pad: Gamepad): SimplePad {
     };
 }
 
+let instance: GamepadListener = null;
+
 export class GamepadListener extends EventEmitter {
     private last: SimplePad[] = [];
 
@@ -34,10 +36,16 @@ export class GamepadListener extends EventEmitter {
 
     private interval: any = null;
 
-    public constructor(emmiter: any) {
+    public static getInstance(emitter: any) {
+        if (!instance) instance = new GamepadListener(emitter);
+        return instance;
+    }
+
+    private constructor(emmiter: any) {
         super();
 
         const changeCheck = () => {
+            this.pads = navigator.getGamepads();
             this.pads.forEach((pad, i) => {
                 const state = translatePad(pad);
 
@@ -71,33 +79,15 @@ export class GamepadListener extends EventEmitter {
             });
         };
 
-        const connect = () => {
-            this.pads = navigator.getGamepads();
-
-            if (this.interval)
-                return;
-
-            this.interval = setInterval(changeCheck, 1000 / 64);
-        };
-        const disconnect = () => {
-            this.pads = navigator.getGamepads();
-
-            if (this.pads.length == 0) {
-                clearInterval(this.interval);
-            }
-        };
-
         this.enabler = () => {
             if (this.disabler)
                 return;
 
-            emmiter.addEventListener('gamepadconnected', connect);
-            emmiter.addEventListener('gamepaddisconnected', disconnect);
+            this.interval = setInterval(changeCheck, 1000 / 64);
 
             this.disabler = () => {
-                emmiter.removeEventListener('gamepadconnected', connect);
-                emmiter.removeEventListener('gamepaddisconnected', disconnect);
                 this.disabler = null;
+                clearInterval(this.interval);
             };
         };
     }

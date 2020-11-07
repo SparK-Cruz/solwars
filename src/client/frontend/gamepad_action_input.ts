@@ -20,30 +20,35 @@ export default Vue.extend({
         idle: true,
         mapper: <any>null,
         listener: <GamepadListener>null,
+        axisMoveListener: <any>null,
+        changeButtonListener: <any>null,
     }),
     created() {
-        this.listener = new GamepadListener(window);
+        this.listener = GamepadListener.getInstance(window);
         this.mapper = new PadMapper(InputStore.data.padMapping);
 
-        this.listener.on('axisMove', (info: AxisInfo) => {
-            if (!info.state) return;
-
-            this.bindKey(info.pad + 'axis' + info.axis + (info.state > 0 ? 'high' : 'low'));
-        });
-
-        this.listener.on('changeButton', (info: ButtonInfo) => {
-            if (!info.state) return;
-
-            this.bindKey(info.pad + 'btn' + info.button);
-        });
+        this.axisMoveListener = this.axisMove.bind(this);
+        this.changeButtonListener = this.changeButton.bind(this);
     },
     props: ['action'],
     methods: {
+        axisMove(info: AxisInfo) {
+            if (!info.state) return;
+
+            this.bindKey(info.pad + 'axis' + info.axis + (info.state > 0 ? 'high' : 'low'));
+        },
+        changeButton(info: ButtonInfo) {
+            if (!info.state) return;
+
+            this.bindKey(info.pad + 'btn' + info.button);
+        },
         listenAndBind() {
             this.idle = false;
             this.$nextTick(() => {
                 this.$refs.input.focus();
                 this.listener.enable();
+                this.listener.on('axisMove', this.axisMoveListener);
+                this.listener.on('changeButton', this.changeButtonListener);
             });
         },
         remove(key: string) {
@@ -55,14 +60,13 @@ export default Vue.extend({
 
             this.idle = true;
             this.mapper.map(key, this.action.code);
+            this.listener.removeListener('axisMove', this.axisMoveListener);
+            this.listener.removeListener('changeButton', this.changeButtonListener);
+            this.listener.disable();
             this.$emit('change');
         },
         keyLabel(key: string) {
-            const found = GamepadLabels.filter(k => k.id.endsWith(key));
-            if (!found.length)
-                return key;
-
-            return found.pop().name;
+            return GamepadLabels.find(k => key.endsWith(k.id)).name || 'Invalid';
         },
     },
 });

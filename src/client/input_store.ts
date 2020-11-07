@@ -1,5 +1,5 @@
 import { Mapping } from '../space/entities/ships/mapping';
-import { writeAxis, writeButton } from './frontend/pad_mapper';
+import { writeAxis, writeButton, readAxis, readButton } from './frontend/pad_mapper';
 
 interface Action {
     code: number;
@@ -69,7 +69,21 @@ const serializeKeyboardMapping = (mapping: Action[]): any => {
         );
 };
 const serializeGamepadMapping = (mapping: Action[]): any => {
-    return {};
+    const result: any[] = [];
+    mapping.forEach(a => a.keys.map(s => {
+        let info = null;
+        if (info = readAxis(s)) {
+            result[info[0]].axes = result[info[0]].axes || Array(6).fill(null);
+            result[info[0]].axes[info[1]] = result[info[0]].axes[info[1]] || { high: null, low: null };
+            result[info[0]].axes[info[1]][info[2] ? 'high' : 'low'] = a.code;
+            return;
+        }
+
+        result[info[0]].buttons = result[info[0]].buttons || Array(12).fill(null);
+        result[info[0]].buttons[info[1]] = a.code;
+    }));
+
+    return result;
 };
 
 const deserializeKeyboardMapping = (obj: any): Action[] => {
@@ -186,15 +200,6 @@ export default {
         return true;
     },
     isGamepadDefault(): boolean {
-        if (Object.values(this.data.padMapping).length !== Object.values(DEFAULT_PAD).length)
-            return false;
-
-        for (const action in this.data.padMapping) {
-            if (!DEFAULT_PAD.hasOwnProperty(action)
-                || (<any>DEFAULT_PAD)[action] !== <any>this.data.padMapping[action])
-                return false;
-        }
-
-        return true;
+        return JSON.stringify(this.data.padMapping) === JSON.stringify(DEFAULT_PAD);
     },
 }
