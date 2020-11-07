@@ -3,8 +3,6 @@ import { AxisInfo, ButtonInfo, GamepadListener } from './gamepad_listener';
 import { Mapping } from '../space/entities/ships/mapping';
 import InputStore from './input_store';
 
-InputStore.load();
-
 export class GamepadInput implements Inputable {
     private gamepadListener: GamepadListener = null;
     private onChange = function (state: number): void { };
@@ -13,7 +11,7 @@ export class GamepadInput implements Inputable {
     private enabler: Function;
     private disabler: Function;
 
-    map: any = InputStore.data.padMapping;
+    private map: any = null;
 
     private axisMoveListener: any = null;
     private buttonChangeListener: any = null;
@@ -27,6 +25,9 @@ export class GamepadInput implements Inputable {
             if (this.disabler)
                 return;
 
+            InputStore.load();
+            this.map = InputStore.data.padMapping;
+
             this.gamepadListener.enable();
             this.gamepadListener.on('axisMove', this.axisMoveListener);
             this.gamepadListener.on('buttonChange', this.buttonChangeListener);
@@ -35,6 +36,7 @@ export class GamepadInput implements Inputable {
                 this.gamepadListener.removeListener('buttonChange', this.buttonChangeListener);
                 this.gamepadListener.removeListener('axisMove', this.axisMoveListener);
                 this.gamepadListener.disable();
+                this.disabler = null;
             };
         };
     }

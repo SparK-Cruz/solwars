@@ -2,8 +2,6 @@ import { Inputable } from './input';
 import { Mapping } from '../space/entities/ships/mapping';
 import InputStore from './input_store';
 
-InputStore.load();
-
 export class KeyboardInput implements Inputable {
     private onChange = function (state: number): void { };
     protected mapping: Mapping = new Mapping();
@@ -11,7 +9,7 @@ export class KeyboardInput implements Inputable {
     private enabler: Function;
     private disabler: Function;
 
-    map: any = InputStore.data.keyMapping;
+    private map: any = null;
 
     public constructor(emmiter: any) {
         const keydown = (e: KeyboardEvent) => {
@@ -24,6 +22,9 @@ export class KeyboardInput implements Inputable {
         this.enabler = () => {
             if (this.disabler)
                 return;
+
+            InputStore.load();
+            this.map = InputStore.data.keyMapping;
 
             emmiter.addEventListener('keydown', keydown);
             emmiter.addEventListener('keyup', keyup);

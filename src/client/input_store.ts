@@ -49,8 +49,13 @@ const DEFAULT_PAD = [{
 
 const parse = (s: string, defaultValue: any): any => {
     try {
-        return JSON.parse(s) || defaultValue;
-    } catch (error) {
+        const result = JSON.parse(s);
+        if (!result || Object.values(result).length == 0)
+            return defaultValue;
+
+        return result;
+    }
+    catch (error) {
         return defaultValue;
     }
 };
