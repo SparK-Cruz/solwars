@@ -25,7 +25,6 @@ export class GamepadInput implements Inputable {
             if (this.disabler)
                 return;
 
-            InputStore.load();
             this.map = InputStore.data.padMapping;
 
             this.gamepadListener.enable();

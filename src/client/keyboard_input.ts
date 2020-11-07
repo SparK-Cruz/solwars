@@ -23,7 +23,6 @@ export class KeyboardInput implements Inputable {
             if (this.disabler)
                 return;
 
-            InputStore.load();
             this.map = InputStore.data.keyMapping;
 
             emmiter.addEventListener('keydown', keydown);

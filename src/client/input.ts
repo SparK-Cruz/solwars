@@ -1,3 +1,5 @@
+import InputStore from "./input_store";
+
 export interface Inputable {
     enable(): void;
     disable(): void;
@@ -12,6 +14,7 @@ export class Input implements Inputable {
     }
 
     enable() {
+        InputStore.load();
         this.inputs.forEach(input => input.enable());
     }
     disable() {
