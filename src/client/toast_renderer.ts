@@ -3,14 +3,14 @@ import { Renderable } from "./game_renderers/renderable";
 
 const SECOND = 60; //Client tick
 const FADE = 30;
-const PADDING = 10;
+const PADDING = 5;
 
 export interface ToastTime {
     time: number;
 }
 export namespace ToastTime {
-    export const SHORT: ToastTime = {time: 2 * SECOND};
-    export const LONG: ToastTime = {time: 3 * SECOND};
+    export const SHORT: ToastTime = { time: 2 * SECOND };
+    export const LONG: ToastTime = { time: 3 * SECOND };
 }
 
 const textStyle = {
@@ -35,7 +35,7 @@ export class ToastRenderer implements Renderable {
 
         const center = {
             x: this.parent.view.width / 2,
-            y: this.parent.view.height - 200,
+            y: this.parent.view.height - 100,
         };
 
         this.timer = time.time;

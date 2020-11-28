@@ -1,4 +1,5 @@
 const PIXI = require('pixi.js');
+import { IS_MOBILE } from "../environment";
 import { Renderable } from "../game_renderers/renderable";
 
 const PAD = 20;
@@ -25,7 +26,7 @@ export class RankingRenderer implements Renderable {
             const text = new PIXI.Text('', style);
             text.anchor.set(1, 0);
             text.visible = false;
-            text.position.set(0, (i+1) * SLOT_SIZE);
+            text.position.set(0, (i + 1) * SLOT_SIZE);
             container.addChild(text);
 
             this.pool.push(text);
@@ -35,7 +36,7 @@ export class RankingRenderer implements Renderable {
         this.container = container;
     }
 
-    public update(ranking: {name: string, bounty: number}[]) {
+    public update(ranking: { name: string, bounty: number }[]) {
         this.pool.slice(ranking.length).forEach(t => { t.visible = false; });
 
         ranking.slice(0, Math.min(LIMIT, ranking.length)).forEach((entry, i) => {
@@ -45,6 +46,11 @@ export class RankingRenderer implements Renderable {
     }
 
     public render() {
+        if (IS_MOBILE) {
+            this.container.position.set(this.container.width + PAD, PAD);
+            return;
+        }
+
         this.container.position.set(this.parent.view.width - PAD, PAD);
     }
 }

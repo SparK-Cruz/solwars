@@ -23,6 +23,7 @@ export class EntityRenderer implements Renderable {
     public constructor(parent: any, private camera: Camera, private stage: Stage) {
         this.container = new PIXI.Container();
         this.container.sortableChildren = true;
+        this.container.interactiveChildren = false;
 
         this.stage.on('despawn', (id: number) => {
             if (!this.cache.hasOwnProperty(id)) {

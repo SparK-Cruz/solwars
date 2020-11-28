@@ -12,10 +12,15 @@ import { ToastRenderer, ToastTime } from './toast_renderer';
 import { AudioRenderer } from './audio_renderers/audio_renderer';
 import { Input, Inputable } from './input';
 import { GamepadInput } from './gamepad_input';
+import { IS_MOBILE } from './environment';
+import { MobileInputRenderer } from './mobile_input_renderer';
+import { MobileInput } from './mobile_input';
 
 const assman = AssetManager.getInstance();
 const adjustViewportSize = function () {
-    const ratio = 3 / 5;
+    let ratio = 3 / 5;
+    if (IS_MOBILE) ratio = 1.1;
+
     this.width = window.innerWidth * ratio;
     this.height = window.innerHeight * ratio;
 };
@@ -31,6 +36,7 @@ export class Engine extends EventEmitter {
     private toastRenderer: ToastRenderer;
     private fpsRenderer: FpsRenderer;
     private audioRenderer: AudioRenderer;
+    private mobileInputRenderer: MobileInputRenderer;
 
     public constructor(private game: HTMLCanvasElement) {
         super();
@@ -48,12 +54,17 @@ export class Engine extends EventEmitter {
         resizePixi();
 
         const container = new PIXI.Container();
+        container.interactiveChildren = true;
         container.view = this.app.view;
+        this.app.stage.interactiveChildren = true;
         this.app.stage.addChild(container);
+
+        this.mobileInputRenderer = new MobileInputRenderer(container);
 
         this.input = new Input(
             new KeyboardInput(window),
             new GamepadInput(window),
+            new MobileInput(this.mobileInputRenderer),
         );
         this.client = new Client(this.input);
         this.camera = new Camera();
@@ -79,6 +90,8 @@ export class Engine extends EventEmitter {
             this.toastRenderer.render();
 
             this.audioRenderer.render();
+
+            this.mobileInputRenderer.render();
         });
 
         this.listenClient(this.client);

@@ -11,11 +11,13 @@ export class Mapping {
     public state = 0;
 
     public press(flag: number) {
+        const last = this.state;
         this.state |= flag;
-        return this;
+        return this.state !== last;
     }
     public release(flag: number) {
+        const last = this.state;
         this.state &= ~flag;
-        return this;
+        return this.state !== last;
     }
 }

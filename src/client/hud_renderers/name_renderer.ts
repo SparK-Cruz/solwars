@@ -4,6 +4,7 @@ import { Camera } from "../camera";
 import { Stage } from ".././stage";
 import { ClientInfo } from "../client";
 import { EntityType } from "../../space/entities";
+import { IS_MOBILE } from "../environment";
 
 const style = {
     fontFamily: 'monospace',
@@ -27,10 +28,12 @@ export class NameRenderer implements Renderable {
             align: 'center',
         });
 
-        this.playerName.position.set(20)
+        this.playerName.position.set(20);
         this.container.position.set(0);
 
-        this.container.addChild(this.playerName);
+        if (!IS_MOBILE)
+            this.container.addChild(this.playerName);
+
         this.parent.addChild(this.container);
     }
 
@@ -47,7 +50,7 @@ export class NameRenderer implements Renderable {
         this.pool.forEach(t => t.visible = false);
 
         let index = 0;
-        for(let i in entities) {
+        for (let i in entities) {
             const entity = entities[i];
 
             if (entity.type.name !== EntityType.Ship.name)

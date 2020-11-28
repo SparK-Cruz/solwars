@@ -5,11 +5,12 @@ import { Camera } from "../camera";
 import { ClientInfo } from "../client";
 import { EntityType } from "../../space/entities";
 import { Stage } from ".././stage";
-import { Ship } from "../../space/entities/ship";
+import { IS_MOBILE } from "../environment";
 
 const SCALE = 1 / 12;
 const REGION_SCALE = 1 / 512;
 const POS = { x: -220, y: -250 };
+const MOBILE_POS = { x: -220, y: 20 };
 
 export class Radar implements Renderable {
     private container: any;
@@ -77,13 +78,21 @@ export class Radar implements Renderable {
         if (!this.info)
             return;
 
+        this.drawCoordinates();
+        this.drawBlips();
+
+        if (IS_MOBILE) {
+            this.container.position.set(
+                this.parent.view.width + MOBILE_POS.x,
+                MOBILE_POS.y
+            );
+            return;
+        }
+
         this.container.position.set(
             this.parent.view.width + POS.x,
             this.parent.view.height + POS.y
         );
-
-        this.drawCoordinates();
-        this.drawBlips();
     }
 
     private drawCoordinates() {
