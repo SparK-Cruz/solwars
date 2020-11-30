@@ -21,9 +21,9 @@ export class ActionsRenderer extends EventEmitter implements Renderable {
 
         const afterburner = this.buildButton(this.drawAfterburnerIcon());
         afterburner.position.set(-RADIUS, -RADIUS - PADDING);
-        afterburner.on('touchstart', () => this.pointerDown('afterburner-up'));
-        afterburner.on('touchend', () => this.pointerUp('afterburner-up'));
-        afterburner.on('touchendoutside', () => this.pointerUp('afterburner-up'));
+        afterburner.on('touchstart', () => this.pointerDown('afterburner'));
+        afterburner.on('touchend', () => this.pointerUp('afterburner'));
+        afterburner.on('touchendoutside', () => this.pointerUp('afterburner'));
 
         const guns = this.buildButton(this.drawGunsIcon());
         guns.position.set(-RADIUS * 3 - PADDING, -RADIUS);

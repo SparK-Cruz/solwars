@@ -79,18 +79,21 @@ export class Engine extends EventEmitter {
         this.app.ticker.add(() => {
             if (!this.running) return;
 
+            const info = this.client.fetchInfo();
+
             this.gameRenderer.render();
 
-            this.hudRenderer.update(this.client.fetchInfo());
+            this.hudRenderer.update(info);
             this.hudRenderer.render();
 
-            this.fpsRenderer.update(this.client.fetchInfo().updates);
+            this.fpsRenderer.update(info.updates);
             this.fpsRenderer.render();
 
             this.toastRenderer.render();
 
             this.audioRenderer.render();
 
+            this.mobileInputRenderer.update(info);
             this.mobileInputRenderer.render();
         });
 

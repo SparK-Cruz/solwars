@@ -1,1 +1,1 @@
-export const IS_MOBILE = navigator.userAgent.match(/(?:Android)|(?:webOS)|(?:iPhone)|(?:iPad)|(?:iPod)|(?:BlackBerry)|(?:Windows Phone)/i);
+export const IS_MOBILE = true; // navigator.userAgent.match(/(?:Android)|(?:webOS)|(?:iPhone)|(?:iPad)|(?:iPod)|(?:BlackBerry)|(?:Windows Phone)/i);

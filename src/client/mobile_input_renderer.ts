@@ -3,6 +3,7 @@ import { DPadRenderer } from "./mobile_input/dpad_renderer";
 import { ActionsRenderer } from "./mobile_input/actions_renderer";
 import { EventEmitter } from "events";
 import { IS_MOBILE } from "./environment";
+import { ClientInfo } from "./client";
 
 const PIXI = require('pixi.js');
 
@@ -11,6 +12,8 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
     private index: number = 0;
     private dpad: DPadRenderer;
     private actions: ActionsRenderer;
+
+    private info: ClientInfo = null;
 
     constructor(private parent: any) {
         super();
@@ -42,9 +45,14 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
         });
     }
 
+    public update(info: ClientInfo) {
+        this.dpad.update(info);
+    }
+
     public render() {
-        if (!IS_MOBILE)
+        if (!IS_MOBILE) {
             return;
+        }
 
         try {
             this.parent.setChildIndex(this.container, this.index++);
