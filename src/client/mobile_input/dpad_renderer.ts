@@ -130,8 +130,6 @@ export class DPadRenderer extends EventEmitter implements Renderable {
             diff = normalize(diff + 180);
         }
 
-        console.log(diff, nAngle, this.dist, RADIUS * 0.7);
-
         return { diff, big };
     }
 

@@ -19,7 +19,7 @@ import { MobileInput } from './mobile_input';
 const assman = AssetManager.getInstance();
 const adjustViewportSize = function () {
     let ratio = 3 / 5;
-    if (IS_MOBILE) ratio = 1.1;
+    if (IS_MOBILE) ratio = 9 / 10;
 
     this.width = window.innerWidth * ratio;
     this.height = window.innerHeight * ratio;
