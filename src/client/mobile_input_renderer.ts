@@ -46,6 +46,9 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
     }
 
     public update(info: ClientInfo) {
+        if (!IS_MOBILE)
+            return;
+
         this.dpad.update(info);
     }
 
