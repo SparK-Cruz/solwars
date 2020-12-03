@@ -30,12 +30,10 @@ export class GravityWell extends EventEmitter implements Entity {
         this.updatePhisics(delta);
     }
     collide(entity: Entity, result: any): void {
-        return;
-
-        if (typeof (<any>entity).addDamage !== 'undefined') {
-            (<any>entity).addDamage((<any>entity).health, this);
-            return;
-        }
+        // if (typeof (<any>entity).addDamage !== 'undefined') {
+        //     (<any>entity).addDamage((<any>entity).health, this);
+        //     return;
+        // }
 
         entity.vx = 0;
         entity.vy = 0;
@@ -55,8 +53,8 @@ export class GravityWell extends EventEmitter implements Entity {
         entities
             .reduce((a, c) => a.concat(Object.values(c)), [])
             .forEach(e => {
-                if (e.id === this.id) return;
-                if (e.type.name == EntityType.Rock.name) return;
+                if (e.type.name === EntityType.GravityWell.name) return;
+                // if (e.type.name == EntityType.Rock.name) return;
 
                 let d = Math.sqrt(Math.pow(this.x - e.x, 2) + Math.pow(this.y - e.y, 2));
                 if (d > this.radius)

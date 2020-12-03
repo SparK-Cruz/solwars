@@ -74,6 +74,10 @@ export class Client extends EventEmitter {
         this.socket.disconnect();
     }
 
+    public syncEntity(id: number) {
+        this.socket.emit(CodecEvents.SYNC_ENTITY, id);
+    }
+
     public getStage() {
         return this.stage;
     }
@@ -160,6 +164,11 @@ export class Client extends EventEmitter {
         socket.on(CodecEvents.UPGRADE, (name: string) => {
             this.emit(ClientEvents.UPGRADE, name);
             this.ship.emit(ShipEvents.Upgrade);
+        });
+
+        socket.on(CodecEvents.ENTITY, (entity: any) => {
+            console.log('triggered');
+            this.stage.add(this.codec.decodeEntity(JSON.parse(entity)));
         });
 
         this.input.change((state: number) => {

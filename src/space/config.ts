@@ -32,18 +32,18 @@ export interface BotsConfig {
     count: number,
     ship: BotShip,
     prefix: string,
+    anon: boolean,
     faction: string,
 }
 
 export interface BotShip {
     model: string,
-    decals: {name: string, color: string}[],
+    decals: { name: string, color: string }[],
     color: string,
 }
 
 export class Config {
     public static serverPort: number;
-    public static networkCompression: boolean;
     public static TPS: number;
     public static maxPlayers: number;
     public static ships: ShipsConfig;
@@ -56,7 +56,7 @@ export class Config {
                 console.log(err);
                 return;
             }
-            for(let i in contents) {
+            for (let i in contents) {
                 (<any>Config)[i] = contents[i];
             }
 

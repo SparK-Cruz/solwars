@@ -11,6 +11,7 @@ export module PlayerEvents {
     export const Ship = 'ship';
     export const Disconnect = 'disconnect';
     export const Die = 'die';
+    export const SyncEntity = 'syncEntity';
 }
 
 export class Player extends EventEmitter {
@@ -30,6 +31,10 @@ export class Player extends EventEmitter {
 
     public sendState(state: string) {
         this.socket.emit(CodecEvents.STEP, state);
+    }
+
+    public sendEntity(entityData: string) {
+        this.socket.emit(CodecEvents.ENTITY, entityData);
     }
 
     public sendRemoval(id: number) {
@@ -54,6 +59,9 @@ export class Player extends EventEmitter {
         });
         this.socket.on(CodecEvents.SEND_INPUT, (data: any) => {
             this.onInput(data);
+        });
+        this.socket.on(CodecEvents.SYNC_ENTITY, (data: any) => {
+            this.emit(PlayerEvents.SyncEntity, parseInt(data));
         });
         this.socket.once(CodecEvents.DISCONNECT, () => {
             this.emit(PlayerEvents.Disconnect);
@@ -124,6 +132,8 @@ export class Player extends EventEmitter {
                 ship.color = options.color;
             if (options.decal)
                 ship.decals[0].color = options.decal;
+
+            (<any>ship).aiFaction = 'human';
 
             onSuccess(ship);
         }, 0);

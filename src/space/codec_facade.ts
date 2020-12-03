@@ -29,7 +29,6 @@ export interface PlayerDeath {
     type: EntityType,
 }
 
-const LZString = require('lz-string');
 const fastjson = require('fast-json-stringify');
 const flatstr = require('flatstr');
 
@@ -188,12 +187,12 @@ export class CodecFacade {
         };
 
         // TODO PSON / binary
-        return this.encodeBin(flatstr(stringify(stream)));
+        return flatstr(stringify(stream));
     }
 
     public decode(state: string): SavedState {
         // TODO PSON / binary
-        return <SavedState>JSON.parse(flatstr(this.decodeBin(state)));
+        return <SavedState>JSON.parse(flatstr(state));
     }
 
     public encodeEntity(entity: any, force: boolean = false) {
@@ -319,19 +318,6 @@ export class CodecFacade {
             type: entity.type,
         };
     }
-
-    private encodeBin(json: string): string {
-        if (!Config.networkCompression)
-            return json;
-
-        return LZString.compress(json);
-    }
-    private decodeBin(bin: string): string {
-        if (!Config.networkCompression)
-            return bin;
-
-        return LZString.decompress(bin);
-    }
 }
 
 export namespace CodecEvents {
@@ -345,10 +331,12 @@ export namespace CodecEvents {
     export const DIE = "die";
     export const RESPAWN = "respawn";
     export const UPGRADE = "upgrade";
+    export const ENTITY = "entity";
 
     // server reads
     export const SEND_INPUT = "input";
     export const JOIN_GAME = "join"
     export const DISCONNECT = "disconnect";
     export const CONNECTION = "connection";
+    export const SYNC_ENTITY = "syncEntity";
 }

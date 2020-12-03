@@ -32,7 +32,7 @@ export class BotManager {
             return;
 
         for (let i = 0; i < number; i++) {
-            const name = ((config && config.prefix) || this.prefix) + BotNamePool.get();
+            const name = ((config && config.prefix) || this.prefix) + (config.anon ? BotNamePool.getAnon() : BotNamePool.get());
             const bot = new Bot(name, this.room, config || this.config);
             this.room.setupPlayer(bot);
             this.bots.push(bot);

@@ -4,7 +4,7 @@ import { Server } from 'http';
 import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
 import { Stage } from '../space/stage';
 import { Player, PlayerEvents } from './player';
-import { EntityEvent, EntityType } from '../space/entities';
+import { EntityEvent, Entity } from '../space/entities';
 import { Config } from '../space/config';
 import { Ship } from '../space/entities/ship';
 
@@ -69,6 +69,13 @@ export class Room {
         player.on(PlayerEvents.Die, (death: PlayerDeath) => {
             this.onPlayerDie(player, death);
             this.ranking = null;
+        });
+        player.on(PlayerEvents.SyncEntity, (id: number) => {
+            console.log('triggered');
+            let entity = null;
+            this.stage.fetchEntitiesAround(player.ship)
+                .find((p: Entity[]) => !!p.find((e: Entity) => e.id === id ? !!(entity = e) : false));
+            player.sendEntity(JSON.stringify(this.codec.encodeEntity(entity)));
         });
         player.on(PlayerEvents.Disconnect, () => {
             this.onPlayerDisconnect(player);

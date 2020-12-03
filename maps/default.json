@@ -86,6 +86,17 @@
     ],
     "npe": [
         {
+            "type": {
+                "name": "gravityWell"
+            },
+            "x": 4500,
+            "y": 4500,
+            "mass": 1000,
+            "radius": 2000,
+            "teleport": 3000,
+            "pull": 0.01
+        },
+        {
             "spawner": true,
             "type": {
                 "name": "rock"

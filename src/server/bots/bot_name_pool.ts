@@ -48,4 +48,8 @@ export class BotNamePool {
 
         return botNames[this.index++];
     }
+
+    public static getAnon() {
+        return "Anon" + (Math.random() * 999 | 0);
+    }
 }

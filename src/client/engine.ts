@@ -98,6 +98,7 @@ export class Engine extends EventEmitter {
         });
 
         this.listenClient(this.client);
+        this.gameRenderer.on('entity_fail', (id: number) => this.client.syncEntity(id));
         assman.preload();
 
         window.onresize = () => {

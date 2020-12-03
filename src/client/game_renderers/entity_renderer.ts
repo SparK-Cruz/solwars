@@ -1,4 +1,6 @@
 const PIXI = require('pixi.js');
+
+import { EventEmitter } from "events";
 import { Renderable } from "./renderable";
 import { Camera } from "../camera";
 import { Stage } from ".././stage";
@@ -16,11 +18,13 @@ import { Prize } from "../../space/entities/prize";
 import { GravityWell } from "../../space/entities/gravity_well";
 import { GravityWellRenderer } from "./entities/gravity_well_renderer";
 
-export class EntityRenderer implements Renderable {
+export class EntityRenderer extends EventEmitter implements Renderable {
     private cache: any = {};
     private container: any;
 
     public constructor(parent: any, private camera: Camera, private stage: Stage) {
+        super();
+
         this.container = new PIXI.Container();
         this.container.sortableChildren = true;
         this.container.interactiveChildren = false;
@@ -91,28 +95,34 @@ export class EntityRenderer implements Renderable {
             renderer,
         });
 
-        switch (entity.type.name) {
-            case EntityType.Ship.name:
-                container.zIndex = 60;
-                return pair(new ShipRenderer(container, <Ship>entity));
-            case EntityType.Bullet.name:
-                container.zIndex = 50;
-                return pair(new BulletRenderer(container, <Bullet>entity));
-            case EntityType.ShipDebris.name:
-                container.zIndex = 40;
-                return pair(new ShipDebrisRenderer(container, <ShipDebris>entity));
-            case EntityType.Rock.name:
-                container.zIndex = 30;
-                return pair(new RockRenderer(container, <Rock>entity));
-            case EntityType.Prize.name:
-                container.zIndex = 20;
-                return pair(new PrizeRenderer(container, <Prize>entity));
-            case EntityType.GravityWell.name:
-                container.zIndex = 10;
-                return pair(new GravityWellRenderer(container, <GravityWell>entity));
-            default:
-                console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
-                break;
+        try {
+            switch (entity.type.name) {
+                case EntityType.Ship.name:
+                    container.zIndex = 60;
+                    return pair(new ShipRenderer(container, <Ship>entity));
+                case EntityType.Bullet.name:
+                    container.zIndex = 50;
+                    return pair(new BulletRenderer(container, <Bullet>entity));
+                case EntityType.ShipDebris.name:
+                    container.zIndex = 40;
+                    return pair(new ShipDebrisRenderer(container, <ShipDebris>entity));
+                case EntityType.Rock.name:
+                    container.zIndex = 30;
+                    return pair(new RockRenderer(container, <Rock>entity));
+                case EntityType.Prize.name:
+                    container.zIndex = 20;
+                    return pair(new PrizeRenderer(container, <Prize>entity));
+                case EntityType.GravityWell.name:
+                    container.zIndex = 10;
+                    return pair(new GravityWellRenderer(container, <GravityWell>entity));
+                default:
+                    console.warn('No renderer for entity (' + entity.id + '): ' + entity.type.name);
+                    break;
+            }
+        } catch (error) {
+            this.container.removeChild(container);
+            this.emit('fail', entity.id);
+            throw error;
         }
 
         return null;
