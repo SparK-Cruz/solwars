@@ -170,16 +170,24 @@ export class DPadRenderer extends EventEmitter implements Renderable {
     private loop() {
         const { diff, big } = this.angleDiff(this.angle);
 
+        this.checkTurnTo(diff);
+        this.checkThrust(big);
+    }
+
+    private checkTurnTo(angle: number) {
         if (this.dist >= RADIUS * 0.9) {
-            this.turnTo(diff);
-        } else {
-            this.stopTurning();
+            this.turnTo(angle);
+            return;
         }
 
+        this.stopTurning();
+    }
+    private checkThrust(backwards: boolean) {
         if (this.dist >= TURN_RADIUS) {
-            this.thrust(big);
-        } else {
-            this.stopThrusting();
+            this.thrust(backwards);
+            return;
         }
+
+        this.stopThrusting();
     }
 }
