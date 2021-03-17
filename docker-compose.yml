@@ -1,0 +1,51 @@
+
+version: '2'
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/nginx/certs
+      - /etc/nginx/vhost.d
+      - /usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    environment:
+      - DHPARAM_GENERATION=0
+    networks:
+      - normie
+      - undercover
+
+  proxy-companion:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    depends_on:
+      - proxy
+    volumes_from:
+      - proxy:rw
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - "DEFAULT_EMAIL=dev.rogercruz@gmail.com"
+    networks:
+      - undercover
+
+  app:
+    build:
+      context: .
+    volumes:
+      - .:/app
+    ports:
+      - "8080:80"
+    environment:
+      - LETSENCRYPT_HOST=opday.net
+      - VIRTUAL_HOST=opday.net
+      - VIRTUAL_PORT=8080
+    networks:
+      - undercover
+
+networks:
+  normie:
+  undercover:
