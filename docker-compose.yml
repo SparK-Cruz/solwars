@@ -40,8 +40,8 @@ services:
     ports:
       - "8080:80"
     environment:
-      - LETSENCRYPT_HOST=opday.net
-      - VIRTUAL_HOST=opday.net
+      - LETSENCRYPT_HOST=solwars.io
+      - VIRTUAL_HOST=solwars.io
       - VIRTUAL_PORT=8080
     networks:
       - undercover
