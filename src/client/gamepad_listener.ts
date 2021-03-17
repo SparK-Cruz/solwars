@@ -46,6 +46,8 @@ export class GamepadListener extends EventEmitter {
 
         const changeCheck = () => {
             this.pads = navigator.getGamepads();
+            if (typeof this.pads.forEach !== 'function') return;
+
             this.pads.forEach((pad, i) => {
                 const state = translatePad(pad);
 
