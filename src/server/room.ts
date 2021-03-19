@@ -74,7 +74,7 @@ export class Room {
             console.log('triggered');
             let entity = null;
             this.stage.fetchEntitiesAround(player.ship)
-                .find((p: Entity[]) => !!p.find((e: Entity) => e.id === id ? !!(entity = e) : false));
+                .find((p: Entity[]) => p && !!p.find((e: Entity) => e.id === id ? !!(entity = e) : false));
             player.sendEntity(JSON.stringify(this.codec.encodeEntity(entity)));
         });
         player.on(PlayerEvents.Disconnect, () => {
