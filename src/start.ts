@@ -17,6 +17,7 @@ Config.read(() => {
     const STATIC_PORT = Config.serverPort;
 
     const port = process.env.PORT || STATIC_PORT;
+    process.env.UV_THREADPOOL_SIZE = "30";
 
     const room = new Room(server);
     server.listen(port);
