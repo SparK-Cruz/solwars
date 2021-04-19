@@ -6,7 +6,7 @@ import { Ship } from '../../space/entities/ship';
 import { Model } from '../../space/entities/ships/model';
 import { Mapping } from '../../space/entities/ships/mapping';
 import { Control } from '../../space/entities/ships/control';
-import { BotsConfig } from '../../space/config';
+import { BotsConfig, Config } from '../../space/config';
 
 const MIN_DISTANCE = 150;
 const MAX_DISTANCE = 400;
@@ -143,6 +143,12 @@ export class Bot extends Player {
         let heading = Math.atan2(this.ship.vy, this.ship.vx) / Math.PI * 180 + 90;
         if (heading < 0) heading += 360;
 
+        const bulletSpeed = Config.bullets[this.ship.bullet].speed;
+        const bulletSplit = {
+            vx: bulletSpeed * Math.sin(heading * Math.PI / 180),
+            vy: -bulletSpeed * Math.cos(heading * Math.PI / 180),
+        };
+        const bulletFinal = Math.sqrt(Math.pow(bulletSplit.vx + this.ship.vx, 2) + Math.pow(bulletSplit.vy + this.ship.vy, 2));
         const targetAcceleration = Control.thrusting(this.target.control) * this.target.power;
 
         const increase = {
@@ -152,7 +158,9 @@ export class Bot extends Player {
 
         // X frames at IDEAL speed gets you between our MIN and MAX distances
         // project where target will be X frames from here and aim
-        const frames = distance / IDEAL_BULLET_SPEED;
+        const frames = distance / bulletFinal;
+
+        // TODO loop over frames for increase in target's velocity, predict the curve!
 
         const prediction = {
             x: this.target.x + (increase.x + this.target.vx - this.ship.vx * frames),
