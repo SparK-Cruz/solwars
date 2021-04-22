@@ -196,7 +196,7 @@ export class CodecFacade {
     }
 
     public encodeEntity(entity: any, force: boolean = false) {
-        if (entity.spawner) {
+        if (!entity || entity.spawner) {
             return null;
         }
 
