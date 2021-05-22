@@ -1,3 +1,6 @@
+export const GRID_SCALE = 1280;
+const FRESHNESS = 4;
+
 export interface Entity {
     type: EntityType;
     id: number;
@@ -65,9 +68,6 @@ export namespace EntityType {
     export const Prize = { name: 'prize' };
     export const GravityWell = { name: 'gravityWell' };
 }
-
-const SCALE = 1280;
-const FRESHNESS = 4;
 
 export class EntityPoolGrid {
     private grid: any = {};
@@ -144,8 +144,8 @@ export class EntityPoolGrid {
 
     private localCell(point: { x: number, y: number }): { x: number, y: number } {
         return {
-            x: Math.floor(point.x / SCALE),
-            y: Math.floor(point.y / SCALE),
+            x: Math.floor(point.x / GRID_SCALE),
+            y: Math.floor(point.y / GRID_SCALE),
         };
     }
 

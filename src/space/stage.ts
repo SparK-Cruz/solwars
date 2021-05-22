@@ -8,6 +8,7 @@ import { CodecFacade } from './codec_facade';
 import { Rock } from './entities/rock';
 import { Prize } from './entities/prize';
 import { PrizeSpawner } from './entity_spawner/prize_spawner';
+import { GravityWell } from './entities/gravity_well';
 
 export class Stage extends EventEmitter {
     public tick = 0;
@@ -43,12 +44,10 @@ export class Stage extends EventEmitter {
 
             const codec = new CodecFacade();
             for (let i in contents.npe) {
-                if (contents.npe[i].spawner) {
-                    this.add(codec.decodeSpawner(contents.npe[i]));
-                    continue;
-                }
                 const entity = codec.decodeEntity(<Entity>contents.npe[i]);
+
                 this.add(entity);
+
                 if (entity.hasOwnProperty('stage')) {
                     (<any>entity).stage = this;
                 }
@@ -192,6 +191,10 @@ export class Stage extends EventEmitter {
             case EntityType.Prize.name:
                 entity = new Prize(entityModel, <PrizeSpawner>parent);
                 Object.assign(entity, { x: parent.x, y: parent.y });
+                break;
+            case EntityType.GravityWell.name:
+                entity = new GravityWell();
+                Object.assign(entity, entityModel);
                 break;
             // case EntityType.Ship.name:
             // ships aren't child entities yet... we still don't have carriers nor turrets...

@@ -21,12 +21,17 @@ export class GravityWell extends EventEmitter implements Entity {
     y: number;
 
     radius: number;
-    teleport: number;
+    teleport: {
+        x: number,
+        y: number,
+        radius: number,
+    };
     pull: number;
 
     stage: Stage = null;
 
     step(delta: number): void {
+        // console.log(this);
         this.updatePhisics(delta);
     }
     collide(entity: Entity, result: any): void {
@@ -39,8 +44,8 @@ export class GravityWell extends EventEmitter implements Entity {
         entity.vy = 0;
         if (this.stage) {
             this.stage.moveEntity(entity, {
-                x: this.x + (Math.round(Math.random() * this.teleport) * 2 - this.teleport),
-                y: this.y + (Math.round(Math.random() * this.teleport) * 2 - this.teleport),
+                x: this.teleport.x + (Math.round(Math.random() * this.teleport.radius) * 2 - this.teleport.radius),
+                y: this.teleport.y + (Math.round(Math.random() * this.teleport.radius) * 2 - this.teleport.radius),
             });
         }
     }

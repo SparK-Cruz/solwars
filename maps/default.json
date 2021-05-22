@@ -89,11 +89,15 @@
             "type": {
                 "name": "gravityWell"
             },
-            "x": 4500,
-            "y": 4500,
+            "x": 14000,
+            "y": 14000,
             "mass": 1000,
             "radius": 2000,
-            "teleport": 3000,
+            "teleport": {
+                "x": 0,
+                "y": 0,
+                "radius": 5000
+            },
             "pull": 0.01
         },
         {

@@ -4,6 +4,8 @@ import { Prize } from '../entities/prize';
 import { RandomPrizeEffect } from '../entities/prize_effects/prize_effects';
 
 export class PrizeSpawner extends EventEmitter implements Entity {
+    public spawner = true;
+
     public type = EntityType.Prize;
     public id: number;
     public sectorKey: string;

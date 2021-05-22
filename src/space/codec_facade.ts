@@ -6,7 +6,6 @@ import { ShipDebris } from './entities/ship_debris';
 import { Rock } from './entities/rock';
 import { EntitySpawner } from './entity_spawner';
 import { Prize } from './entities/prize';
-import { Config } from './config';
 import { GravityWell } from './entities/gravity_well';
 
 interface SavedState {
@@ -209,7 +208,10 @@ export class CodecFacade {
         return this.lightEncode(entity);
     }
 
-    public decodeEntity(data: Entity) {
+    public decodeEntity(data: Entity): Entity {
+        if ((<any>data).spawner)
+            return this.decodeSpawner(data);
+
         switch (data.type.name) {
             case EntityType.Ship.name:
                 return this.decodeShip(<Ship>data);
