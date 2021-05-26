@@ -35,10 +35,7 @@ export class GravityWell extends EventEmitter implements Entity {
         this.updatePhisics(delta);
     }
     collide(entity: Entity, result: any): void {
-        // if (typeof (<any>entity).addDamage !== 'undefined') {
-        //     (<any>entity).addDamage((<any>entity).health, this);
-        //     return;
-        // }
+        if (entity.type.name === EntityType.GravityWell.name) return;
 
         entity.vx = 0;
         entity.vy = 0;

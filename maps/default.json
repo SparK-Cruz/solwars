@@ -86,17 +86,18 @@
     ],
     "npe": [
         {
+            "spawner": true,
             "type": {
                 "name": "gravityWell"
             },
-            "x": 14000,
-            "y": 14000,
+            "x": 0,
+            "y": 0,
             "mass": 1000,
             "radius": 2000,
             "teleport": {
                 "x": 0,
                 "y": 0,
-                "radius": 5000
+                "radius": 500
             },
             "pull": 0.01
         },

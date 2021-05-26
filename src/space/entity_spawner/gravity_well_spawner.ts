@@ -2,6 +2,8 @@ import { EventEmitter } from 'events';
 import { Entity, EntityType, EntityEvent, GRID_SCALE } from "../entities";
 import { Stage } from '../stage';
 
+const RADAR_SCALE = 512;
+
 export class GravityWellSpawner extends EventEmitter implements Entity {
     public spawner = true;
 
@@ -25,8 +27,8 @@ export class GravityWellSpawner extends EventEmitter implements Entity {
     };
     public pull: number;
     public startSectorRadius: number = 8;
-    public intervalSectors: number = 3;
-    public maxSectorRadius: number = 10;
+    public intervalSectors: number = 2;
+    public maxSectorRadius: number = 5;
 
     public done: boolean = false;
 
@@ -58,47 +60,19 @@ export class GravityWellSpawner extends EventEmitter implements Entity {
 
     private calculateOffsets(): { x: number, y: number }[] {
         const start = this.startSectorRadius;
-        const end = this.startSectorRadius+this.maxSectorRadius;
+        const end = this.startSectorRadius + this.maxSectorRadius;
         const offsets = [];
 
-        for (let x=start; x<end; x += this.intervalSectors) {
-            for (let y=0; y<end; y += this.intervalSectors) {
-                offsets.push({
-                    x: x*GRID_SCALE,
-                    y: y*GRID_SCALE,
-                });
-                offsets.push({
-                    x: x*GRID_SCALE,
-                    y: -y*GRID_SCALE,
-                });
-                offsets.push({
-                    x: -x*GRID_SCALE,
-                    y: y*GRID_SCALE,
-                });
-                offsets.push({
-                    x: -x*GRID_SCALE,
-                    y: -y*GRID_SCALE,
-                });
-            }
-        }
+        for (let d = start; d < end; d += this.intervalSectors) {
+            const steps = d * 5;
+            const stepSize = 360 / steps;
 
-        for (let y=start; y<end; y += this.intervalSectors) {
-            for (let x=0; x<start; x += this.intervalSectors) {
+            for (let step = 0; step < steps; step++) {
+                const a = stepSize * step;
+
                 offsets.push({
-                    x: x*GRID_SCALE,
-                    y: y*GRID_SCALE,
-                });
-                offsets.push({
-                    x: x*GRID_SCALE,
-                    y: -y*GRID_SCALE,
-                });
-                offsets.push({
-                    x: -x*GRID_SCALE,
-                    y: y*GRID_SCALE,
-                });
-                offsets.push({
-                    x: -x*GRID_SCALE,
-                    y: -y*GRID_SCALE,
+                    x: d * GRID_SCALE * Math.sin(a * Math.PI / 180),
+                    y: -d * GRID_SCALE * Math.cos(a * Math.PI / 180),
                 });
             }
         }

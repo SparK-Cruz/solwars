@@ -209,6 +209,8 @@ export class CodecFacade {
     }
 
     public decodeEntity(data: Entity): Entity {
+        // if (!data) return;
+
         if ((<any>data).spawner)
             return this.decodeSpawner(data);
 

@@ -77,6 +77,7 @@ export class EntityRenderer extends EventEmitter implements Renderable {
             return this.cache[entity.id] = pair;
         } catch (error) {
             console.error('Failed to create renderer for entity (' + entity.id + '): ' + entity.type.name);
+            console.error(error);
             return null;
         }
     }

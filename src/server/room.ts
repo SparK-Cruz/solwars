@@ -75,7 +75,8 @@ export class Room {
             let entity = null;
             this.stage.fetchEntitiesAround(player.ship)
                 .find((p: Entity[]) => p && typeof p.find === "function" && !!p.find((e: Entity) => e.id === id ? !!(entity = e) : false));
-            player.sendEntity(JSON.stringify(this.codec.encodeEntity(entity)));
+
+            player.sendEntity(JSON.stringify(this.codec.encodeEntity(entity, true)));
         });
         player.on(PlayerEvents.Disconnect, () => {
             this.onPlayerDisconnect(player);
