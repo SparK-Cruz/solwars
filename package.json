@@ -11,11 +11,12 @@
         "build-engine-loader": "browserify dist/client/engine_loader.js | terser --compress --mangle > dist/client/dist_engine_loader.js",
         "build-frontend-debug": "browserify dist/client/frontend.js > dist/client/dist_frontend.js",
         "build-engine-loader-debug": "browserify dist/client/engine_loader.js > dist/client/dist_engine_loader.js",
-        "build-assets": "npm run build-html && npm run build-img && npm run build-css && npm run build-sfx",
+        "build-assets": "npm run build-html && npm run build-img && npm run build-css && npm run build-sfx && npm run build-ico",
         "build-html": "cp src/client/*.html dist/client/",
         "build-img": "cp -r src/client/img dist/client/",
         "build-css": "cp src/client/frontend/*.css dist/client/frontend/",
-        "build-sfx": "cp -r src/client/sfx dist/client"
+        "build-sfx": "cp -r src/client/sfx dist/client",
+        "build-ico": "cp src/client/favicon.ico dist/client/favicon.ico"
     },
     "keywords": [
         "space",
