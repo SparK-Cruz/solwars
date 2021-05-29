@@ -1,19 +1,16 @@
 import { Renderable } from "../game_renderers/renderable";
 import { EventEmitter } from 'events';
 import { ClientInfo } from "../client";
+import { Joystick } from "pixi-virtual-joystick";
 
 const PIXI = require('pixi.js');
 
 const TPS = 32;
-const NUM_SEGS = 12;
-const ANGLE = 360 / NUM_SEGS;
-const HALF_ANGLE = ANGLE / 2;
-const RADIUS = 28;
-const TURN_RADIUS = 45;
-const DEAD_RADIUS = 200;
+const RADIUS = 0.2;
+const TURN_RADIUS = 0.5;
 const ANGLE_TOLERANCE = 15;
-const BIG_DIFF = 175;
-const PADDING = 50;
+const BIG_DIFF = 165;
+const PADDING = 90;
 
 const normalize = (angle: number) => {
     const step = (angle + 360) % 360;
@@ -37,71 +34,31 @@ export class DPadRenderer extends EventEmitter implements Renderable {
         this.container.view = parent.view;
         parent.addChild(this.container);
 
-        const segments = Array(NUM_SEGS).fill(0).map((e, i) => {
-            const a = {
-                start: (((i * ANGLE - HALF_ANGLE) + 360) % 360) / 180 * Math.PI,
-                end: (((i * ANGLE + HALF_ANGLE) + 360) % 360) / 180 * Math.PI,
-            };
+        const outer = new PIXI.Graphics();
+        outer.beginFill(0x202020);
+        outer.drawCircle(0, 0, 50);
+        outer.alpha = 1;
 
-            const segment = new PIXI.Graphics();
-            segment.lineStyle(1);
-            segment.beginFill(0x333333, 0.8);
-            segment.arc(0, 0, TURN_RADIUS, a.start - Math.PI / 2, a.end - Math.PI / 2);
-            segment.arc(0, 0, RADIUS / 2, a.end - Math.PI / 2, a.start - Math.PI / 2, true);
-            segment.endFill();
-            segment.index = i;
-            segment.visible = false;
+        const inner = new PIXI.Graphics();
+        inner.beginFill(0x3399ff);
+        inner.drawCircle(0, 0, 30);
+        inner.alpha = 0.5;
 
-            this.container.addChild(segment);
-
-            return segment;
+        const joystick = new Joystick({
+            outer,
+            inner,
+            onChange: (data) => {
+                this.dist = data.power;
+                this.angle = normalize(90-data.angle);
+            },
+            onEnd: () => {
+                this.dist = 0;
+            }
         });
 
-        const up = () => {
-            segments.forEach(s => {
-                s.visible = false;
-            });
-        };
+        this.loop();
 
-        const move = (e: any) => {
-            const data = e.data;
-            const pos = data.getLocalPosition(this.container);
-            const dist = Math.sqrt(Math.pow(pos.x, 2) + Math.pow(pos.y, 2));
-            const angle = Math.atan2(pos.y, pos.x) / Math.PI * 180 + 90;
-
-            let index = -1;
-
-            up();
-
-            if (dist > DEAD_RADIUS)
-                return;
-
-            this.dist = dist;
-
-            if (dist > RADIUS) {
-                index = ((angle + 360 + HALF_ANGLE) % 360) / ANGLE % NUM_SEGS | 0;
-            }
-
-            if (!!~index) {
-                this.angle = index * ANGLE;
-                segments[index].visible = true;
-            }
-        };
-
-        setInterval(() => { this.loop(); }, 1000 / TPS);
-
-        const middle = new PIXI.Graphics();
-        middle.interactive = true;
-        middle.beginFill(0x202020, 1);
-        middle.arc(0, 0, RADIUS, 0, Math.PI * 2);
-        middle.endFill();
-
-        middle.on('touchstart', move);
-        middle.on('touchmove', move);
-        middle.on('touchend', up);
-        middle.on('touchendoutside', up);
-
-        this.container.addChild(middle);
+        this.container.addChild(joystick);
     }
 
     public update(info: ClientInfo) {
@@ -110,9 +67,18 @@ export class DPadRenderer extends EventEmitter implements Renderable {
 
     public render() {
         this.container.position.set(
-            TURN_RADIUS + PADDING,
-            this.container.view.height - TURN_RADIUS - PADDING,
+            PADDING,
+            this.container.view.height - PADDING,
         );
+    }
+
+    private loop() {
+        const { diff, big } = this.angleDiff(this.angle);
+
+        this.checkTurnTo(diff);
+        this.checkThrust(big);
+
+        setTimeout(() => this.loop(), 1000 / TPS);
     }
 
     private angleDiff(angle: number) {
@@ -167,15 +133,8 @@ export class DPadRenderer extends EventEmitter implements Renderable {
         this.emit('release', action);
     }
 
-    private loop() {
-        const { diff, big } = this.angleDiff(this.angle);
-
-        this.checkTurnTo(diff);
-        this.checkThrust(big);
-    }
-
     private checkTurnTo(angle: number) {
-        if (this.dist >= RADIUS * 0.9) {
+        if (this.dist >= RADIUS) {
             this.turnTo(angle);
             return;
         }
