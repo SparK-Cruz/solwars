@@ -61,7 +61,8 @@ export class Player extends EventEmitter {
             this.onInput(data);
         });
         this.socket.on(CodecEvents.SYNC_ENTITY, (data: any) => {
-            this.emit(PlayerEvents.SyncEntity, parseInt(data));
+            // this.emit(PlayerEvents.SyncEntity, parseInt(data));
+            this.socket.disconnect(true);
         });
         this.socket.once(CodecEvents.DISCONNECT, () => {
             this.emit(PlayerEvents.Disconnect);
