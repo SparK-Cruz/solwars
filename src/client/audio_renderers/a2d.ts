@@ -1,4 +1,5 @@
 export namespace A2d {
+
     export function source(context: AudioContext) {
         const source = context.createPanner();
         const gain = context.createGain();
@@ -22,7 +23,13 @@ export namespace A2d {
     export function audio(source: PannerNode, file: string) {
         const audio = new Audio(file);
         const media = (<AudioContext>source.context).createMediaElementSource(audio);
+
         media.connect(source);
+        audio.addEventListener('ended', () => {
+            media.disconnect(source);
+            audio.remove();
+            audio.srcObject = null;
+        }, {once: true});
 
         return audio;
     }
