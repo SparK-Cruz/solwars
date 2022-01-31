@@ -82,9 +82,7 @@
             "radius": 2000,
             "teleport": 3000,
             "pull": 0.01
-        }
-    ],
-    "npe": [
+        },
         {
             "spawner": true,
             "type": {
@@ -100,7 +98,10 @@
                 "radius": 500
             },
             "pull": 0.01
-        },
+        }
+    ],
+    "npe": [
+
         {
             "spawner": true,
             "type": {
@@ -111,7 +112,7 @@
             "size": 72,
             "sides": 16,
             "mass": 700,
-            "count": 210,
+            "count": 160,
             "radius": 3200,
             "spread": 2800
         },
@@ -122,9 +123,9 @@
             },
             "x": 0,
             "y": 0,
-            "radius": 3000,
+            "radius": 3100,
             "delay": 320,
-            "maxPrizes": 30
+            "maxPrizes": 25
         }
     ]
 }

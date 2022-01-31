@@ -38,24 +38,6 @@
             },
             "prefix": "BOT ",
             "faction": "bot_reds"
-        },
-        {
-            "count": 2,
-            "ship": {
-                "color": "#aa00ff",
-                "decals": [
-                    {
-                        "name": "decal0",
-                        "color": "#aa00ff"
-                    },
-                    {
-                        "name": "decal1",
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            "prefix": "BOT ",
-            "faction": "bot_purples"
         }
     ],
     "ships": {
