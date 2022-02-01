@@ -4,7 +4,7 @@
     "maxPlayers": 100,
     "bots": [
         {
-            "count": 2,
+            "count": 3,
             "ship": {
                 "color": "#3399ff",
                 "decals": [
@@ -22,7 +22,7 @@
             "faction": "bot_blues"
         },
         {
-            "count": 2,
+            "count": 3,
             "ship": {
                 "color": "#aa0000",
                 "decals": [
@@ -38,6 +38,24 @@
             },
             "prefix": "BOT ",
             "faction": "bot_reds"
+        },
+        {
+            "count": 3,
+            "ship": {
+                "color": "#ff00aa",
+                "decals": [
+                    {
+                        "name": "decal0",
+                        "color": "#ff00aa"
+                    },
+                    {
+                        "name": "decal1",
+                        "color": "#ffffff"
+                    }
+                ]
+            },
+            "prefix": "BOT ",
+            "faction": "bot_pink"
         }
     ],
     "ships": {
