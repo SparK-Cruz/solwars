@@ -4,7 +4,6 @@ import { Server } from "http";
 import { Room } from "./server/room";
 import { Config, BotsConfig } from "./space/config";
 
-// test stuff
 import { BotManager } from "./server/bots/bot_manager";
 
 const app = express();
