@@ -116,9 +116,6 @@ export class Radar implements Renderable {
 
         for (let i in entities) {
             const entity = entities[i];
-            if (entity.type.name === EntityType.Bullet.name) {
-                continue;
-            }
 
             let size = 4;
             let alpha = 1;
@@ -135,7 +132,7 @@ export class Radar implements Renderable {
                     size = 2;
                     break;
                 case EntityType.Rock.name:
-                    style = 0xaaaaaa;
+                    style = 0x777777;
                     size = (<any>entity).size * SCALE;
                     break;
                 case EntityType.Prize.name:
@@ -145,6 +142,11 @@ export class Radar implements Renderable {
                 case EntityType.GravityWell.name:
                     style = 0x666699;
                     size = 5;
+                    break;
+                case EntityType.Bullet.name:
+                    style = 0xff0000;
+                    size = 3;
+                    break;
             }
 
             const pos = this.camera.translate(entity);
