@@ -49,6 +49,10 @@ export class GamepadListener extends EventEmitter {
             if (typeof this.pads.forEach !== 'function') return;
 
             this.pads.forEach((pad, i) => {
+                if (!pad) {
+                    return;
+                }
+
                 const state = translatePad(pad);
 
                 if (this.last[i]) {
