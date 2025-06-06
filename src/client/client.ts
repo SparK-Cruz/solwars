@@ -13,6 +13,7 @@ export interface ClientOptions {
     model: string,
     color?: string,
     decal?: string,
+    decalIndex?: number,
 }
 
 const UPDATE_LOG_LENGTH = 100;

@@ -37,22 +37,31 @@ export class AssetManager extends EventEmitter {
             .add('ship_warbird_mask', 'img/ships/warbird_mask.png')
             .add('ship_warbird_decal0', 'img/ships/warbird_decal0.png')
             .add('ship_warbird_decal1', 'img/ships/warbird_decal1.png')
+            .add('ship_warbird_decal2', 'img/ships/warbird_decal2.png')
             .add('ship_javelin', 'img/ships/javelin.png')
             .add('ship_javelin_mask', 'img/ships/javelin_mask.png')
             .add('ship_javelin_decal0', 'img/ships/javelin_decal0.png')
             .add('ship_javelin_decal1', 'img/ships/javelin_decal1.png')
+            .add('ship_javelin_decal2', 'img/ships/javelin_decal2.png')
             .add('ship_spider', 'img/ships/spider.png')
             .add('ship_spider_mask', 'img/ships/spider_mask.png')
             .add('ship_spider_decal0', 'img/ships/spider_decal0.png')
             .add('ship_spider_decal1', 'img/ships/spider_decal1.png')
+            .add('ship_spider_decal2', 'img/ships/spider_decal2.png')
             .add('ship_leviathan', 'img/ships/leviathan.png')
             .add('ship_leviathan_mask', 'img/ships/leviathan_mask.png')
             .add('ship_leviathan_decal0', 'img/ships/leviathan_decal0.png')
             .add('ship_leviathan_decal1', 'img/ships/leviathan_decal1.png')
+            .add('ship_leviathan_decal2', 'img/ships/leviathan_decal2.png')
             .add('ship_terrier', 'img/ships/terrier.png')
             .add('ship_terrier_mask', 'img/ships/terrier_mask.png')
             .add('ship_terrier_decal0', 'img/ships/terrier_decal0.png')
-            .add('ship_terrier_decal1', 'img/ships/terrier_decal1.png');
+            .add('ship_terrier_decal1', 'img/ships/terrier_decal1.png')
+            .add('ship_terrier_decal2', 'img/ships/terrier_decal2.png')
+            .add('ship_football', 'img/ships/football.png')
+            .add('ship_football_mask', 'img/ships/football_mask.png')
+            .add('ship_football_decal0', 'img/ships/football_decal0.png')
+            .add('ship_football_decal1', 'img/ships/football_decal1.png');
 
         loader.load((_loader: any, resources: any) => {
             Assets.pool['light'] = new PIXI.Sprite(resources.light.texture);
@@ -61,22 +70,31 @@ export class AssetManager extends EventEmitter {
             Assets.pool['ship_warbird_mask'] = new PIXI.Sprite(resources.ship_warbird_mask.texture);
             Assets.pool['ship_warbird_decal0'] = new PIXI.Sprite(resources.ship_warbird_decal0.texture);
             Assets.pool['ship_warbird_decal1'] = new PIXI.Sprite(resources.ship_warbird_decal1.texture);
+            Assets.pool['ship_warbird_decal2'] = new PIXI.Sprite(resources.ship_warbird_decal2.texture);
             Assets.pool['ship_javelin'] = new PIXI.Sprite(resources.ship_javelin.texture);
             Assets.pool['ship_javelin_mask'] = new PIXI.Sprite(resources.ship_javelin_mask.texture);
             Assets.pool['ship_javelin_decal0'] = new PIXI.Sprite(resources.ship_javelin_decal0.texture);
             Assets.pool['ship_javelin_decal1'] = new PIXI.Sprite(resources.ship_javelin_decal1.texture);
+            Assets.pool['ship_javelin_decal2'] = new PIXI.Sprite(resources.ship_javelin_decal2.texture);
             Assets.pool['ship_spider'] = new PIXI.Sprite(resources.ship_spider.texture);
             Assets.pool['ship_spider_mask'] = new PIXI.Sprite(resources.ship_spider_mask.texture);
             Assets.pool['ship_spider_decal0'] = new PIXI.Sprite(resources.ship_spider_decal0.texture);
             Assets.pool['ship_spider_decal1'] = new PIXI.Sprite(resources.ship_spider_decal1.texture);
+            Assets.pool['ship_spider_decal2'] = new PIXI.Sprite(resources.ship_spider_decal2.texture);
             Assets.pool['ship_leviathan'] = new PIXI.Sprite(resources.ship_leviathan.texture);
             Assets.pool['ship_leviathan_mask'] = new PIXI.Sprite(resources.ship_leviathan_mask.texture);
             Assets.pool['ship_leviathan_decal0'] = new PIXI.Sprite(resources.ship_leviathan_decal0.texture);
             Assets.pool['ship_leviathan_decal1'] = new PIXI.Sprite(resources.ship_leviathan_decal1.texture);
+            Assets.pool['ship_leviathan_decal2'] = new PIXI.Sprite(resources.ship_leviathan_decal2.texture);
             Assets.pool['ship_terrier'] = new PIXI.Sprite(resources.ship_terrier.texture);
             Assets.pool['ship_terrier_mask'] = new PIXI.Sprite(resources.ship_terrier_mask.texture);
             Assets.pool['ship_terrier_decal0'] = new PIXI.Sprite(resources.ship_terrier_decal0.texture);
             Assets.pool['ship_terrier_decal1'] = new PIXI.Sprite(resources.ship_terrier_decal1.texture);
+            Assets.pool['ship_terrier_decal2'] = new PIXI.Sprite(resources.ship_terrier_decal2.texture);
+            Assets.pool['ship_football'] = new PIXI.Sprite(resources.ship_football.texture);
+            Assets.pool['ship_football_mask'] = new PIXI.Sprite(resources.ship_football_mask.texture);
+            Assets.pool['ship_football_decal0'] = new PIXI.Sprite(resources.ship_football_decal0.texture);
+            Assets.pool['ship_football_decal1'] = new PIXI.Sprite(resources.ship_football_decal1.texture);
 
             callback();
         });

@@ -4,86 +4,72 @@
     "maxPlayers": 100,
     "bots": [
         {
-            "count": 3,
+            "count": 2,
             "ship": {
-                "color": "#3399ff",
-                "decals": [
-                    {
-                        "name": "decal0",
-                        "color": "#3399ff"
-                    },
-                    {
-                        "name": "decal1",
-                        "color": "#ffffff"
-                    }
-                ]
+                "model": "warbird"
             },
             "prefix": "BOT ",
-            "faction": "bot_blues"
+            "faction": "bot_warbird"
         },
         {
-            "count": 3,
+            "count": 2,
             "ship": {
-                "color": "#aa0000",
-                "decals": [
-                    {
-                        "name": "decal0",
-                        "color": "#aa0000"
-                    },
-                    {
-                        "name": "decal1",
-                        "color": "#ffffff"
-                    }
-                ]
+                "model": "javelin"
             },
             "prefix": "BOT ",
-            "faction": "bot_reds"
+            "faction": "bot_javelin"
         },
         {
-            "count": 3,
+            "count": 2,
             "ship": {
-                "color": "#ff00aa",
-                "decals": [
-                    {
-                        "name": "decal0",
-                        "color": "#ff00aa"
-                    },
-                    {
-                        "name": "decal1",
-                        "color": "#ffffff"
-                    }
-                ]
+                "model": "spider"
             },
             "prefix": "BOT ",
-            "faction": "bot_pink"
+            "faction": "bot_spider"
+        },
+        {
+            "count": 2,
+            "ship": {
+                "model": "leviathan"
+            },
+            "prefix": "BOT ",
+            "faction": "bot_leviathan"
+        },
+        {
+            "count": 2,
+            "ship": {
+                "model": "terrier"
+            },
+            "prefix": "BOT ",
+            "faction": "bot_terrier"
         }
     ],
     "ships": {
         "warbird": {
-            "speed": 5.5,
-            "acceleration": 0.079,
-            "spin": 2.3,
-            "energy": 500,
-            "regeneration": 2.5,
-            "bullet": 0,
+            "speed": 5,
+            "acceleration": 0.1,
+            "spin": 2,
+            "energy": 300.1,
+            "regeneration": 1.5,
+            "bullet": 2,
             "bomb": 0
         },
         "javelin": {
-            "speed": 3.8,
-            "acceleration": 0.125,
-            "spin": 2.1,
-            "energy": 670,
-            "regeneration": 2.1,
+            "speed": 3.7,
+            "acceleration": 0.15,
+            "spin": 1.7,
+            "energy": 700,
+            "regeneration": 1.5,
             "bullet": 0,
             "bomb": 0
         },
         "spider": {
             "speed": 4.2,
             "acceleration": 0.082,
-            "spin": 1.9,
+            "spin": 4.2,
             "energy": 1100,
-            "regeneration": 1.7,
-            "bullet": 1,
+            "regeneration": 2.5,
+            "bullet": 0,
             "bomb": 0
         },
         "leviathan": {
@@ -128,6 +114,15 @@
             "spin": 2.1,
             "energy": 950,
             "regeneration": 1.8,
+            "bullet": 0,
+            "bomb": 0
+        },
+        "football": {
+            "speed": 4,
+            "acceleration": 0.1,
+            "spin": 1.7,
+            "energy": 99999,
+            "regeneration": 99999,
             "bullet": 0,
             "bomb": 0
         }

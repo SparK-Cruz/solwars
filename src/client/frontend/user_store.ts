@@ -14,6 +14,7 @@ export default {
         name: <string>null,
         defaultName: defaultName,
         shipIndex: <number>null,
+        decalIndex: <number>null,
         primaryColor: <string>null,
         secondaryColor: <string>null,
     },
@@ -22,6 +23,7 @@ export default {
         this.data.shipIndex = validStoredShip();
         this.data.primaryColor = localStorage.getItem('color') || 'default';
         this.data.secondaryColor = localStorage.getItem('decal') || 'default';
+        this.data.decalIndex = parseInt(localStorage.getItem('decalIndex')) || 0;
     },
     dump() {
         return {
@@ -29,6 +31,7 @@ export default {
             model: Model.all[this.data.shipIndex].id,
             color: prepareColor(this.filterColor(this.data.primaryColor)),
             decal: prepareColor(this.filterColor(this.data.secondaryColor)),
+            decalIndex: this.data.decalIndex,
         };
     },
     save() {
@@ -36,6 +39,7 @@ export default {
         localStorage.setItem('model', this.data.shipIndex.toString());
         localStorage.setItem('color', prepareColor(this.data.primaryColor));
         localStorage.setItem('decal', prepareColor(this.data.secondaryColor));
+        localStorage.setItem('decalIndex', this.data.decalIndex.toString());
     },
     filterColor(hexColor: string) {
         if (hexColor.charAt(0) !== '#')

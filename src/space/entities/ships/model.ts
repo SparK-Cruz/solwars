@@ -106,7 +106,12 @@ export namespace Model {
         decals: [{
             name: 'decal0',
             color: '#996600'
-        }]
+        }],
+        guns: [
+            { x: 1, y: 15 },
+            { x: 11, y: 13 },
+            { x: -10, y: 13 },
+        ]
     }
 
     export const Leviathan: Model = {
@@ -212,6 +217,33 @@ export namespace Model {
         polygon: [[-16, 12], [0, -16], [16, 12]],
         color: 'rgb(255, 255, 255)',
         decals: []
+    }
+
+    export const Football: Model = {
+        disabled: true,
+        id: 'football',
+        name: 'Football',
+        make: 'Venus',
+        description: 'A football',
+        color: '#ffffff',
+        polygon: [
+            [ 4, -16],
+            [ 10, -11],
+            [ 15, -3],
+            [ 15, 4],
+            [ 10, 10],
+            [ 4, 15],
+            [-3, 15],
+            [-11, 10],
+            [-16, 4],
+            [-16, -3],
+            [-11, -11],
+            [-3, 16],
+        ],
+        decals: [{
+            name: 'decal0',
+            color: '#ffffff'
+        }],
     }
 
     export const byId: any = (() => {

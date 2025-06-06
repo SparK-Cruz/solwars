@@ -173,9 +173,9 @@ export class Ship extends EventEmitter implements entities.Entity {
         const gun = this.guns[this.nextGun];
 
         const offset = {
-            x: gun.y * Math.sin(inRads(this.angle))
+            x: + gun.y * Math.sin(inRads(this.angle))
                 + gun.x * Math.sin(inRads(this.angle + 90)),
-            y: -gun.y * Math.cos(inRads(this.angle))
+            y: - gun.y * Math.cos(inRads(this.angle))
                 - gun.x * Math.cos(inRads(this.angle + 90)),
         };
 

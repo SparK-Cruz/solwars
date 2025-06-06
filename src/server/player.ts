@@ -108,14 +108,9 @@ export class Player extends EventEmitter {
         setTimeout(() => {
             let model = ShipModel.byId[data.model] || ShipModel.Warbird;
 
-            // this validation is temporary until we have all ships
-            const models = [
-                ShipModel.Warbird.id,
-                ShipModel.Javelin.id,
-                ShipModel.Spider.id,
-                ShipModel.Leviathan.id,
-                ShipModel.Terrier.id,
-            ];
+            const models = ShipModel.all
+                .filter(ship => !ship.disabled)
+                .map(ship => ship.id);
             if (!models.includes(model.id)) {
                 model = ShipModel.Warbird;
             }
@@ -133,6 +128,8 @@ export class Player extends EventEmitter {
                 ship.color = options.color;
             if (options.decal)
                 ship.decals[0].color = options.decal;
+            if (options.decalIndex)
+                ship.decals[0].name = `decal${options.decalIndex}`;
 
             (<any>ship).aiFaction = 'human';
 

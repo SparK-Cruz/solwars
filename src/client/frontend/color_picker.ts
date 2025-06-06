@@ -51,7 +51,7 @@ const vertices = range(0, 6).map(a => ({
 
 const drawHex = (color: string) => {
     const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 
     ctx.save();
     ctx.fillStyle = color;
@@ -71,7 +71,7 @@ const drawHex = (color: string) => {
 }
 
 const draw = (canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 
     canvas.width = stage.width;
     canvas.height = stage.height;
@@ -107,14 +107,14 @@ const draw = (canvas: HTMLCanvasElement) => {
         }
     }
 
-    const bkp = colors.getContext('2d');
+    const bkp = colors.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
     colors.width = canvas.width;
     colors.height = canvas.height;
     bkp.drawImage(canvas, 0, 0);
 }
 
 const drawCursor = (canvas: HTMLCanvasElement, mouse: { x: number, y: number }, color: number[]) => {
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(colors, 0, 0);
 
@@ -173,6 +173,7 @@ export default Vue.extend({
     methods: {
         findColor(e: MouseEvent) {
             const canvas = <HTMLCanvasElement>e.target;
+
             const rect = canvas.getBoundingClientRect();
             const offset = {
                 x: rect.left,
@@ -185,7 +186,8 @@ export default Vue.extend({
 
             canvas.style.cursor = 'none';
 
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
+
             const color = [].slice.call(ctx.getImageData(mouse.x, mouse.y, 1, 1).data, 0, 4);
             const alpha = color.pop();
 

@@ -5,6 +5,8 @@ import ShipRender from './ship_render';
 import PageIndicator from './page_indicator';
 import UserStore from './user_store';
 
+const MAX_DECALS = 3;
+
 const ships = Model.all.filter(s => !s.disabled);
 const stats: number[][] = [
     [0.5, 0.5, 0.25, 0.5],
@@ -12,6 +14,7 @@ const stats: number[][] = [
     [0.6, 0.4, 0.5, 0.5],
     [0.7, 0.3, 0.75, 0.3],
     [0.6, 0.5, 0.5, 0.4],
+    [0.5, 0.5, 0.5, 0.5],
 ];
 
 const Vue = require('vue/dist/vue');
@@ -26,6 +29,7 @@ interface Data {
     ship: Model,
     stats: StatsData,
     index: number,
+    decalIndex: number,
 }
 
 export default Vue.extend({
@@ -37,7 +41,11 @@ export default Vue.extend({
                 <div class="next button" @click="next">Next Ship</div>
             </div>
             <PageIndicator :index="index" :total="totalShips" @switch="jumpTo" />
-            <ShipRender :ship="ship" />
+            <div class="decal buttons">
+                <div class="prev button" @click="prevDecal">Prev Decal</div>
+                <div class="next button" @click="nextDecal">Next Decal</div>
+            </div>
+            <ShipRender :ship="ship" :decal="decalIndex" />
             <ShipInfo :ship="ship" />
             <ShipStats :stats="stats" />
         </div>
@@ -50,6 +58,7 @@ export default Vue.extend({
     },
     data: () => (<Data>{
         index: 0,
+        decalIndex: 0,
         ship: ships[0],
         stats: <StatsData>{
             energy: 0,
@@ -60,6 +69,7 @@ export default Vue.extend({
     }),
     created() {
         this.index = UserStore.data.shipIndex;
+        this.decalIndex = UserStore.data.decalIndex;
         this.loadCurrentShip();
     },
     methods: {
@@ -78,16 +88,23 @@ export default Vue.extend({
             vm.index = number;
             vm.loadCurrentShip();
         },
+        nextDecal() {
+            const vm = <any>this;
+            vm.decalIndex = (vm.decalIndex + MAX_DECALS + 1) % MAX_DECALS;
+            vm.loadCurrentShip();
+        },
+        prevDecal() {
+            const vm = <any>this;
+            vm.decalIndex = (vm.decalIndex + MAX_DECALS - 1) % MAX_DECALS;
+            vm.loadCurrentShip();
+        },
         loadCurrentShip() {
             const vm = <Data>this;
 
-            if (vm.index < 0)
-                vm.index = ships.length - 1;
-
-            if (vm.index >= ships.length)
-                vm.index = 0;
-
+            vm.index = (vm.index + ships.length) % ships.length;
             vm.ship = ships[vm.index];
+
+            vm.ship.decals[0].name = `decal${vm.decalIndex}`;
 
             const numbers = stats[vm.index || 0];
             Object.assign(vm.stats, <StatsData>{
@@ -97,6 +114,7 @@ export default Vue.extend({
                 handling: numbers[3],
             });
             UserStore.data.shipIndex = vm.index;
+            UserStore.data.decalIndex = vm.decalIndex;
         },
     },
     computed: {

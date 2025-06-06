@@ -32,6 +32,7 @@ export default Vue.extend({
     },
     props: [
         'ship',
+        'decal',
     ],
     data: () => ({
         shipInstance: shipSingleton,
@@ -77,6 +78,7 @@ export default Vue.extend({
             this.shipInstance.color = this.ship.color;
             this.defaults.primary = this.ship.color;
             this.shipInstance.decals[0].color = this.ship.decals[0].color;
+            this.shipInstance.decals[0].name = this.ship.decals[0].name;
             this.defaults.secondary = this.ship.decals[0].color;
 
             if (this.colors.primary.charAt(0) == '#')
@@ -104,5 +106,8 @@ export default Vue.extend({
         ship() {
             this.render();
         },
+        decal() {
+            this.render();
+        }
     },
 });

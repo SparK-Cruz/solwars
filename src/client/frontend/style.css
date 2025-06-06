@@ -118,6 +118,9 @@ label {
     grid-column: 1 / span 2;
     margin-bottom: 22px;
 }
+#ship-select .decal.buttons {
+    grid-column: 1 / span 3;
+}
 #ship-select .buttons .button {
     display: block;
     float: left;

@@ -126,6 +126,32 @@
             "radius": 3100,
             "delay": 320,
             "maxPrizes": 25
+        },
+        {
+            "type": {
+                "name": "ship"
+            },
+            "model": "football",
+            "name": "BOTNIP \"Esquie\"",
+            "x": 0,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 99999,
+            "regen": 99999,
+            "color": "#ffffff",
+            "decals": [
+                {
+                    "name": "decal0",
+                    "color": "#3399ff"
+                },
+                {
+                    "name": "decal1",
+                    "color": "#ff9801"
+                }
+            ]
         }
     ]
 }
