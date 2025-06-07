@@ -1,9 +1,8 @@
-const Vue = require('vue/dist/vue');
-
+import { defineComponent } from 'vue';
 import Modal from './modal';
 import ColorPicker from './color_picker';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ColorInput',
     template: `
         <div class="color-input" :style="{ backgroundColor: safeColor }" @click="openPicker">

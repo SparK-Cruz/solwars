@@ -1,4 +1,4 @@
-const Vue = require('vue/dist/vue');
+import { defineComponent } from "vue";
 
 const range = (start: number, end: number): number[] => {
     return Array.apply(null, Array(end)).map((_: any, i: number) => i + start);
@@ -148,7 +148,7 @@ const drawCursor = (canvas: HTMLCanvasElement, mouse: { x: number, y: number }, 
     ctx.restore();
 };
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ColorPicker',
     template: `
         <div class="color-picker">

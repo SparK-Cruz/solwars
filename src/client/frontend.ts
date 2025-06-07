@@ -1,20 +1,17 @@
-const Vue = require('vue/dist/vue');
+import { createApp } from 'vue';
 import Layout from './frontend/layout';
 
 const binder = {
     isGameRunning: false,
 };
 
-const app = new Vue({
-    el: '#app',
+createApp({
     template: `
         <Layout v-if="!binder.isGameRunning" />
     `,
     components: { Layout },
-    data: {
-        binder
-    }
-});
+    data: () => ({binder}),
+}).mount('#app');
 
 window.addEventListener('gamestart', () => {
     binder.isGameRunning = true;

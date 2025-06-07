@@ -1,8 +1,8 @@
-const Vue = require('vue/dist/vue');
+import { defineComponent } from 'vue';
 import GamepadActionInput from './gamepad_action_input';
 import InputStore from '../input_store';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'GamepadEditor',
     template: `
         <section id="gamepad-editor">

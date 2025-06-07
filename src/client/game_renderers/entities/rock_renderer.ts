@@ -5,6 +5,10 @@ import { Assets } from "../../assets";
 
 export class RockRenderer implements Renderable {
     constructor(parent: any, public rock: Rock) {
+        if (!this.rock.collisionMap) {
+            return;
+        }
+
         const gfx = new PIXI.Sprite(Assets.pool['rock'].texture);
         const mask = new PIXI.Graphics();
 

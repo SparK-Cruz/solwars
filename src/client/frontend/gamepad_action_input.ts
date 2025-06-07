@@ -1,10 +1,10 @@
-const Vue = require('vue/dist/vue');
+import { defineComponent } from 'vue';
 import { AxisInfo, ButtonInfo, GamepadListener } from '../gamepad_listener';
 import InputStore from '../input_store';
 import GamepadLabels from './gamepad_labels';
 import { PadMapper } from './pad_mapper';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'GamepadActionInput',
     template: `
         <div class="controller-input input">

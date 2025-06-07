@@ -1,31 +1,32 @@
-import { Entity, EntityEvent } from "../../space/entities";
-import { A2d } from "./a2d";
+import { EntityEvent } from "../../space/entities";
 import { Ship, ShipEvents } from "../../space/entities/ship";
+import { SfxRenderer } from "./sfx_renderer";
 
 export class ShipAudioRenderer {
-    private source: PannerNode;
+    private shipDeathAudio: SfxRenderer = null;
+    private pickItemAudio: SfxRenderer = null;
 
-    public constructor(private context: AudioContext, private entity: Entity) {
-        this.source = A2d.source(this.context);
-        (<Ship>this.entity).once(EntityEvent.Die, () => this.onDie());
-        (<Ship>this.entity).on(ShipEvents.Upgrade, () => this.onUpgrade());
+    public constructor(private context: AudioContext) {
+        this.shipDeathAudio = new SfxRenderer(this.context, 'sfx/ship_death.mp3');
+        this.pickItemAudio = new SfxRenderer(this.context, 'sfx/pick_item.mp3');
     }
 
-    private onDie() {
-        const audio = A2d.audio(this.source, 'sfx/ship_death.mp3');
-        this.updatePositions();
-        audio.play();
+    public bind(entity: Ship) {
+        entity.once(EntityEvent.Die, () => this.onDie(entity));
+        entity.on(ShipEvents.Upgrade, () => this.onUpgrade(entity));
+        this.onSpawn(entity);
     }
 
-    private onUpgrade() {
-        const audio = A2d.audio(this.source, 'sfx/pick_item.mp3');
-        this.updatePositions();
-        audio.play();
+    private onSpawn(entity: Ship) {
     }
 
-    private updatePositions() {
-        (<any>this.source).positionX.value = this.entity.x;
-        (<any>this.source).positionY.value = this.entity.y;
-        (<any>this.source).positionZ.value = 10;
+    private onDie(entity: Ship) {
+        const sfx = this.shipDeathAudio;
+        sfx.playAt(entity.x, entity.y);
+    }
+
+    private onUpgrade(entity: Ship) {
+        const sfx = this.pickItemAudio;
+        sfx.playAt(entity.x, entity.y);
     }
 }

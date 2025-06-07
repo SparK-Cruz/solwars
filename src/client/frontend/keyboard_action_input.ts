@@ -1,9 +1,9 @@
-const Vue = require('vue/dist/vue');
+import { defineComponent } from 'vue';
 import InputStore from '../input_store';
 import KeyboardLabels from './keyboard_labels';
 import { KeyMapper } from './key_mapper';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'KeyboardActionInput',
     template: `
         <div class="controller-input input">

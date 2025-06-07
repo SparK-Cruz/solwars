@@ -1,3 +1,4 @@
+import { defineComponent } from 'vue';
 import { Model } from '../../space/entities/ships/model';
 import ShipStats from './ship_stats';
 import ShipInfo from './ship_info';
@@ -17,8 +18,6 @@ const stats: number[][] = [
     [0.5, 0.5, 0.5, 0.5],
 ];
 
-const Vue = require('vue/dist/vue');
-
 interface StatsData {
     energy: number,
     engines: number,
@@ -32,7 +31,7 @@ interface Data {
     decalIndex: number,
 }
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ShipSelect',
     template: `
         <div id="ship-select">

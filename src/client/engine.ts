@@ -110,13 +110,14 @@ export class Engine extends EventEmitter {
     }
 
     public start(options: ClientOptions, callback: Function = null) {
-        const timeout = setTimeout(() => {
+        setTimeout(() => {
+            if (this.client.connected) return;
+
             callback && callback({ error: 'Connection Timeout' });
             this.stop();
         }, 10000);
 
         const once = (data: any) => {
-            clearTimeout(timeout);
             this.input.enable();
             this.showCanvas();
 

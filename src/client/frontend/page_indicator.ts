@@ -1,6 +1,6 @@
-const Vue = require('vue/dist/vue');
+import { defineComponent } from "vue";
 
-export default Vue.extend({
+export default defineComponent({
     name: 'PageIndicator',
     template: `
         <div class="page-indicator">

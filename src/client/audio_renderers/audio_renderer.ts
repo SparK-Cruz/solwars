@@ -8,9 +8,15 @@ import { Renderable } from "../game_renderers/renderable";
 export class AudioRenderer implements Renderable {
     private context: AudioContext;
 
+    private shipAudioRenderer: ShipAudioRenderer = null;
+    private bulletAudioRenderer: BulletAudioRenderer = null;
+
     constructor(private camera: Camera, private stage: Stage) {
         this.context = new AudioContext();
         this.stage.on('newEntity', (e) => this.onEntitySpawn(e));
+
+        this.shipAudioRenderer = new ShipAudioRenderer(this.context);
+        this.bulletAudioRenderer = new BulletAudioRenderer(this.context);
     }
 
     public render() {
@@ -25,21 +31,21 @@ export class AudioRenderer implements Renderable {
     }
 
     private onEntitySpawn(entity: Entity) {
-        const renderer: any = this.setupRenderer(entity);
-        renderer &&
-            renderer.onSpawn &&
-            renderer.onSpawn();
+        const renderer: any = this.fetchRenderer(entity);
+        if (!renderer) return;
+
+        renderer.bind(entity);
     }
 
-    private setupRenderer(entity: Entity) {
+    private fetchRenderer(entity: Entity) {
         if (typeof entity.type === 'undefined')
             return null;
 
         switch (entity.type.name) {
             case EntityType.Ship.name:
-                return new ShipAudioRenderer(this.context, entity);
+                return this.shipAudioRenderer;
             case EntityType.Bullet.name:
-                return new BulletAudioRenderer(this.context, entity);
+                return this.bulletAudioRenderer;
         }
     }
 }

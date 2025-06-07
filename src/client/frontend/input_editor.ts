@@ -1,8 +1,8 @@
-const Vue = require('vue/dist/vue');
+import { defineComponent } from 'vue';
 import KeyboardEditor from './keyboard_editor';
 import GamepadEditor from './gamepad_editor';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'InputEditor',
     template: `
         <section id="input-editor">

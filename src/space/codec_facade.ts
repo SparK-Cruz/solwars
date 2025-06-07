@@ -14,7 +14,7 @@ interface SavedState {
     ranking: { name: string, bounty: number }[],
 }
 
-export module DeathCauses {
+export namespace DeathCauses {
     export const Collision = 'collision';
     export const Bullet = 'bullet';
 }

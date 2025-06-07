@@ -1,16 +1,15 @@
-const Vue = require('vue/dist/vue');
-
 import ShipSelect from './ship_select';
 import UserStore from './user_store';
 
 import InputEditor from './input_editor';
 import Modal from './modal';
+import { defineComponent } from 'vue';
 
 const customEvent = (name: string, data: any) => {
     return Object.assign(new Event(name), { data });
 }
 
-export default Vue.extend({
+export default defineComponent({
     name: 'JoinForm',
     template: `
         <form @submit.prevent="submit" id="join-form">

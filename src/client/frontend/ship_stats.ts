@@ -1,8 +1,7 @@
-const Vue = require('vue/dist/vue');
-
+import { defineComponent } from 'vue';
 import ShipStatIndicator from './ship_stat_indicator';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ShipStats',
     template: `
         <div id="stats">

@@ -1,4 +1,4 @@
-import * as socketio from 'socket.io';
+import { Socket, Server as SocketServer } from 'socket.io';
 import { Server } from 'http';
 
 import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
@@ -19,7 +19,7 @@ const playerSkipFactor = Math.ceil(TPS / (TPS_TARGET / UPDATE_SKIP));
 export class Room {
     public codec: CodecFacade;
 
-    private io: SocketIO.Server;
+    private io: SocketServer;
     private stage: Stage;
 
     private players: Player[] = [];
@@ -34,7 +34,7 @@ export class Room {
     }
 
     public constructor(private server: Server) {
-        this.io = socketio(this.server);
+        this.io = new SocketServer(this.server);
 
         this.stage = new Stage(new Collisions());
         this.codec = new CodecFacade();
@@ -71,7 +71,7 @@ export class Room {
             this.ranking = null;
         });
         player.on(PlayerEvents.SyncEntity, (id: number) => {
-            console.log('triggered');
+            console.log('Full sync requested by', id);
             let entity = null;
             this.stage.fetchEntitiesAround(player.ship)
                 .find((p: Entity[]) => p && typeof p.find === "function" && !!p.find((e: Entity) => e.id === id ? !!(entity = e) : false));
@@ -185,7 +185,7 @@ export class Room {
         this.stage.on(EntityEvent.Collide, this.onEntityCollide);
 
         this.lastId = 0;
-        this.io.sockets.on(CodecEvents.CONNECTION, (socket: SocketIO.Socket) => {
+        this.io.sockets.on(CodecEvents.CONNECTION, (socket: Socket) => {
             if (this.players.length > Config.maxPlayers) {
                 socket.disconnect(true);
                 return;

@@ -5,7 +5,7 @@
     "main": "",
     "scripts": {
         "start": "node dist/start.js",
-        "build": "tsc && npm run build-frontend && npm run build-engine-loader && npm run build-assets",
+        "build": "tsc\nnpm run build-frontend&\nnpm run build-engine-loader&\nnpm run build-assets&\nwait",
         "build-debug": "tsc && npm run build-frontend-debug && npm run build-engine-loader-debug && npm run build-assets",
         "build-frontend": "browserify dist/client/frontend.js | terser --compress --mangle > dist/client/dist_frontend.js",
         "build-engine-loader": "browserify dist/client/engine_loader.js | terser --compress --mangle > dist/client/dist_engine_loader.js",
@@ -29,14 +29,12 @@
     "license": "UNLICENSED",
     "devDependencies": {
         "@types/express": "^4.17.7",
-        "@types/socket.io": "^1.4.41",
-        "@types/socket.io-client": "^1.4.33",
+        "@types/jsonfile": "^5.0.1",
         "browserify": "^14.5.0",
         "terser": "^5.3.2",
         "typescript": "^4.2.3"
     },
     "dependencies": {
-        "@types/jsonfile": "^5.0.1",
         "collisions": "file:lib/collisions",
         "express": "^4.16.3",
         "fast-json-stringify": "^1.21.0",
@@ -45,9 +43,9 @@
         "long": "^4.0.0",
         "pixi-virtual-joystick": "^0.4.1",
         "pixi.js": "^5.3.2",
-        "socket.io": "^2.1.1",
-        "socket.io-client": "^2.1.1",
+        "socket.io": "^4.8.1",
+        "socket.io-client": "^4.8.1",
         "uglify-es": "^3.3.9",
-        "vue": "^2.6.12"
+        "vue": "^3.5.16"
     }
 }

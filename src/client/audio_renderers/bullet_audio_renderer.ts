@@ -1,32 +1,40 @@
-import { Entity, EntityEvent } from "../../space/entities";
+import { EntityEvent } from "../../space/entities";
 import { Bullet } from "../../space/entities/bullet";
-import { A2d } from "./a2d";
+import { SfxRenderer } from "./sfx_renderer";
 
 export class BulletAudioRenderer {
-    private source: PannerNode;
+    private bulletShot0Audio: SfxRenderer = null;
+    private bulletShot1Audio: SfxRenderer = null;
+    private bulletShot2Audio: SfxRenderer = null;
+    private bulletShot3Audio: SfxRenderer = null;
+    private bulletImpactAudio: SfxRenderer = null;
 
-    public constructor(private context: AudioContext, private entity: Entity) {
-        this.source = A2d.source(this.context);
-        (<any>entity).once(EntityEvent.Collide, () => this.onCollide());
+    public constructor(private context: AudioContext) {
+        this.bulletShot0Audio = new SfxRenderer(this.context, 'sfx/bullet_0.mp3');
+        this.bulletShot1Audio = new SfxRenderer(this.context, 'sfx/bullet_1.mp3');
+        this.bulletShot2Audio = new SfxRenderer(this.context, 'sfx/bullet_2.mp3');
+        this.bulletShot3Audio = new SfxRenderer(this.context, 'sfx/bullet_3.mp3');
+        this.bulletImpactAudio = new SfxRenderer(this.context, 'sfx/bullet_impact.mp3');
     }
 
-    public onSpawn() {
-        const type = (<Bullet>this.entity).bulletType;
-        const audio = A2d.audio(this.source, `sfx/bullet_${type}.mp3`);
-
-        this.updatePositions();
-        audio.play();
+    public bind(entity: Bullet) {
+        entity.once(EntityEvent.Collide, () => this.onCollide(entity));
+        this.onSpawn(entity);
     }
 
-    private onCollide() {
-        const audio = A2d.audio(this.source, 'sfx/bullet_impact.mp3');
-        this.updatePositions();
-        audio.play();
+    public onSpawn(entity: Bullet) {
+        const type = entity.bulletType;
+        const sfx = [
+            this.bulletShot0Audio,
+            this.bulletShot1Audio,
+            this.bulletShot2Audio,
+            this.bulletShot3Audio,
+        ][type];
+        sfx.playAt(entity.x, entity.y);
     }
 
-    private updatePositions() {
-        (<any>this.source).positionX.value = this.entity.x;
-        (<any>this.source).positionY.value = this.entity.y;
-        (<any>this.source).positionZ.value = 10;
+    private onCollide(entity: Bullet) {
+        const sfx = this.bulletImpactAudio;
+        sfx.playAt(entity.x, entity.y);
     }
 }

@@ -1,6 +1,6 @@
-const Vue = require('vue/dist/vue');
 const PIXI = require('pixi.js');
 
+import { defineComponent } from 'vue';
 import { Ship } from '../../space/entities/ship';
 import { Model } from '../../space/entities/ships/model';
 import { AssetManager, Assets } from '../assets';
@@ -14,7 +14,7 @@ container.position.set(32);
 const assman = AssetManager.getInstance();
 const shipSingleton = new Ship(Model.all[0]);
 
-export default Vue.extend({
+export default defineComponent({
     name: 'ShipRender',
     template: `
         <div id="ship-render">

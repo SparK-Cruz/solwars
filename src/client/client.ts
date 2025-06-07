@@ -1,4 +1,5 @@
 import * as socketio from 'socket.io-client';
+import { Socket } from 'socket.io-client';
 
 import { Stage } from './stage';
 import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
@@ -26,7 +27,7 @@ export class Client extends EventEmitter {
     private ship: Ship = null;
     private ranking: { name: string, bounty: number }[] = [];
 
-    private socket: SocketIOClient.Socket;
+    private socket: Socket;
     private compensator: NodeJS.Timeout;
 
     private lastUpdateTime: number = Date.now();
@@ -59,7 +60,7 @@ export class Client extends EventEmitter {
         this.options = options;
 
         if (!this.socket) {
-            this.socket = socketio('', { autoConnect: false });
+            this.socket = socketio.connect('', { autoConnect: false });
 
             this.bindEvents(this.socket);
         }
@@ -122,7 +123,7 @@ export class Client extends EventEmitter {
         this.compensator = null;
     }
 
-    private bindEvents(socket: SocketIOClient.Socket) {
+    private bindEvents(socket: Socket) {
         socket.on(CodecEvents.CONNECT, () => {
             this.socket.emit(CodecEvents.JOIN_GAME, this.options);
         });
@@ -168,7 +169,7 @@ export class Client extends EventEmitter {
         });
 
         socket.on(CodecEvents.ENTITY, (entity: any) => {
-            console.log('triggered');
+            console.log('Running full entity decode');
             this.stage.add(this.codec.decodeEntity(JSON.parse(entity)));
         });
 

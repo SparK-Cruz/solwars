@@ -25,11 +25,11 @@ export namespace A2d {
         const media = (<AudioContext>source.context).createMediaElementSource(audio);
 
         media.connect(source);
-        audio.addEventListener('ended', () => {
-            media.disconnect(source);
-            audio.remove();
-            audio.srcObject = null;
-        }, {once: true});
+        // audio.addEventListener('ended', () => {
+        //     media.disconnect(source);
+        //     audio.remove();
+        //     audio.srcObject = null;
+        // }, {once: true});
 
         return audio;
     }

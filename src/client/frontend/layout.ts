@@ -1,8 +1,7 @@
-const Vue = require('vue/dist/vue');
-
+import { defineComponent } from 'vue';
 import JoinForm from './join_form';
 
-export default Vue.extend({
+export default defineComponent({
     name: 'Layout',
     template: `
         <section id="layout">
