@@ -20,7 +20,7 @@ export class Stage extends EventEmitter {
 
     private steppers: Entity[] = [];
 
-    public constructor(public collisionSystem: any) {
+    public constructor(public collisionSystem: any, mapName: string) {
         super();
         this.collisionResult = this.collisionSystem.createResult();
 
@@ -34,7 +34,12 @@ export class Stage extends EventEmitter {
             }
         });
 
-        json.readFile('./maps/default.json', (err: any, contents: any) => {
+        if (!mapName) {
+            return;
+        }
+
+        // load map
+        json.readFile(`./maps/${mapName}.json`, (err: any, contents: any) => {
             if (err) {
                 console.log(err);
                 return;

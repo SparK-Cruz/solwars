@@ -33,10 +33,10 @@ export class Room {
         return this.players.length;
     }
 
-    public constructor(private server: Server) {
+    public constructor(private server: Server, mapName: string = "default") {
         this.io = new SocketServer(this.server);
 
-        this.stage = new Stage(new Collisions());
+        this.stage = new Stage(new Collisions(), mapName);
         this.codec = new CodecFacade();
 
         TPS = Config.TPS;

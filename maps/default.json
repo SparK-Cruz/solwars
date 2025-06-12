@@ -101,7 +101,6 @@
         }
     ],
     "npe": [
-
         {
             "spawner": true,
             "type": {
@@ -109,8 +108,8 @@
             },
             "x": 0,
             "y": 0,
-            "size": 72,
-            "sides": 16,
+            "size": 75,
+            "sides": 12,
             "mass": 700,
             "count": 160,
             "radius": 3200,

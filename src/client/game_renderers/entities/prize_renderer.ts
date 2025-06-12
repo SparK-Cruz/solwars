@@ -1,6 +1,7 @@
 const PIXI = require('pixi.js');
 import { Renderable } from "../renderable";
 import { Prize } from '../../../space/entities/prize';
+import { Assets } from "../../assets";
 
 const PRIZE_SIZE = 16;
 
@@ -8,11 +9,11 @@ export class PrizeRenderer implements Renderable {
     private text: any;
 
     public constructor(parent: any, private prize: Prize) {
-        const body = new PIXI.Graphics();
-        body.beginFill(0x007700);
-        body.drawRect(-PRIZE_SIZE/2, -PRIZE_SIZE/2, PRIZE_SIZE, PRIZE_SIZE);
-        body.endFill();
-
+        const body = new PIXI.Sprite(Assets.pool['prize'].texture);
+        body.position.set(
+            -body.width / 2,
+            -body.height / 2,
+        );
         const text = new PIXI.Text('?', {
             fontFamily: 'monospace',
             fontSize: 12,

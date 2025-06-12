@@ -24,7 +24,7 @@ canvas#game {
     padding: 0px;
     width: 100%;
     height: 100%;
-    /* cursor: none !important; */
+    cursor: none !important;
 }
 
 input, button {

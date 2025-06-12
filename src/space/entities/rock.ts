@@ -24,12 +24,12 @@ export class Rock extends EventEmitter implements Entity {
     constructor(public size: number, public sides: number) {
         super();
 
-        const sideVariation = Math.random() * 0.5 + 0.5;
+        const sideVariation = Math.random() * 0.3 + 0.7;
         const theta = 360 / Math.round(sides * sideVariation);
         const radius = size / 2;
         for (let i = 0; i<sides; i++) {
             const surfaceVariation = Math.random() * 0.2 + 0.8;
-            const tethaVariation = Math.random();
+            const tethaVariation = Math.random() * 0.2 + 0.8;
             this.collisionMap.push([
                 surfaceVariation * radius * Math.sin(theta*(i + tethaVariation) * Math.PI / 180),
                 surfaceVariation * radius * Math.cos(theta*(i + tethaVariation) * Math.PI / 180),

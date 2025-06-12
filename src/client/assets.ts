@@ -33,6 +33,7 @@ export class AssetManager extends EventEmitter {
         loader
             .add('light', 'img/light.png')
             .add('rock', 'img/rock.png')
+            .add('prize', 'img/prize.png')
             .add('ship_warbird', 'img/ships/warbird.png')
             .add('ship_warbird_mask', 'img/ships/warbird_mask.png')
             .add('ship_warbird_decal0', 'img/ships/warbird_decal0.png')
@@ -66,6 +67,7 @@ export class AssetManager extends EventEmitter {
         loader.load((_loader: any, resources: any) => {
             Assets.pool['light'] = new PIXI.Sprite(resources.light.texture);
             Assets.pool['rock'] = new PIXI.Sprite(resources.rock.texture);
+            Assets.pool['prize'] = new PIXI.Sprite(resources.prize.texture);
             Assets.pool['ship_warbird'] = new PIXI.Sprite(resources.ship_warbird.texture);
             Assets.pool['ship_warbird_mask'] = new PIXI.Sprite(resources.ship_warbird_mask.texture);
             Assets.pool['ship_warbird_decal0'] = new PIXI.Sprite(resources.ship_warbird_decal0.texture);

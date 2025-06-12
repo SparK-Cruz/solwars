@@ -1,0 +1,79 @@
+{
+    "npe": [
+        {
+            "type": {
+                "name": "ship"
+            },
+            "model": "warbird",
+            "name": "HA-46",
+            "x": 0,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "type": {
+                "name": "ship"
+            },
+            "model": "javelin",
+            "name": "FC-12/0",
+            "x": 64,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "type": {
+                "name": "ship"
+            },
+            "model": "spider",
+            "name": "RSC17",
+            "x": 128,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "type": {
+                "name": "ship"
+            },
+            "model": "leviathan",
+            "name": "Ut-59",
+            "x": 192,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        },
+        {
+            "type": {
+                "name": "ship"
+            },
+            "model": "terrier",
+            "name": "Nu-34",
+            "x": 256,
+            "y": 0,
+            "vx": 0,
+            "vy": 0,
+            "control": 8,
+            "bullet": 0,
+            "health": 1200,
+            "regen": 1200
+        }
+    ]
+}

@@ -21,6 +21,7 @@ export class RockSpawner extends EventEmitter implements Entity {
     public count: number;
     public radius: number;
     public spread: number;
+    public minRadius: number;
 
     public done: boolean = false;
 
@@ -37,6 +38,8 @@ export class RockSpawner extends EventEmitter implements Entity {
             return angle * Math.PI / 180;
         }
 
+        this.minRadius ??= 0;
+
         const rocky = {size: this.size, sides: this.sides};
         const reference = {
             x: this.x,
@@ -50,7 +53,7 @@ export class RockSpawner extends EventEmitter implements Entity {
         for (let i = 0; i < this.count; i++) {
             const angle = toRads(360 / this.count) * i;
             const spread = {
-                distance: Math.random() * this.spread,
+                distance: this.minRadius + (Math.random() * (this.spread - this.minRadius)),
                 angle: toRads(Math.random() * 360),
             }
 
@@ -59,9 +62,13 @@ export class RockSpawner extends EventEmitter implements Entity {
                 y: this.radius * Math.cos(angle) + spread.distance * Math.cos(spread.angle),
             };
 
-            const rock = Object.assign({}, rocky, {size: (0.6 + Math.random() * 0.8) * rocky.size});
+            const targetSize = (0.6 + Math.random() * 1.1) * rocky.size;
+            const targetMass = targetSize / rocky.size * reference.mass;
 
-            this.emit(EntityEvent.Spawn, EntityType.Rock, rock, reference, offset);
+            const rock = Object.assign({}, rocky, {size: targetSize});
+            const localRef = Object.assign({}, reference, {mass: targetMass});
+
+            this.emit(EntityEvent.Spawn, EntityType.Rock, rock, localRef, offset);
         }
 
         this.emit(EntityEvent.Despawn, this);

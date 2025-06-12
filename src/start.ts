@@ -18,19 +18,23 @@ Config.read(() => {
     const port = process.env.PORT || STATIC_PORT;
     process.env.UV_THREADPOOL_SIZE = "30";
 
-    const room = new Room(server);
+    let mapName = 'kuiperbelt';
+    const mapArgIndex = process.argv.indexOf('-map');
+    if (mapArgIndex !== -1) {
+        mapName = process.argv[mapArgIndex+1] ?? mapName;
+    }
+
+    const room = new Room(server, mapName);
     server.listen(port);
     room.open();
 
     console.log("Serving on port " + port);
 
     // BOTs
-    if (typeof process.argv[2] != "undefined"
-        && process.argv[2] === "no-bots")
-        return;
-
-    const botman = new BotManager(room);
-    Config.bots.forEach((config: BotsConfig) => {
-        botman.add(config.count, config);
-    });
+    if (!process.argv.includes("no-bots")) {
+        const botman = new BotManager(room);
+        Config.bots.forEach((config: BotsConfig) => {
+            botman.add(config.count, config);
+        });
+    }
 });

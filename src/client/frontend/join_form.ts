@@ -47,6 +47,7 @@ export default defineComponent({
     },
     methods: {
         submit() {
+            this.$refs.name.blur();
             UserStore.data.name = this.name;
             UserStore.save();
             window.dispatchEvent(customEvent('joingame', UserStore.dump()));
