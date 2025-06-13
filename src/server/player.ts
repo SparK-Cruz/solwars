@@ -28,7 +28,6 @@ export class Player extends EventEmitter {
     public constructor(public socket: Socket, public room: Room) {
         super();
         this.setupListeners();
-        // this.socket.emit(CodecEvents.CONNECT);
     }
 
     public sendState(state: string) {
@@ -117,7 +116,7 @@ export class Player extends EventEmitter {
                 model = ShipModel.Warbird;
             }
 
-            const ship = new Ship(model);
+            const ship = new Ship(model, Config);
 
             // Customize ship here
             const options: any = {};

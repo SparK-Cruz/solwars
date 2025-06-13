@@ -6,7 +6,8 @@ import { Ship } from '../../space/entities/ship';
 import { Model } from '../../space/entities/ships/model';
 import { Mapping } from '../../space/entities/ships/mapping';
 import { Control } from '../../space/entities/ships/control';
-import { BotsConfig, Config } from '../../space/config';
+import { Config } from '../../space/config';
+import { BotsConfig } from '../../space/config_interfaces';
 
 const MIN_DISTANCE = 150;
 const MAX_DISTANCE = 400;
@@ -74,7 +75,7 @@ export class Bot extends Player {
     protected fetchPlayerShip(name: string, cache: Ship = null) {
         let onSuccess = (ship: Ship) => { };
         setTimeout(() => {
-            const ship = new Ship(Model.byId[this.fetchShipModel()]);
+            const ship = new Ship(Model.byId[this.fetchShipModel()], Config);
             ship.decals.push(...this.config.ship.decals);
             if (this.config.ship.color)
                 ship.color = this.config.ship.color;

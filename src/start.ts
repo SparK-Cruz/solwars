@@ -2,7 +2,8 @@
 const express = require("express");
 import { Server } from "http";
 import { Room } from "./server/room";
-import { Config, BotsConfig } from "./space/config";
+import { Config } from "./space/config";
+import { BotsConfig } from "./space/config_interfaces";
 
 import { BotManager } from "./server/bots/bot_manager";
 

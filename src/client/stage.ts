@@ -11,6 +11,7 @@ function validOrDefault(value: any, defaultValue: any): any {
 
 export class Stage extends EventEmitter {
     public tick: number;
+    public radius: number;
     public entities: any = {};
     private seen: number[] = [];
 

@@ -3,7 +3,7 @@ import { Bot } from "./bot";
 import { Ship } from "../../space/entities/ship";
 import { Stage } from "../../space/stage";
 import { EntityType, Entity } from "../../space/entities";
-import { BotsConfig } from "../../space/config";
+import { BotsConfig } from "../../space/config_interfaces";
 import { BotNamePool } from "./bot_name_pool";
 
 const INPUT_TPS = 16;

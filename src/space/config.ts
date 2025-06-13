@@ -1,56 +1,26 @@
 import * as json from 'jsonfile';
+import { ShipsConfig, BulletConfig, BotsConfig, Config as Base } from './config_interfaces';
+// export * from './config_interfaces';
 
-export interface ShipConfig {
-    speed: number,
-    acceleration: number,
-    spin: number,
-    energy: number,
-    bullet: number,
-    bomb: number,
-}
+class Class implements Base {
+    private static instance: Base;
 
-export interface ShipsConfig {
-    warbird: ShipConfig,
-    javelin: ShipConfig,
-    spider: ShipConfig,
-    leviathan: ShipConfig,
-    terrier: ShipConfig,
-    weasel: ShipConfig,
-    lancaster: ShipConfig,
-    shark: ShipConfig,
-}
+    constructor() {
+        if (Class.instance) {
+            return Class.instance;
+        }
 
-export interface BulletConfig {
-    speed: number,
-    cost: number,
-    energy: number,
-    cooldown: number,
-    color: string,
-}
+        Class.instance = this;
+    }
 
-export interface BotsConfig {
-    count: number,
-    ship: BotShip,
-    prefix: string,
-    anon: boolean,
-    faction: string,
-}
+    public serverPort: number;
+    public TPS: number;
+    public maxPlayers: number;
+    public ships: ShipsConfig;
+    public bullets: BulletConfig[];
+    public bots: BotsConfig[];
 
-export interface BotShip {
-    model: string,
-    decals: { name: string, color: string }[],
-    color: string,
-}
-
-export class Config {
-    public static serverPort: number;
-    public static TPS: number;
-    public static maxPlayers: number;
-    public static ships: ShipsConfig;
-    public static bullets: BulletConfig[];
-    public static bots: BotsConfig[];
-
-    public static read(callback: Function) {
+    public read(callback: Function) {
         json.readFile('./config.json', (err: any, contents: any) => {
             if (err) {
                 console.log(err);
@@ -64,3 +34,5 @@ export class Config {
         });
     }
 }
+
+export const Config = new Class();

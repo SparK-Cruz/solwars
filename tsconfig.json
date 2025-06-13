@@ -8,12 +8,13 @@
         ],
         "outDir": "dist",
         "noImplicitAny": true,
-        "module": "commonjs",
-        "target": "ES5",
+        "module": "esnext",
+        "target": "esnext",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "sourceMap": true,
-        "declaration": false
+        "declaration": false,
+        "moduleResolution": "node"
     },
     "include": [
         "src"

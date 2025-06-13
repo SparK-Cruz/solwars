@@ -3,7 +3,7 @@ const PIXI = require('pixi.js');
 import { defineComponent } from 'vue';
 import { Ship } from '../../space/entities/ship';
 import { Model } from '../../space/entities/ships/model';
-import { AssetManager, Assets } from '../assets';
+import { AssetManager } from '../assets';
 import { ShipRenderer } from '../game_renderers/entities/ship_renderer';
 import ColorInput from './color_input';
 import UserStore from './user_store';

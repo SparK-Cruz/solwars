@@ -7,7 +7,7 @@ import { Config } from '../space/config';
 const Collisions = require('collisions').Collisions;
 
 Config.read(() => {
-  const stage = new Stage(new Collisions());
+  const stage = new Stage(new Collisions(), 'default');
   const ship = new Ship(ShipModel.Warbird);
   const mapping = new Mapping();
 

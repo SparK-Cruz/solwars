@@ -3,7 +3,7 @@ import { Model } from './ships/model';
 import { Control } from './ships/control';
 import { Decal } from './ships/decal';
 import * as entities from '../entities';
-import { Config } from '../config';
+import { Config, ShipConfig } from '../config_interfaces';
 
 function inRads(degrees :number) :number {
     return degrees * Math.PI / 180;
@@ -66,7 +66,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     afterburnerCost = 6;
     shootCost = 150;
 
-    constructor(model :Model) {
+    constructor(model :Model, private config: Config = null) {
         super();
 
         this.model = model.id;
@@ -81,19 +81,21 @@ export class Ship extends EventEmitter implements entities.Entity {
             }
         }
 
-        if (!Config.ships) return;
+        if (config && config.ships) {
+            // server only
 
-        const traits = (<any> Config.ships)[model.id];
-        if (!traits) return;
+            const traits = (<any> this.config.ships)[model.id] as ShipConfig;
+            if (!traits) return;
 
-        this.vmax = traits.speed;
-        this.turnSpeed = traits.spin;
-        this.power = traits.acceleration;
-        this.health = traits.energy;
-        this.regen = traits.regeneration;
+            this.vmax = traits.speed;
+            this.turnSpeed = traits.spin;
+            this.power = traits.acceleration;
+            this.health = traits.energy;
+            this.regen = traits.regeneration;
 
-        this.bullet = traits.bullet;
-        this.bomb = traits.bomb;
+            this.bullet = traits.bullet;
+            this.bomb = traits.bomb;
+        }
     }
 
     step(delta: number) :void {
@@ -115,7 +117,7 @@ export class Ship extends EventEmitter implements entities.Entity {
         this.updateHealth(0);
 
         if (wasAlive && !this.alive) {
-            this.die(origin);
+            this.die(origin ?? this);
         }
     }
 
@@ -161,10 +163,10 @@ export class Ship extends EventEmitter implements entities.Entity {
         this.vangle = turn * this.turnSpeed;
     }
     private readShoot() {
-        if (!Config.bullets)
+        if (!this.config?.bullets)
             return;
 
-        const bulletTraits = Config.bullets[this.bullet];
+        const bulletTraits = this.config.bullets[this.bullet];
 
         if (!Control.shooting(this.control)
             || !this.canShoot(bulletTraits.cost))

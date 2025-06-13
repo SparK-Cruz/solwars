@@ -9,9 +9,14 @@ import { Rock } from './entities/rock';
 import { Prize } from './entities/prize';
 import { PrizeSpawner } from './entity_spawner/prize_spawner';
 import { GravityWell } from './entities/gravity_well';
+import { Config } from './config';
 
 export class Stage extends EventEmitter {
     public tick = 0;
+    public radius: number = 0;
+
+    private spawnRadius: number = 5000;
+    private radiusSurvivalSeconds: number = 0;
 
     private shapes: any = {};
     private collisionResult: any = null;
@@ -29,8 +34,24 @@ export class Stage extends EventEmitter {
                 if (!(this.steppers[i]))
                     continue;
 
-                this.steppers[i].step(delta);
-                this.sectors.updateGrid(this.steppers[i]);
+                const stepper: any & Entity = this.steppers[i];
+
+                stepper.step(delta);
+                this.sectors.updateGrid(stepper);
+
+                if (
+                    this.radius > 0
+                    && this.radiusSurvivalSeconds > 0
+                    && stepper.addDamage
+                ) {
+                    const distance = Math.sqrt(Math.pow(stepper.y, 2) + Math.pow(stepper.x, 2));
+                    if (distance >= this.radius) {
+                        stepper.addDamage(
+                            stepper.health
+                            / (delta * (1000 / Config.TPS) * this.radiusSurvivalSeconds)
+                        );
+                    }
+                }
             }
         });
 
@@ -44,18 +65,23 @@ export class Stage extends EventEmitter {
                 console.log(err);
                 return;
             }
-            if (!contents.hasOwnProperty('npe'))
-                return;
+            if (contents.hasOwnProperty('npe')) {
+                const codec = new CodecFacade();
+                for (let i in contents.npe) {
+                    const entity = codec.decodeEntity(<Entity>contents.npe[i]);
 
-            const codec = new CodecFacade();
-            for (let i in contents.npe) {
-                const entity = codec.decodeEntity(<Entity>contents.npe[i]);
+                    this.add(entity);
 
-                this.add(entity);
-
-                if (entity.hasOwnProperty('stage')) {
-                    (<any>entity).stage = this;
+                    if (entity.hasOwnProperty('stage')) {
+                        (<any>entity).stage = this;
+                    }
                 }
+            }
+
+            if (contents.hasOwnProperty('stage')) {
+                this.radius = contents.stage.radius ?? this.radius;
+                this.radiusSurvivalSeconds = contents.stage.radiusSurvivalSeconds ?? this.radiusSurvivalSeconds;
+                this.spawnRadius = contents.stage.spawnRadius ?? this.spawnRadius;
             }
         });
     }
@@ -81,6 +107,14 @@ export class Stage extends EventEmitter {
         (<any>entity).on(EntityEvent.Collide, this.onCollideEntity);
 
         this.addStepper(entity);
+    }
+
+    public spawn(entity: Entity) {
+        const spawnRadius = this.spawnRadius;
+        const x = (Math.random() * spawnRadius) - spawnRadius / 2;
+        const y = (Math.random() * spawnRadius) - spawnRadius / 2;
+        this.add(entity);
+        this.moveEntity(entity, {x, y});
     }
 
     public remove(entity: Entity) {

@@ -1,4 +1,4 @@
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 
 import { Renderable } from "../game_renderers/renderable";
 import { Camera } from "../camera";
@@ -13,10 +13,12 @@ const POS = { x: -220, y: -250 };
 const MOBILE_POS = { x: -220, y: 20 };
 
 export class Radar implements Renderable {
-    private container: any;
+    private container: PIXI.Container;
 
-    private coordText: any;
-    private blips: any;
+    private coordText: PIXI.Text;
+    private blips: PIXI.Graphics;
+    private radius: PIXI.Graphics;
+    private radiusHole: PIXI.Graphics;
 
     private info: ClientInfo;
 
@@ -33,6 +35,7 @@ export class Radar implements Renderable {
 
         this.initializeCoord();
         this.initializeFrame();
+        this.initializeDeathRadius();
         this.initializeBlips();
 
         this.parent.addChild(this.container);
@@ -40,7 +43,7 @@ export class Radar implements Renderable {
 
     private initializeCoord() {
         this.coordText = new PIXI.Text(
-            'W0 N0',
+            'E0 S0',
             {
                 fontFamily: 'monospace',
                 fontSize: 16,
@@ -53,17 +56,20 @@ export class Radar implements Renderable {
 
     private initializeFrame() {
         const frame = new PIXI.Graphics();
-        frame.lineStyle(2, 0x3399ff, 1, 1);
-        frame.beginFill(0x000000, 0.6);
-        frame.drawCircle(100, 100, 100);
+        frame
+            .setFillStyle({ color: 0x000000, alpha: 0.6 })
+            .setStrokeStyle({ color: 0x3399ff, width: 2 })
+            .circle(100, 100, 100)
+            .stroke()
+            .fill()
         frame.position.set(0, 30);
         this.container.addChild(frame);
     }
 
     private initializeBlips() {
         const mask = new PIXI.Graphics();
-        mask.beginFill(0xffffff, 1);
-        mask.drawCircle(100, 100, 100);
+        mask.circle(100, 100, 100)
+            .fill(0xffffff);
 
         this.blips = new PIXI.Graphics();
         this.blips.mask = mask;
@@ -74,12 +80,37 @@ export class Radar implements Renderable {
         this.container.addChild(this.blips);
     }
 
+    private initializeDeathRadius() {
+        const mask = new PIXI.Graphics();
+        mask.circle(100, 100, 100)
+            .fill(0xffffff);
+        mask.position.set(0, 30);
+
+        const radiusContainer = new PIXI.Container();
+        radiusContainer.mask = mask;
+        radiusContainer.position.set(0, 30);
+
+        this.container.addChild(mask);
+        this.container.addChild(radiusContainer);
+
+        this.radiusHole = new PIXI.Graphics();
+        this.radius = new PIXI.Graphics();
+        this.radius.mask = this.radiusHole;
+
+        radiusContainer.addChild(this.radiusHole);
+        radiusContainer.addChild(this.radius);
+    }
+
     public render() {
         if (!this.info)
             return;
 
         this.drawCoordinates();
         this.drawBlips();
+
+        if (this.stage.radius) {
+            this.drawDeathRadius();
+        }
 
         if (IS_MOBILE) {
             this.container.position.set(
@@ -159,5 +190,37 @@ export class Radar implements Renderable {
             );
             this.blips.endFill();
         }
+    }
+
+    private drawDeathRadius() {
+        this.radiusHole.clear();
+        this.radius.clear();
+
+        const pos = this.camera.translate({x: 0, y: 0});
+
+        // mask
+        this.radiusHole.circle(
+            pos.x * SCALE + 100,
+            pos.y * SCALE + 100,
+            (this.stage.radius + 3000) * SCALE
+        ).fill(0xffffff);
+
+        this.radiusHole.circle(
+            pos.x * SCALE + 100,
+            pos.y * SCALE + 100,
+            this.stage.radius * SCALE
+        ).fill(0x000000);
+
+        // zone
+        const style = 0x770000;
+        const alpha = 0.5;
+
+        this.radius.circle(
+            pos.x * SCALE + 100,
+            pos.y * SCALE + 100,
+            (this.stage.radius + 3000) * SCALE
+        )
+        .fill(style)
+        .alpha = alpha;
     }
 }

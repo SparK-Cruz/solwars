@@ -202,6 +202,7 @@ export class Client extends EventEmitter {
 
         const decoded = this.codec.decode(data);
 
+        this.stage.radius = decoded.radius;
         this.stage.addAll([].concat(...decoded.entities).map((e: any) => e.newSector ? this.codec.decodeEntity(e) : e).filter(e => e));
         this.ranking = decoded.ranking;
     }

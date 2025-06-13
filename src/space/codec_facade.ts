@@ -10,6 +10,7 @@ import { GravityWell } from './entities/gravity_well';
 
 interface SavedState {
     tick: number,
+    radius: number,
     entities: any[],
     ranking: { name: string, bounty: number }[],
 }
@@ -36,6 +37,9 @@ const stringify = fastjson({
     type: 'object',
     properties: {
         tick: {
+            type: 'integer',
+        },
+        radius: {
             type: 'integer',
         },
         ranking: {
@@ -181,6 +185,7 @@ export class CodecFacade {
     public encode(state: SavedState, force: boolean = false): string {
         const stream = {
             tick: state.tick,
+            radius: state.radius,
             ranking: state.ranking.map(p => { return { name: p.name, bounty: p.bounty } }),
             entities: state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e))
         };

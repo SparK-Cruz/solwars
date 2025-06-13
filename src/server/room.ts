@@ -97,10 +97,7 @@ export class Room {
         player.ship = ship;
         player.updateShipName();
 
-        const spawnRadius = 5000;
-        player.ship.x += (Math.random() * spawnRadius) - spawnRadius / 2;
-        player.ship.y += (Math.random() * spawnRadius) - spawnRadius / 2;
-        this.stage.add(player.ship);
+        this.stage.spawn(player.ship);
     }
     private onPlayerDie(player: Player, death: PlayerDeath) {
         const killer: Player = this.players.find(p => p.ship && p.ship.id == death.killer.id);
@@ -143,6 +140,7 @@ export class Room {
                 player.sendState(this.codec.encode(
                     {
                         tick: this.stage.tick,
+                        radius: this.stage.radius,
                         entities: this.stage.fetchEntitiesAround(player.ship),
                         ranking: ranking,
                     },

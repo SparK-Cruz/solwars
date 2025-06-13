@@ -1,4 +1,9 @@
 {
+    "stage": {
+        "radius": 2000,
+        "radiusSurvivalSeconds": 10,
+        "spawnRadius": 0
+    },
     "npe": [
         {
             "type": {
@@ -6,7 +11,7 @@
             },
             "model": "warbird",
             "name": "HA-46",
-            "x": 0,
+            "x": 64,
             "y": 0,
             "vx": 0,
             "vy": 0,
@@ -21,7 +26,7 @@
             },
             "model": "javelin",
             "name": "FC-12/0",
-            "x": 64,
+            "x": 128,
             "y": 0,
             "vx": 0,
             "vy": 0,
@@ -36,7 +41,7 @@
             },
             "model": "spider",
             "name": "RSC17",
-            "x": 128,
+            "x": 192,
             "y": 0,
             "vx": 0,
             "vy": 0,
@@ -51,7 +56,7 @@
             },
             "model": "leviathan",
             "name": "Ut-59",
-            "x": 192,
+            "x": 256,
             "y": 0,
             "vx": 0,
             "vy": 0,
@@ -66,7 +71,7 @@
             },
             "model": "terrier",
             "name": "Nu-34",
-            "x": 256,
+            "x": 320,
             "y": 0,
             "vx": 0,
             "vy": 0,
