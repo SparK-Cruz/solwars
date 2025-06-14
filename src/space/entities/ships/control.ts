@@ -1,4 +1,4 @@
-import { Mapping } from './mapping';
+import { Mapping } from './mapping.js';
 
 export namespace Control {
     export function thrusting(state :number) :number {

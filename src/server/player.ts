@@ -1,12 +1,12 @@
-import { Room } from './room';
-import { Ship, ShipEvents } from '../space/entities/ship';
-import { Model as ShipModel } from '../space/entities/ships/model';
-import { CodecEvents, PlayerDeath, DeathCauses } from '../space/codec_facade';
-import { EntityEvent, Entity, EntityType } from '../space/entities';
-import { Bullet } from '../space/entities/bullet';
-import { Config } from '../space/config';
+import { Room } from './room.js';
+import { Ship, ShipEvents } from '../space/entities/ship.js';
+import { Model as ShipModel } from '../space/entities/ships/model.js';
+import { CodecEvents, PlayerDeath, DeathCauses } from '../space/codec_facade.js';
+import { EntityEvent, Entity, EntityType } from '../space/entities.js';
+import { Bullet } from '../space/entities/bullet.js';
+import { Config } from '../space/config.js';
 import { Socket } from 'socket.io';
-const EventEmitter = require('events');
+import { EventEmitter } from 'events';
 
 export namespace PlayerEvents {
     export const Ship = 'ship';

@@ -1,32 +1,34 @@
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 import { EventEmitter } from 'events';
 
-import { KeyboardInput } from './keyboard_input';
-import { Client, ClientOptions, ClientEvents } from './client';
-import { Camera } from './camera';
-import { AssetManager } from './assets';
-import { GameRenderer } from './game_renderer';
-import { HudRenderer } from './hud_renderer';
-import { FpsRenderer } from './hud_renderers/fps_renderer';
-import { ToastRenderer, ToastTime } from './toast_renderer';
-import { AudioRenderer } from './audio_renderers/audio_renderer';
-import { Input, Inputable } from './input';
-import { GamepadInput } from './gamepad_input';
-import { IS_MOBILE } from './environment';
-import { MobileInputRenderer } from './mobile_input_renderer';
-import { MobileInput } from './mobile_input';
+PIXI.extensions.add(PIXI.TickerPlugin);
+PIXI.extensions.add(PIXI.ResizePlugin);
+
+import { KeyboardInput } from './keyboard_input.js';
+import { Client, ClientOptions, ClientEvents } from './client.js';
+import { Camera } from './camera.js';
+import { AssetManager } from './assets.js';
+import { GameRenderer } from './game_renderer.js';
+import { HudRenderer } from './hud_renderer.js';
+import { FpsRenderer } from './hud_renderers/fps_renderer.js';
+import { ToastRenderer, ToastTime } from './toast_renderer.js';
+import { AudioRenderer } from './audio_renderers/audio_renderer.js';
+import { Input, Inputable } from './input.js';
+import { GamepadInput } from './gamepad_input.js';
+import { MobileInputRenderer } from './mobile_input_renderer.js';
+import { MobileInput } from './mobile_input.js';
+
+const ASPECT = 16/9;
 
 const assman = AssetManager.getInstance();
-const adjustViewportSize = function () {
-    let ratio = 3 / 5;
-    if (IS_MOBILE) ratio = 9 / 10;
-
-    this.width = window.innerWidth * ratio;
-    this.height = window.innerHeight * ratio;
+const adjustGameSize = function (original: {width: number, height: number}, resolution: number = 1) {
+    const ratio = ASPECT;
+    this.height = original.height * resolution;
+    this.width = original.height * ratio * resolution;
 };
 
 export class Engine extends EventEmitter {
-    private app: any;
+    private app: PIXI.Application;
     private input: Inputable;
     private client: Client;
     private camera: Camera;
@@ -41,21 +43,26 @@ export class Engine extends EventEmitter {
     public constructor(private game: HTMLCanvasElement) {
         super();
 
-        this.app = new PIXI.Application({
+        const resolution = 0.95;
+
+        this.app = new PIXI.Application();
+        this.app.init({
             backgroundColor: 0x000000,
-            resolution: 1,
-            view: game,
+            resolution,
+            autoDensity: true,
+            canvas: game,
+            resizeTo: window,
+            autoStart: true,
+            antialias: true,
+            powerPreference: 'high-performance',
         });
-        const resizePixi = () => {
-            adjustViewportSize.call(game);
-            this.app.renderer.resize(game.width, game.height);
-        };
-        window.addEventListener('resize', resizePixi);
-        resizePixi();
+
+        this.app.ticker = new PIXI.Ticker();
+        this.app.ticker.autoStart = true;
 
         const container = new PIXI.Container();
         container.interactiveChildren = true;
-        container.view = this.app.view;
+        (<any>container).canvas = game;
         this.app.stage.interactiveChildren = true;
         this.app.stage.addChild(container);
 
@@ -122,7 +129,7 @@ export class Engine extends EventEmitter {
             this.showCanvas();
 
             // start renderers
-            this.app.start();
+            this.app.ticker.start();
 
             callback && callback(data);
         };
@@ -141,7 +148,7 @@ export class Engine extends EventEmitter {
         this.client.getStage().clear();
 
         // stop renderers
-        this.app.stop();
+        this.app.ticker.stop();
         this.emit('stop');
     }
 
@@ -155,9 +162,9 @@ export class Engine extends EventEmitter {
     }
 
     private hideCanvas() {
-        this.game.style.display = 'none';
+        this.game.parentElement.style.display = 'none';
     }
     private showCanvas() {
-        this.game.style.display = 'block';
+        this.game.parentElement.style.display = 'block';
     }
 }

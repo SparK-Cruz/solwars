@@ -1,5 +1,5 @@
-import { Engine } from './engine';
-import { IS_MOBILE } from './environment';
+import { Engine } from './engine.js';
+import { IS_MOBILE } from './environment.js';
 
 const game = <HTMLCanvasElement>document.getElementById("game");
 const engine = new Engine(game);

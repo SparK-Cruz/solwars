@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType } from "../entities";
-import { Stage } from "../stage";
+import { Entity, EntityType } from "../entities.js";
+import { Stage } from '../stage_interface.js';
 
 export class GravityWell extends EventEmitter implements Entity {
     type = EntityType.GravityWell;

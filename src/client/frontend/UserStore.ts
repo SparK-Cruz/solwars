@@ -1,4 +1,4 @@
-import { Model } from "../../space/entities/ships/model";
+import { Model } from "../../space/entities/ships/model.js";
 
 const defaultName = 'Anon' + (100 + Math.round(Math.random() * 899));
 

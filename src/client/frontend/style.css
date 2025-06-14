@@ -14,17 +14,29 @@ body {
 }
 
 /* GAME */
-canvas#game {
-    position: absolute;
+#game-container {
     display: none;
+    overflow: hidden;
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
     top: 0px;
     left: 0px;
+    overflow: hidden;
+}
+canvas#game {
+    position: relative;
     z-index: 100;
     margin: 0px;
     padding: 0px;
-    width: 100%;
-    height: 100%;
+    width: 100vw !important;
+    height: 100vh !important;
+    transform: scale(1.05);
+    transform-origin: top left;
+    top: 0;
+    left: 0;
     cursor: none !important;
+    image-rendering: optimizeQuality;
 }
 
 input, button {

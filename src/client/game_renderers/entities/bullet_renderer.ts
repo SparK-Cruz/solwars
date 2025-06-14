@@ -1,17 +1,15 @@
-const PIXI = require('pixi.js');
-import { Bullet } from '../../../space/entities/bullet';
-import { Renderable } from '../renderable';
+import * as PIXI from 'pixi.js';
+import { Bullet } from '../../../space/entities/bullet.js';
+import { Renderable } from '../renderable.js';
 
 export class BulletRenderer implements Renderable {
     constructor(parent: any, public bullet: Bullet) {
         const gfx = new PIXI.Graphics();
-        gfx.beginFill(parseInt(this.bullet.color.replace('#', '0x')));
-        gfx.drawCircle(0, 0, 2);
-        gfx.endFill();
+        gfx.circle(0, 0, 2)
+            .fill(parseInt(this.bullet.color.replace('#', '0x')));
 
-        gfx.beginFill(0xffffff, 0.8);
-        gfx.drawCircle(0, 0, 1);
-        gfx.endFill();
+        gfx.circle(0, 0, 1)
+            .fill({color: 0xffffff, alpha: 0.8});
 
         parent.addChild(gfx);
     }

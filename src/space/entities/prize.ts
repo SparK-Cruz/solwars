@@ -1,11 +1,13 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType, EntityEvent } from "../entities";
-import { Ship, ShipEvents } from "./ship";
-import { PrizeSpawner } from "../entity_spawner/prize_spawner";
+import { Entity, EntityType, EntityEvent } from "../entities.js";
+import { Ship, ShipEvents } from "./ship.js";
+import { PrizeSpawner } from "../entity_spawner/prize_spawner.js";
+import { Config } from '../config_interfaces.js';
 
 export interface PrizeEffect {
     name: string;
     apply(entity: Ship): void;
+    config?: Config;
 }
 
 export class Prize extends EventEmitter implements Entity {
@@ -31,6 +33,7 @@ export class Prize extends EventEmitter implements Entity {
     public constructor(private effect: PrizeEffect = null, private parent: PrizeSpawner = null) {
         super();
         if (!parent) return;
+        effect.config = parent.config;
         parent.onPrizeSpawn(this);
     }
 

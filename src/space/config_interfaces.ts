@@ -48,5 +48,5 @@ export interface Config {
     ships: ShipsConfig;
     bullets: BulletConfig[];
     bots: BotsConfig[];
-    read: (callback: () => void) => void;
+    read(callback: () => void): void;
 }

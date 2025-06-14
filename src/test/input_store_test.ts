@@ -1,6 +1,6 @@
-import subject from '../client/input_store';
-import { KeyMapper } from "../client/frontend/key_mapper";
-import { Mapping } from "../space/entities/ships/mapping";
+import subject from '../client/input_store.js';
+import { KeyMapper } from "../client/frontend/KeyMapper.js";
+import { Mapping } from "../space/entities/ships/mapping.js";
 
 subject.data.keyMapping = {
     'ArrowUp': Mapping.FORWARD, //Arrow up

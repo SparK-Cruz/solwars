@@ -1,8 +1,8 @@
-import { PrizeEffect } from "../prize";
-import { BulletUpgrade } from "./bullet_upgrade";
-import { MaxHealthUpgrade } from "./health_upgrade";
-import { EngineUpgrade } from "./engine_upgrade";
-import { RegenUpgrade } from "./regen_upgrade";
+import { PrizeEffect } from "../prize.js";
+import { BulletUpgrade } from "./bullet_upgrade.js";
+import { MaxHealthUpgrade } from "./health_upgrade.js";
+import { EngineUpgrade } from "./engine_upgrade.js";
+import { RegenUpgrade } from "./regen_upgrade.js";
 
 export namespace PrizeEffects {
     export const bulletUpgrade: PrizeEffect = BulletUpgrade;

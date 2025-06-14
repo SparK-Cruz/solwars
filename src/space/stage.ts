@@ -1,22 +1,28 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities';
-import { Bullet } from './entities/bullet';
-import { ShipDebris } from './entities/ship_debris';
-import { Ship } from './entities/ship';
-import * as json from 'jsonfile';
-import { CodecFacade } from './codec_facade';
-import { Rock } from './entities/rock';
-import { Prize } from './entities/prize';
-import { PrizeSpawner } from './entity_spawner/prize_spawner';
-import { GravityWell } from './entities/gravity_well';
-import { Config } from './config';
+import { Entity, EntityPoolGrid, EntityEvent, EntityType } from './entities.js';
+import { Bullet } from './entities/bullet.js';
+import { ShipDebris } from './entities/ship_debris.js';
+import { Ship } from './entities/ship.js';
+import { CodecFacade } from './codec_facade.js';
+import { Rock } from './entities/rock.js';
+import { Prize } from './entities/prize.js';
+import { PrizeSpawner } from './entity_spawner/prize_spawner.js';
+import { GravityWell } from './entities/gravity_well.js';
+import { Config } from './config.js';
+import { Stage as Base } from './stage_interface.js';
+import fs from 'fs';
 
-export class Stage extends EventEmitter {
+const SUDDENT_DEATH_MIN_RADIUS = 500;
+
+export class Stage extends EventEmitter implements Base {
     public tick = 0;
     public radius: number = 0;
 
-    private spawnRadius: number = 5000;
+    private targetRadius: number = 0;
     private radiusSurvivalSeconds: number = 0;
+    private suddenDeath: number = 0;
+    private suddenDeathShrinkRate: number = 0.75;
+    private spawnRadius: number = 5000;
 
     private shapes: any = {};
     private collisionResult: any = null;
@@ -48,7 +54,7 @@ export class Stage extends EventEmitter {
                     if (distance >= this.radius) {
                         stepper.addDamage(
                             stepper.health
-                            / (delta * (1000 / Config.TPS) * this.radiusSurvivalSeconds)
+                            / (delta * (1000 / Config.TPS * 2) * this.radiusSurvivalSeconds)
                         );
                     }
                 }
@@ -60,15 +66,18 @@ export class Stage extends EventEmitter {
         }
 
         // load map
-        json.readFile(`./maps/${mapName}.json`, (err: any, contents: any) => {
+        fs.readFile(`./maps/${mapName}.json`, (err: any, raw: any) => {
             if (err) {
                 console.log(err);
                 return;
             }
+
+            const contents = JSON.parse(raw);
+
             if (contents.hasOwnProperty('npe')) {
                 const codec = new CodecFacade();
                 for (let i in contents.npe) {
-                    const entity = codec.decodeEntity(<Entity>contents.npe[i]);
+                    const entity = codec.decodeEntity(<Entity>contents.npe[i], Config);
 
                     this.add(entity);
 
@@ -81,7 +90,31 @@ export class Stage extends EventEmitter {
             if (contents.hasOwnProperty('stage')) {
                 this.radius = contents.stage.radius ?? this.radius;
                 this.radiusSurvivalSeconds = contents.stage.radiusSurvivalSeconds ?? this.radiusSurvivalSeconds;
+                this.suddenDeath = contents.stage.suddenDeath ?? this.suddenDeath;
+                this.suddenDeathShrinkRate = contents.stage.suddenDeathShrinkRate ?? this.suddenDeathShrinkRate;
                 this.spawnRadius = contents.stage.spawnRadius ?? this.spawnRadius;
+
+                if (this.suddenDeathShrinkRate > 1) {
+                    this.suddenDeathShrinkRate = 1 / this.suddenDeathShrinkRate;
+                }
+                this.targetRadius = this.radius;
+
+                if (this.suddenDeath && this.radius) {
+                    const reduceRadius = () => {
+                        this.targetRadius = Math.max(this.targetRadius * this.suddenDeathShrinkRate, 1);
+                        this.spawnRadius = Math.min(Math.max(this.targetRadius - 100, 0), this.spawnRadius);
+                        console.log('Target', this.targetRadius, 'Spawn', this.spawnRadius);
+
+                        if (this.targetRadius < SUDDENT_DEATH_MIN_RADIUS) {
+                            this.suddenDeath = 0;
+                            return;
+                        }
+
+                        setTimeout(reduceRadius, this.suddenDeath*1000);
+                    };
+
+                    setTimeout(reduceRadius, this.suddenDeath*1000);
+                }
             }
         });
     }
@@ -153,6 +186,10 @@ export class Stage extends EventEmitter {
         this.collisionSystem.update();
         this.checkCollisionsBroad();
 
+        if (this.radius && this.radius > this.targetRadius) {
+            this.radius--;
+        }
+
         return this.tick;
     }
 
@@ -218,7 +255,7 @@ export class Stage extends EventEmitter {
         let entity: Entity = null;
         switch (entityType.name) {
             case EntityType.Bullet.name:
-                entity = new Bullet(entityModel, parent);
+                entity = new Bullet(entityModel, parent, Config);
                 break;
             case EntityType.ShipDebris.name:
                 entity = new ShipDebris(entityModel, <Ship>parent);

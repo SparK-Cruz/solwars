@@ -1,5 +1,5 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "../game_renderers/renderable";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "../game_renderers/renderable.js";
 
 const CURVE = 100;
 const FPS_DANGER = 55;
@@ -27,8 +27,8 @@ export class FpsRenderer implements Renderable {
     public constructor(parent: any) {
         this.lastRender = Date.now();
 
-        this.fpsText = new PIXI.Text('');
-        this.tickText = new PIXI.Text('');
+        this.fpsText = new PIXI.Text();
+        this.tickText = new PIXI.Text();
         this.fpsText.position.set(2, 2);
         this.tickText.position.set(50, 2);
 

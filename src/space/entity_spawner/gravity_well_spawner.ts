@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType, EntityEvent, GRID_SCALE } from "../entities";
-import { Stage } from '../stage';
+import { Entity, EntityType, EntityEvent, GRID_SCALE } from "../entities.js";
+import { Stage } from '../stage_interface.js';
 
 const RADAR_SCALE = 512;
 

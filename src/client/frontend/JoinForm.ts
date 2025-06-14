@@ -1,15 +1,10 @@
-import ShipSelect from './ship_select';
-import UserStore from './user_store';
-
-import InputEditor from './input_editor';
-import Modal from './modal';
-import { defineComponent } from 'vue';
+import UserStore from './UserStore.js';
 
 const customEvent = (name: string, data: any) => {
     return Object.assign(new Event(name), { data });
 }
 
-export default defineComponent({
+export default {
     name: 'JoinForm',
     template: `
         <form @submit.prevent="submit" id="join-form">
@@ -31,11 +26,6 @@ export default defineComponent({
             <button type="submit">JOIN GAME</button>
         </form>
     `,
-    components: {
-        ShipSelect,
-        Modal,
-        InputEditor,
-    },
     data: () => ({
         name: '',
         editorModalPosition: { x: 0, y: 0 },
@@ -65,4 +55,4 @@ export default defineComponent({
             return UserStore.data.defaultName;
         }
     }
-});
+};

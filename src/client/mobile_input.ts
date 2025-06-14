@@ -1,6 +1,6 @@
-import { Mapping } from '../space/entities/ships/mapping';
-import { IS_MOBILE } from './environment';
-import { Inputable } from './input';
+import { Mapping } from '../space/entities/ships/mapping.js';
+import { IS_MOBILE } from './environment.js';
+import { Inputable } from './input.js';
 
 export class MobileInput implements Inputable {
     private onChange = function (state: number): void { };

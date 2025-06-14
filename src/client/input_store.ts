@@ -1,5 +1,5 @@
-import { Mapping } from '../space/entities/ships/mapping';
-import { writeAxis, writeButton, readAxis, readButton } from './frontend/pad_mapper';
+import { Mapping } from '../space/entities/ships/mapping.js';
+import { writeAxis, writeButton, readAxis, readButton } from './frontend/PadMapper.js';
 
 interface Action {
     code: number;

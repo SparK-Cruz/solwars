@@ -1,14 +1,15 @@
-import { PrizeEffect } from "../prize";
-import { Ship } from "../ship";
-import { Config } from "../../config";
+import { PrizeEffect } from "../prize.js";
+import { Ship } from "../ship.js";
+import { Config } from "../../config_interfaces.js";
 
 export class BulletUpgrade implements PrizeEffect {
+    public config: Config;
     public name = 'Better bullets!';
     public apply(entity: Ship): void {
-        if (!Config.bullets)
+        if (!this.config?.bullets)
             return;
 
-        const max = Config.bullets.length - 1;
+        const max = this.config.bullets.length - 1;
         entity.bullet = Math.min(entity.bullet + 1, max);
     }
 }

@@ -1,16 +1,17 @@
 import * as PIXI from 'pixi.js';
 
-import { Renderable } from "../game_renderers/renderable";
-import { Camera } from "../camera";
-import { ClientInfo } from "../client";
-import { EntityType } from "../../space/entities";
-import { Stage } from ".././stage";
-import { IS_MOBILE } from "../environment";
+import { Renderable } from "../game_renderers/renderable.js";
+import { Camera } from "../camera.js";
+import { ClientInfo } from "../client.js";
+import { EntityType } from "../../space/entities.js";
+import { Stage } from ".././stage.js";
+import { IS_MOBILE } from "../environment.js";
 
 const SCALE = 1 / 12;
 const REGION_SCALE = 1 / 512;
 const POS = { x: -220, y: -250 };
 const MOBILE_POS = { x: -220, y: 20 };
+const BLINKER_FRAMES = 32;
 
 export class Radar implements Renderable {
     private container: PIXI.Container;
@@ -18,9 +19,13 @@ export class Radar implements Renderable {
     private coordText: PIXI.Text;
     private blips: PIXI.Graphics;
     private radius: PIXI.Graphics;
-    private radiusHole: PIXI.Graphics;
+    private lastRadius: number = 0;
 
     private info: ClientInfo;
+
+    private blinker: number = 0;
+    private isBlinkerOn: boolean = true;
+    private isFastBlinkerOn: boolean = true;
 
     public constructor(private parent: any, private camera: Camera, private stage: Stage) {
         this.initialize();
@@ -35,22 +40,22 @@ export class Radar implements Renderable {
 
         this.initializeCoord();
         this.initializeFrame();
-        this.initializeDeathRadius();
         this.initializeBlips();
+        this.initializeDeathRadius();
 
         this.parent.addChild(this.container);
     }
 
     private initializeCoord() {
-        this.coordText = new PIXI.Text(
-            'E0 S0',
-            {
+        this.coordText = new PIXI.Text({
+            text: 'E0 S0',
+            style: {
                 fontFamily: 'monospace',
                 fontSize: 16,
                 fill: 0x3399ff,
                 align: 'center'
             }
-        );
+        });
         this.container.addChild(this.coordText);
     }
 
@@ -93,17 +98,23 @@ export class Radar implements Renderable {
         this.container.addChild(mask);
         this.container.addChild(radiusContainer);
 
-        this.radiusHole = new PIXI.Graphics();
-        this.radius = new PIXI.Graphics();
-        this.radius.mask = this.radiusHole;
+        // zone
+        const alpha = 0.5;
 
-        radiusContainer.addChild(this.radiusHole);
+        this.radius = new PIXI.Graphics();
+        this.radius.alpha = alpha;
+
         radiusContainer.addChild(this.radius);
     }
 
     public render() {
         if (!this.info)
             return;
+
+        this.blinker += 1;
+        this.blinker %= BLINKER_FRAMES * 2;
+        this.isBlinkerOn = this.blinker < BLINKER_FRAMES;
+        this.isFastBlinkerOn = this.blinker % BLINKER_FRAMES > BLINKER_FRAMES / 2;
 
         this.drawCoordinates();
         this.drawBlips();
@@ -114,24 +125,24 @@ export class Radar implements Renderable {
 
         if (IS_MOBILE) {
             this.container.position.set(
-                this.parent.view.width + MOBILE_POS.x,
+                this.parent.canvas.width + MOBILE_POS.x,
                 MOBILE_POS.y
             );
             return;
         }
 
         this.container.position.set(
-            this.parent.view.width + POS.x,
-            this.parent.view.height + POS.y
+            this.parent.canvas.width + POS.x,
+            this.parent.canvas.height + POS.y
         );
     }
 
     private drawCoordinates() {
         const positionText = [
-            this.info.position.x > 0 ? 'E' : 'W',
+            this.info.position.x >= 0 ? 'E' : 'W',
             Math.abs(Math.floor(this.info.position.x * REGION_SCALE)),
             ' ',
-            this.info.position.y > 0 ? 'S' : 'N',
+            this.info.position.y >= 0 ? 'S' : 'N',
             Math.abs(Math.floor(this.info.position.y * REGION_SCALE)),
         ].join('');
 
@@ -155,6 +166,7 @@ export class Radar implements Renderable {
             if (entity.id == this.info.id) {
                 style = 0xffffff;
                 size = 5;
+                alpha = this.isFastBlinkerOn ? 1 : 0;
             }
             switch (entity.type.name) {
                 case EntityType.ShipDebris.name:
@@ -182,45 +194,36 @@ export class Radar implements Renderable {
 
             const pos = this.camera.translate(entity);
 
-            this.blips.beginFill(style, alpha);
-            this.blips.drawCircle(
+            this.blips.circle(
                 pos.x * SCALE + 100,
                 pos.y * SCALE + 100,
                 size / 2
-            );
-            this.blips.endFill();
+            ).fill({color: style, alpha});
         }
     }
 
     private drawDeathRadius() {
-        this.radiusHole.clear();
-        this.radius.clear();
-
         const pos = this.camera.translate({x: 0, y: 0});
+        let alpha = 0.5;
 
-        // mask
-        this.radiusHole.circle(
-            pos.x * SCALE + 100,
-            pos.y * SCALE + 100,
-            (this.stage.radius + 3000) * SCALE
-        ).fill(0xffffff);
+        if (this.stage.radius) {
+            const distance = Math.sqrt(Math.pow(this.info.position.x, 2) + Math.pow(this.info.position.y, 2));
+            alpha = distance > this.stage.radius && this.isBlinkerOn ? 0.6 : 0.5;
 
-        this.radiusHole.circle(
-            pos.x * SCALE + 100,
-            pos.y * SCALE + 100,
-            this.stage.radius * SCALE
-        ).fill(0x000000);
+            if (this.lastRadius !== this.stage.radius) {
+                const style = 0x770000;
 
-        // zone
-        const style = 0x770000;
-        const alpha = 0.5;
+                this.radius.clear();
+                this.radius.circle(
+                    0,
+                    0,
+                    this.stage.radius * SCALE + 200
+                )
+                .stroke({color: style, width: 400, alpha: 1});
+            }
+        }
 
-        this.radius.circle(
-            pos.x * SCALE + 100,
-            pos.y * SCALE + 100,
-            (this.stage.radius + 3000) * SCALE
-        )
-        .fill(style)
-        .alpha = alpha;
+        this.radius.alpha = alpha;
+        this.radius.position.set(pos.x * SCALE + 100, pos.y * SCALE + 100);
     }
 }

@@ -1,6 +1,6 @@
-const PIXI = require('pixi.js');
-import { IS_MOBILE } from "../environment";
-import { Renderable } from "../game_renderers/renderable";
+import * as PIXI from 'pixi.js';
+import { IS_MOBILE } from "../environment.js";
+import { Renderable } from "../game_renderers/renderable.js";
 
 const PAD = 20;
 const LIMIT = 10;
@@ -18,12 +18,12 @@ export class RankingRenderer implements Renderable {
     public constructor(private parent: any) {
         const container = new PIXI.Container();
 
-        const title = new PIXI.Text('Bounty List', style);
+        const title = new PIXI.Text({text: 'Bounty List', style});
         title.anchor.set(1, 0);
         container.addChild(title);
 
         for (let i = 0; i < LIMIT; i++) {
-            const text = new PIXI.Text('', style);
+            const text = new PIXI.Text({style});
             text.anchor.set(1, 0);
             text.visible = false;
             text.position.set(0, (i + 1) * SLOT_SIZE);
@@ -51,6 +51,6 @@ export class RankingRenderer implements Renderable {
             return;
         }
 
-        this.container.position.set(this.parent.view.width - PAD, PAD);
+        this.container.position.set(this.parent.canvas.width - PAD, PAD);
     }
 }

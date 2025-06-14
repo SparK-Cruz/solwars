@@ -1,8 +1,4 @@
-import { defineComponent } from 'vue';
-import KeyboardEditor from './keyboard_editor';
-import GamepadEditor from './gamepad_editor';
-
-export default defineComponent({
+export default {
     name: 'InputEditor',
     template: `
         <section id="input-editor">
@@ -14,11 +10,7 @@ export default defineComponent({
             <div v-if="tab == 1" ref="gamepad" class="controls"><GamepadEditor /></div>
         </section>
     `,
-    components: {
-        KeyboardEditor,
-        GamepadEditor,
-    },
     data: () => ({
         tab: 0,
     }),
-});
+};

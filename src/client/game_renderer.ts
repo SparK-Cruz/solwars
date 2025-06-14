@@ -1,10 +1,9 @@
-const PIXI = require('pixi.js');
 import { EventEmitter } from 'events';
-import { Camera } from './camera';
-import { Stage } from './stage';
-import { Renderable } from './game_renderers/renderable';
-import { Background } from './game_renderers/background';
-import { EntityRenderer } from './game_renderers/entity_renderer';
+import { Camera } from './camera.js';
+import { Stage } from './stage.js';
+import { Renderable } from './game_renderers/renderable.js';
+import { Background } from './game_renderers/background.js';
+import { EntityRenderer } from './game_renderers/entity_renderer.js';
 
 export class GameRenderer extends EventEmitter implements Renderable {
     private bg: Background;

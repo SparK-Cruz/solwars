@@ -1,17 +1,17 @@
-// using require because npm sucks with typings
-const express = require("express");
+import express from "express";
 import { Server } from "http";
-import { Room } from "./server/room";
-import { Config } from "./space/config";
-import { BotsConfig } from "./space/config_interfaces";
+import { Room } from "./server/room.js";
+import { Config } from "./space/config.js";
+import { BotsConfig } from "./space/config_interfaces.js";
 
-import { BotManager } from "./server/bots/bot_manager";
+import { BotManager } from "./server/bots/bot_manager.js";
 
 const app = express();
 const server = new Server(app);
 
 // Static files
-app.use("/", express.static(__dirname + "/client"));
+app.use("/", express.static("./client"));
+app.use("/", express.static("./dist/client"));
 
 Config.read(() => {
     const STATIC_PORT = Config.serverPort;

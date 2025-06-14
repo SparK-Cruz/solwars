@@ -1,14 +1,14 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "./game_renderers/renderable";
-import { ClientInfo } from "./client";
-import { Camera } from "./camera";
-import { Stage } from "./stage";
-import { SpeedIndicator } from "./hud_renderers/speed_indicator";
-import { EnergyIndicator } from "./hud_renderers/energy_indicator";
-import { GunIndicator } from "./hud_renderers/gun_indicator";
-import { Radar } from "./hud_renderers/radar";
-import { NameRenderer } from "./hud_renderers/name_renderer";
-import { RankingRenderer } from "./hud_renderers/ranking_renderer";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "./game_renderers/renderable.js";
+import { ClientInfo } from "./client.js";
+import { Camera } from "./camera.js";
+import { Stage } from "./stage.js";
+import { SpeedIndicator } from "./hud_renderers/speed_indicator.js";
+import { EnergyIndicator } from "./hud_renderers/energy_indicator.js";
+import { GunIndicator } from "./hud_renderers/gun_indicator.js";
+import { Radar } from "./hud_renderers/radar.js";
+import { NameRenderer } from "./hud_renderers/name_renderer.js";
+import { RankingRenderer } from "./hud_renderers/ranking_renderer.js";
 
 export class HudRenderer implements Renderable {
     private container: any;
@@ -26,7 +26,7 @@ export class HudRenderer implements Renderable {
         this.container = new PIXI.Container();
         this.container.interactiveChildren = false;
         this.container.position.set(0);
-        this.container.view = parent.view;
+        (<any>this.container.canvas) = parent.canvas;
         parent.addChild(this.container);
 
         this.energyIndicator = new EnergyIndicator(this.container);

@@ -1,6 +1,6 @@
-import { Inputable } from './input';
-import { Mapping } from '../space/entities/ships/mapping';
-import InputStore from './input_store';
+import { Inputable } from './input.js';
+import { Mapping } from '../space/entities/ships/mapping.js';
+import InputStore from './input_store.js';
 
 export class KeyboardInput implements Inputable {
     private onChange = function (state: number): void { };

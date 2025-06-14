@@ -1,7 +1,8 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType, EntityEvent } from "../entities";
-import { Prize } from '../entities/prize';
-import { RandomPrizeEffect } from '../entities/prize_effects/prize_effects';
+import { Entity, EntityType, EntityEvent } from "../entities.js";
+import { Prize } from '../entities/prize.js';
+import { RandomPrizeEffect } from '../entities/prize_effects/prize_effects.js';
+import { Config } from '../config_interfaces.js';
 
 export class PrizeSpawner extends EventEmitter implements Entity {
     public spawner = true;
@@ -22,6 +23,10 @@ export class PrizeSpawner extends EventEmitter implements Entity {
 
     private timer: number = 0;
     private prizeCount: number = 0;
+
+    public constructor(public config: Config = null) {
+        super();
+    }
 
     public onPrizeSpawn(prize: Prize) {
         this.prizeCount++;

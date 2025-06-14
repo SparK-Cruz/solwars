@@ -1,10 +1,10 @@
 import { defineComponent } from 'vue';
-import { Model } from '../../space/entities/ships/model';
-import ShipStats from './ship_stats';
-import ShipInfo from './ship_info';
-import ShipRender from './ship_render';
-import PageIndicator from './page_indicator';
-import UserStore from './user_store';
+import { Model } from '../../space/entities/ships/model.js';
+import ShipStats from './ShipStats.js';
+import ShipInfo from './ShipInfo.js';
+import ShipRender from './ShipRender.js';
+import PageIndicator from './PageIndicator.js';
+import UserStore from './UserStore.js';
 
 const MAX_DECALS = 3;
 

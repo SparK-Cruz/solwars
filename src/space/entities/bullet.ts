@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType, EntityEvent } from '../entities';
-import { Config } from '../config';
+import { Entity, EntityType, EntityEvent } from '../entities.js';
+import { Config } from '../config_interfaces.js';
 
 export class Bullet extends EventEmitter implements Entity {
     public id :number;
@@ -27,12 +27,12 @@ export class Bullet extends EventEmitter implements Entity {
         EntityType.Prize,
     ];
 
-    constructor(public bulletType: number, public parent: Entity) {
+    constructor(public bulletType: number, public parent: Entity, public config?: Config) {
         super();
 
-        if (!Config.bullets) return;
+        if (!config || !config.bullets) return;
 
-        const trait = Config.bullets[bulletType];
+        const trait = config.bullets[bulletType];
         if (!trait) return;
 
         this.x = parent.x;
@@ -63,6 +63,7 @@ export class Bullet extends EventEmitter implements Entity {
 
         this.energy = 0;
         this.emit(EntityEvent.Collide, this);
+        this.step(0);
     }
 
     private updatePhysics(delta: number): void {

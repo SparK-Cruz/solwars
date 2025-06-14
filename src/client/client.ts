@@ -1,13 +1,13 @@
 import * as socketio from 'socket.io-client';
 import { Socket } from 'socket.io-client';
 
-import { Stage } from './stage';
-import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
-import { Ship, ShipEvents } from '../space/entities/ship';
+import { Stage } from './stage.js';
+import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade.js';
+import { Ship, ShipEvents } from '../space/entities/ship.js';
 import { EventEmitter } from 'events';
-import { Model as ShipModel } from '../space/entities/ships/model';
-import { EntityEvent } from '../space/entities';
-import { Inputable } from './input';
+import { Model as ShipModel } from '../space/entities/ships/model.js';
+import { Entity, EntityEvent } from '../space/entities.js';
+import { Inputable } from './input.js';
 
 export interface ClientOptions {
     name: string,
@@ -50,6 +50,10 @@ export class Client extends EventEmitter {
 
         this.stage = new Stage();
         this.codec = new CodecFacade();
+
+        this.stage.on("resync", (id: number) => {
+            this.syncEntity(id);
+        });
     }
 
     public get connected() {
@@ -134,6 +138,7 @@ export class Client extends EventEmitter {
 
         socket.on(CodecEvents.ACCEPT, (data: any) => {
             this.onConnect(data);
+            socket.emit(CodecEvents.SEND_INPUT, 0);
         });
 
         socket.on(CodecEvents.STEP, (data: any) => {
@@ -203,12 +208,14 @@ export class Client extends EventEmitter {
         const decoded = this.codec.decode(data);
 
         this.stage.radius = decoded.radius;
-        this.stage.addAll([].concat(...decoded.entities).map((e: any) => e.newSector ? this.codec.decodeEntity(e) : e).filter(e => e));
+        this.stage.addAll(decoded.entities.map((e: any) => (
+            e.newSector ? this.codec.decodeEntity(e) : e
+        )).filter(e => e));
         this.ranking = decoded.ranking;
     }
 
     private onServerRemoveObject(data: any) {
-        this.stage.remove(data);
+        this.stage.remove({id: data} as Entity);
     }
 
     private onCollision(data: any) {

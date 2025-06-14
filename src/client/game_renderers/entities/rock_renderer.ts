@@ -1,7 +1,7 @@
-const PIXI = require('pixi.js');
-import { Rock } from "../../../space/entities/rock";
-import { Renderable } from "../renderable";
-import { Assets } from "../../assets";
+import * as PIXI from 'pixi.js';
+import { Rock } from "../../../space/entities/rock.js";
+import { Renderable } from "../renderable.js";
+import { Assets } from "../../assets.js";
 
 export class RockRenderer implements Renderable {
     constructor(parent: any, public rock: Rock) {
@@ -9,17 +9,16 @@ export class RockRenderer implements Renderable {
             return;
         }
 
-        const gfx = new PIXI.Sprite(Assets.pool['rock'].texture);
+        const gfx = new PIXI.Sprite(Assets.pool['rock']);
         const mask = new PIXI.Graphics();
 
         const geometry = this.rock.collisionMap.slice(0);
         const start = geometry.shift();
-        mask.beginFill(parseInt(this.rock.color.replace('#', '0x')));
         mask.moveTo(start[0], start[1]);
         geometry.forEach(point => {
             mask.lineTo(point[0], point[1]);
         });
-        mask.endFill();
+        mask.fill(parseInt(this.rock.color.replace('#', '0x')));
 
         const bound = {
             x: gfx.width - this.rock.size,

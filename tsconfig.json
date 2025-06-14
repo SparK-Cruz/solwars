@@ -1,25 +1,32 @@
 {
-    "compilerOptions": {
-        "skipLibCheck": true,
-        "allowJs": true,
-        "lib": [
-            "es2017",
-            "dom"
-        ],
-        "outDir": "dist",
-        "noImplicitAny": true,
-        "module": "esnext",
-        "target": "esnext",
-        "emitDecoratorMetadata": true,
-        "experimentalDecorators": true,
-        "sourceMap": true,
-        "declaration": false,
-        "moduleResolution": "node"
-    },
-    "include": [
-        "src"
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "allowJs": true,
+    "lib": [
+      "es2017",
+      "dom"
     ],
-    "exclude": [
-        "node_modules"
-    ]
+    "outDir": "dist",
+    "noImplicitAny": true,
+    "module": "nodenext",
+    "target": "esnext",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "nodenext",
+    "plugins": [
+      {
+        "transform": "typia/lib/transform"
+      }
+    ],
+    "strictNullChecks": false,
+    "strict": false
+  },
+  "include": [
+    "src"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

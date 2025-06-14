@@ -1,5 +1,5 @@
 import { defineComponent } from 'vue';
-import ShipStatIndicator from './ship_stat_indicator';
+import ShipStatIndicator from './ShipStatIndicator.js';
 
 export default defineComponent({
     name: 'ShipStats',

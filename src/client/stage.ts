@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events';
-import { Entity } from '../space/entities';
+import { Entity } from '../space/entities.js';
+import { Stage as Base } from '../space/stage_interface.js';
 
 const SEEN_BUFFER_SIZE = 100;
 
@@ -9,18 +10,20 @@ function validOrDefault(value: any, defaultValue: any): any {
         : defaultValue;
 }
 
-export class Stage extends EventEmitter {
+export class Stage extends EventEmitter implements Base {
     public tick: number;
     public radius: number;
     public entities: any = {};
     private seen: number[] = [];
 
-    public step(factor: number = 1) {
+    public step(factor: number = 1): number {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
         Object.values(this.entities).forEach((e: Entity) => {
             if (e.step) e.step(factor);
         });
+
+        return this.tick;
     }
 
     public clear() {
@@ -68,6 +71,10 @@ export class Stage extends EventEmitter {
             return;
         }
 
+        if (!entity.type?.name) {
+            return;
+        }
+
         this.entities[entity.id] = entity;
 
         if (~this.seen.indexOf(entity.id))
@@ -80,6 +87,10 @@ export class Stage extends EventEmitter {
         }
     }
 
+    public spawn(entity: Entity) {
+        this.add(entity);
+    }
+
     public addAll(entities: Entity[]) {
         const received: number[] = [];
         for (const i in entities) {
@@ -88,15 +99,18 @@ export class Stage extends EventEmitter {
         }
 
         for (const id in this.entities) {
-            if (received.includes(parseInt(id))
-                || !((<any>this.entities[id]).removable))
+            if (
+                received.includes(parseInt(id))
+                || !((<any>this.entities[id]).removable)
+            ) {
                 continue;
+            }
 
-            this.remove(parseInt(id));
+            this.remove({id: parseInt(id)} as Entity);
         }
     }
 
-    public remove(id: number) {
+    public remove({id}: Entity) {
         if (!this.entities.hasOwnProperty(id))
             return;
 
@@ -109,5 +123,13 @@ export class Stage extends EventEmitter {
 
     public fetchAllEntities(): Entity[] {
         return <Entity[]>Object.values(this.entities).filter((e: Entity) => e.type);
+    }
+
+    public moveEntity(entity: Entity, position: { x: number; y: number; }): void {
+        entity.x = position.x;
+        entity.y = position.y;
+    }
+    public fetchEntitiesAround(point: { x: number; y: number; }): Entity[][] {
+        return [this.fetchAllEntities()];
     }
 }

@@ -1,4 +1,4 @@
-import { A2d } from "./a2d";
+import { A2d } from "./a2d.js";
 
 export class SfxRenderer {
   private queueIndex = 0;

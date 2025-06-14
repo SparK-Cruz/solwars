@@ -1,9 +1,9 @@
 import { EventEmitter } from 'events';
-import { Model } from './ships/model';
-import { Control } from './ships/control';
-import { Decal } from './ships/decal';
-import * as entities from '../entities';
-import { Config, ShipConfig } from '../config_interfaces';
+import { Model } from './ships/model.js';
+import { Control } from './ships/control.js';
+import { Decal } from './ships/decal.js';
+import * as entities from '../entities.js';
+import { Config, ShipConfig } from '../config_interfaces.js';
 
 function inRads(degrees :number) :number {
     return degrees * Math.PI / 180;
@@ -66,7 +66,7 @@ export class Ship extends EventEmitter implements entities.Entity {
     afterburnerCost = 6;
     shootCost = 150;
 
-    constructor(model :Model, private config: Config = null) {
+    constructor(model :Model, private config?: Config) {
         super();
 
         this.model = model.id;

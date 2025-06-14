@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityEvent, EntityType } from "../entities";
+import { Entity, EntityEvent, EntityType } from "../entities.js";
 
 export class RockSpawner extends EventEmitter implements Entity {
     public spawner = true;

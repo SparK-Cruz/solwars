@@ -1,8 +1,4 @@
-import { defineComponent } from 'vue';
-import Modal from './modal';
-import ColorPicker from './color_picker';
-
-export default defineComponent({
+export default {
     name: 'ColorInput',
     template: `
         <div class="color-input" :style="{ backgroundColor: safeColor }" @click="openPicker">
@@ -11,10 +7,6 @@ export default defineComponent({
             </Modal>
         </div>
     `,
-    components: {
-        Modal,
-        ColorPicker,
-    },
     props: ['color', 'default'],
     data: () => ({
         modalPosition: { x: 0, y: 0 },
@@ -37,4 +29,4 @@ export default defineComponent({
             this.$refs.modal.close();
         }
     }
-});
+};

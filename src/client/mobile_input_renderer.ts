@@ -1,11 +1,11 @@
-import { Renderable } from "./game_renderers/renderable";
-import { DPadRenderer } from "./mobile_input/dpad_renderer";
-import { ActionsRenderer } from "./mobile_input/actions_renderer";
+import { Renderable } from "./game_renderers/renderable.js";
+import { DPadRenderer } from "./mobile_input/dpad_renderer.js";
+import { ActionsRenderer } from "./mobile_input/actions_renderer.js";
 import { EventEmitter } from "events";
-import { IS_MOBILE } from "./environment";
-import { ClientInfo } from "./client";
+import { IS_MOBILE } from "./environment.js";
+import { ClientInfo } from "./client.js";
 
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 
 export class MobileInputRenderer extends EventEmitter implements Renderable {
     private container: any;
@@ -24,7 +24,7 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
         this.container = new PIXI.Container();
         this.container.interactiveChildren = true;
         this.container.position.set(0);
-        this.container.view = parent.view;
+        this.container.view = parent.canvas;
         parent.addChild(this.container);
 
         this.dpad = new DPadRenderer(this.container);

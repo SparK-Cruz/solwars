@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType, EntityEvent } from '../entities';
-import { Ship } from './ship';
+import { Entity, EntityType, EntityEvent } from '../entities.js';
+import { Ship } from './ship.js';
 
 export class ShipDebris extends EventEmitter implements Entity {
     public id: number;

@@ -1,7 +1,7 @@
-import { Inputable } from './input';
-import { AxisInfo, ButtonInfo, GamepadListener } from './gamepad_listener';
-import { Mapping } from '../space/entities/ships/mapping';
-import InputStore from './input_store';
+import { Inputable } from './input.js';
+import { AxisInfo, ButtonInfo, GamepadListener } from './gamepad_listener.js';
+import { Mapping } from '../space/entities/ships/mapping.js';
+import InputStore from './input_store.js';
 
 export class GamepadInput implements Inputable {
     private gamepadListener: GamepadListener = null;

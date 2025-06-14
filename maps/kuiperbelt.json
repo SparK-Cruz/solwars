@@ -1,4 +1,11 @@
 {
+    "stage": {
+        "radius": 6000,
+        "radiusSurvivalSeconds": 10,
+        "suddenDeath": 120,
+        "suddenDeathShrinkRate": 0.5,
+        "spawnRadius": 5000
+    },
     "npe": [
         {
             "spawner": true,

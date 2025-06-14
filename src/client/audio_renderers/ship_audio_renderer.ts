@@ -1,6 +1,6 @@
-import { EntityEvent } from "../../space/entities";
-import { Ship, ShipEvents } from "../../space/entities/ship";
-import { SfxRenderer } from "./sfx_renderer";
+import { EntityEvent } from "../../space/entities.js";
+import { Ship, ShipEvents } from "../../space/entities/ship.js";
+import { SfxRenderer } from "./sfx_renderer.js";
 
 export class ShipAudioRenderer {
     private shipDeathAudio: SfxRenderer = null;

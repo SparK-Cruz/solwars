@@ -1,12 +1,12 @@
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 
 import { defineComponent } from 'vue';
-import { Ship } from '../../space/entities/ship';
-import { Model } from '../../space/entities/ships/model';
-import { AssetManager } from '../assets';
-import { ShipRenderer } from '../game_renderers/entities/ship_renderer';
-import ColorInput from './color_input';
-import UserStore from './user_store';
+import { Ship } from '../../space/entities/ship.js';
+import { Model } from '../../space/entities/ships/model.js';
+import { AssetManager } from '../assets.js';
+import { ShipRenderer } from '../game_renderers/entities/ship_renderer.js';
+import ColorInput from './ColorInput.js';
+import UserStore from './UserStore.js';
 
 const container: any = new PIXI.Container();
 container.position.set(32);
@@ -53,11 +53,12 @@ export default defineComponent({
         this.shipInstance.collisionMap = [];
 
         this.$nextTick(() => {
-            this.renderer = new PIXI.Application({
+            this.renderer = new PIXI.Application();
+            this.renderer.init({
                 resolution: 1,
                 width: 64,
                 height: 64,
-                view: this.$refs.canvas
+                canvas: this.$refs.canvas
             });
             this.renderer.stage.addChild(container);
 

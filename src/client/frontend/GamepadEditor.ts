@@ -1,19 +1,18 @@
-import { defineComponent } from 'vue';
-import KeyboardActionInput from './keyboard_action_input';
-import InputStore from '../input_store';
+import GamepadActionInput from './GamepadActionInput.js';
+import InputStore from '../input_store.js';
 
-export default defineComponent({
-    name: 'KeyboardEditor',
+export default {
+    name: 'GamepadEditor',
     template: `
-        <section id="keyboard-editor">
-            <KeyboardActionInput v-for="action in actions" :key="action.name" :action="action" @change="refresh" />
+        <section id="gamepad-editor">
+            <GamepadActionInput v-for="action in actions" :key="action.name" :action="action" @change="refresh" />
             <div class="buttons">
                 <div class="button" @click="restore" :class="{disabled: isDefault}">Restore Defaults</div>
             </div>
         </section>
     `,
     components: {
-        KeyboardActionInput,
+        GamepadActionInput,
     },
     created() {
         InputStore.load();
@@ -28,15 +27,15 @@ export default defineComponent({
     methods: {
         refresh() {
             InputStore.save();
-            this.actions = InputStore.export().keyMapping;
-            this.isDefault = InputStore.isKeyboardDefault();
+            this.actions = InputStore.export().padMapping;
+            this.isDefault = InputStore.isGamepadDefault();
         },
         restore() {
             if (this.isDefault)
                 return;
 
-            InputStore.restoreDefaultKeyboard();
+            InputStore.restoreDefaultGamepad();
             this.refresh();
         }
     }
-});
+};

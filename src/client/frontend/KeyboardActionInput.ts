@@ -1,9 +1,8 @@
-import { defineComponent } from 'vue';
-import InputStore from '../input_store';
-import KeyboardLabels from './keyboard_labels';
-import { KeyMapper } from './key_mapper';
+import InputStore from '../input_store.js';
+import KeyboardLabels from './KeyboardLabels.js';
+import { KeyMapper } from './KeyMapper.js';
 
-export default defineComponent({
+export default {
     name: 'KeyboardActionInput',
     template: `
         <div class="controller-input input">
@@ -47,4 +46,4 @@ export default defineComponent({
             return found.pop().name;
         },
     },
-});
+};

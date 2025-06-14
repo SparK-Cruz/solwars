@@ -1,5 +1,5 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "./game_renderers/renderable";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "./game_renderers/renderable.js";
 
 const SECOND = 60; //Client tick
 const FADE = 30;
@@ -13,7 +13,7 @@ export namespace ToastTime {
     export const LONG: ToastTime = { time: 3 * SECOND };
 }
 
-const textStyle = {
+const textStyle: PIXI.TextStyleOptions = {
     fontFamily: 'monospace',
     fontSize: 14,
     fontWeight: 'bold',
@@ -34,12 +34,12 @@ export class ToastRenderer implements Renderable {
         this.container.alpha = 1;
 
         const center = {
-            x: this.parent.view.width / 2,
-            y: this.parent.view.height - 100,
+            x: this.parent.canvas.width / 2,
+            y: this.parent.canvas.height - 100,
         };
 
         this.timer = time.time;
-        const element = new PIXI.Text(text, textStyle);
+        const element = new PIXI.Text({ text, style: textStyle });
         element.anchor.set(0.5);
 
         const rect = {
@@ -48,14 +48,12 @@ export class ToastRenderer implements Renderable {
         };
 
         const gfx = new PIXI.Graphics();
-        gfx.beginFill(0x000000, 0.8);
-        gfx.drawRect(
+        gfx.rect(
             -rect.width / 2,
             -rect.height / 2,
             rect.width,
             rect.height
-        );
-        gfx.endFill();
+        ).fill({ color: 0x000000, alpha: 0.8 });
 
         this.container.position.set(center.x, center.y);
 

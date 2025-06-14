@@ -1,12 +1,117 @@
-import { Entity, EntityType } from './entities';
-import { Ship } from './entities/ship';
-import { Model } from './entities/ships/model';
-import { Bullet } from './entities/bullet';
-import { ShipDebris } from './entities/ship_debris';
-import { Rock } from './entities/rock';
-import { EntitySpawner } from './entity_spawner';
-import { Prize } from './entities/prize';
-import { GravityWell } from './entities/gravity_well';
+import { Entity, EntityType } from './entities.js';
+import { Ship } from './entities/ship.js';
+import { Model } from './entities/ships/model.js';
+import { Bullet } from './entities/bullet.js';
+import { ShipDebris } from './entities/ship_debris.js';
+import { Rock } from './entities/rock.js';
+import { EntitySpawner } from './entity_spawner.js';
+import { Prize } from './entities/prize.js';
+import { GravityWell } from './entities/gravity_well.js';
+
+import { sjs, attr } from 'slow-json-stringify';
+import { json } from 'typescript-json';
+import { Config } from './config_interfaces.js';
+
+const PAYLOAD_TEMPLATE = {
+    "tick": 0,
+    "radius": 0,
+    "ranking": [{"name": "", "bounty": 0}],
+    "entities": [{
+        "newSector": 0,
+        "id": 0,
+        "name": "",
+        "x": 0,
+        "y": 0,
+        "vx": 0,
+        "vy": 0,
+        "vmax": 0,
+        "angle": 0,
+        "vangle": 0,
+        "control": 0,
+        "damage": 0,
+        "health": 0,
+        "color": "",
+        "model": "",
+        "decals": [{
+            "name": "decal0",
+            "color": "#000000",
+        }],
+        "parent": {
+            "type": {
+                "name": "",
+            }
+        },
+        "bulletType": 0,
+        "options": {
+            "size": 0,
+            "angle": 0,
+        },
+        "size": 0,
+        "energy": 0,
+        "sides": 0,
+        "type": {
+            "name": "",
+        },
+
+    }]
+};
+
+const recursiveSchemaCopy = (obj: any, template: any, init: any = null) => {
+    const isArray = Array.isArray(obj) && Array.isArray(template);
+    const result: any = init ?? isArray ? [] : {};
+    const keys = (() => {
+        if (isArray) {
+            return Object.keys(obj).map(k => parseInt(k));
+        }
+        return Object.keys(template);
+    })();
+
+    keys.forEach(key => {
+        // undefined
+        if (
+            !obj.hasOwnProperty(key)
+            || typeof obj[key] === 'undefined'
+        ) {
+            return;
+        }
+
+        // array
+        if (
+            isArray
+            && typeof template[0] === 'object'
+        ) {
+            result[key] = recursiveSchemaCopy(
+                obj[key as number],
+                template[0],
+                init?.[key] ?? null
+            );
+            return;
+        }
+
+        // object
+        if (
+            !isArray
+            && typeof obj[key] === 'object'
+            && obj[key] !== null
+        ) {
+            result[key] = recursiveSchemaCopy(
+                obj[key],
+                template[key],
+                init?.[key] ?? null
+            );
+            return;
+        }
+
+        // simple value and null
+        result[key] = obj[key];
+    });
+
+    if (isArray) {
+        return result.filter((e: any) => e);
+    }
+
+    return result;
+}
 
 interface SavedState {
     tick: number,
@@ -29,155 +134,61 @@ export interface PlayerDeath {
     type: EntityType,
 }
 
-const fastjson = require('fast-json-stringify');
-const flatstr = require('flatstr');
+const flatstr = (s: string) => s;
 
-const stringify = fastjson({
-    title: 'Stream',
-    type: 'object',
-    properties: {
-        tick: {
-            type: 'integer',
-        },
-        radius: {
-            type: 'integer',
-        },
-        ranking: {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    name: {
-                        type: 'string',
-                    },
-                    bounty: {
-                        type: 'integer',
-                    },
-                }
-            }
-        },
-        entities: {
-            type: 'array',
-            items: {
-                type: 'array',
-                items: {
-                    type: 'object',
-                    properties: {
-                        newSector: {
-                            type: 'boolean',
-                        },
-                        id: {
-                            type: 'integer',
-                        },
-                        name: {
-                            type: 'string',
-                        },
-                        x: {
-                            type: 'integer',
-                        },
-                        y: {
-                            type: 'integer',
-                        },
-                        vx: {
-                            type: 'integer',
-                        },
-                        vy: {
-                            type: 'integer',
-                        },
-                        vmax: {
-                            type: 'number',
-                        },
-                        angle: {
-                            type: 'number',
-                        },
-                        vangle: {
-                            type: 'number',
-                        },
-                        control: {
-                            type: 'integer',
-                        },
-                        damage: {
-                            type: 'number',
-                        },
-                        health: {
-                            type: 'integer',
-                        },
-                        color: {
-                            type: 'string',
-                        },
-                        model: {
-                            type: 'string',
-                        },
-                        decals: {
-                            type: 'array',
-                            items: {
-                                type: 'object',
-                                properties: {
-                                    name: {
-                                        type: 'string',
-                                    },
-                                    color: {
-                                        type: 'string',
-                                    },
-                                },
-                            },
-                        },
-                        parent: {
-                            type: 'object',
-                            properties: {
-                                type: {
-                                    type: 'object',
-                                    properties: {
-                                        name: {
-                                            type: 'string',
-                                        },
-                                    },
-                                },
-                                id: {
-                                    type: 'string',
-                                },
-                                name: {
-                                    type: 'string',
-                                },
-                            },
-                        },
-                        bulletType: {
-                            type: 'integer',
-                        },
-                        options: {
-                            type: 'object',
-                            properties: {
-                                size: {
-                                    type: 'number',
-                                },
-                                angle: {
-                                    type: 'number',
-                                },
-                            },
-                        },
-                        size: {
-                            type: 'number',
-                        },
-                        energy: {
-                            type: 'number',
-                        },
-                        sides: {
-                            type: 'integer',
-                        },
-                        type: {
-                            type: 'object',
-                            properties: {
-                                name: {
-                                    type: 'string',
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        },
+const entityStringify = sjs({
+    newSector: attr('number'),
+    id: attr('number'),
+    name: attr('string', (raw: any) => raw ?? undefined),
+    x: attr('number'),
+    y: attr('number'),
+    vx: attr('number', (raw: any) => raw ?? undefined),
+    vy: attr('number', (raw: any) => raw ?? undefined),
+    vmax: attr('number', (raw: any) => raw ?? undefined),
+    angle: attr('number', (raw: any) => raw ?? undefined),
+    vangle: attr('number', (raw: any) => raw ?? undefined),
+    control: attr('number', (raw: any) => raw ?? undefined),
+    damage: attr('number', (raw: any) => raw ?? undefined),
+    health: attr('number', (raw: any) => raw ?? undefined),
+    color: attr('string', (raw: any) => raw ?? undefined),
+    model: attr('string', (raw: any) => raw ?? undefined),
+    decals: attr('array', sjs({
+        name: attr('string'),
+        color: attr('string'),
+    })),
+    bulletType: attr('number', (raw: any) => raw ?? undefined),
+    options: (raw: any) => (raw ? sjs({
+        size: attr('number'),
+        angle: attr('number'),
+    })(raw) : undefined),
+    size: attr('number', (raw: any) => raw ?? undefined),
+    energy: attr('number', (raw: any) => raw ?? undefined),
+    sides: attr('number', (raw: any) => raw ?? undefined),
+    type: {
+        name: attr('string'),
     },
 });
+
+const stringify = (obj: any) => {
+    // const internal = sjs({
+    //     tick: attr('number'),
+    //     radius: attr('number'),
+    //     ranking: attr('array', sjs({
+    //         name: attr('string'),
+    //         bounty: attr('number'),
+    //     })),
+    //     entities: attr('array', entityStringify),
+    // });
+
+    // const result = internal(obj);
+
+    // const init = JSON.parse(JSON.stringify(PAYLOAD_TEMPLATE));
+    // const result = JSON.stringify(recursiveSchemaCopy(obj, PAYLOAD_TEMPLATE));
+    // const result = JSON.stringify(obj);
+    const result = json.stringify(obj);
+
+    return result;
+};
 
 export class CodecFacade {
     public constructor() { }
@@ -187,7 +198,7 @@ export class CodecFacade {
             tick: state.tick,
             radius: state.radius,
             ranking: state.ranking.map(p => { return { name: p.name, bounty: p.bounty } }),
-            entities: state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e))
+            entities: [].concat(...state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e)))
         };
 
         // TODO PSON / binary
@@ -200,7 +211,11 @@ export class CodecFacade {
     }
 
     public encodeEntity(entity: any, force: boolean = false) {
-        if (!entity || entity.spawner) {
+        if (
+            !entity
+            || entity.spawner
+            || !entity.id
+        ) {
             return null;
         }
 
@@ -213,17 +228,16 @@ export class CodecFacade {
         return this.lightEncode(entity);
     }
 
-    public decodeEntity(data: Entity): Entity {
-        // if (!data) return;
+    public decodeEntity(data: Entity, config?: Config): Entity {
 
         if ((<any>data).spawner)
             return this.decodeSpawner(data);
 
         switch (data.type.name) {
             case EntityType.Ship.name:
-                return this.decodeShip(<Ship>data);
+                return this.decodeShip(<Ship>data, config);
             case EntityType.Bullet.name:
-                return this.decodeBullet(<Bullet>data);
+                return this.decodeBullet(<Bullet>data, config);
             case EntityType.ShipDebris.name:
                 return this.decodeShipDebris(<ShipDebris>data);
             case EntityType.Rock.name:
@@ -232,6 +246,8 @@ export class CodecFacade {
                 return this.decodePrize(<Prize>data);
             case EntityType.GravityWell.name:
                 return this.decodeGravityWell(<GravityWell>data);
+            default:
+                console.warn("Incomplete entity data.");
         }
     }
 
@@ -241,14 +257,14 @@ export class CodecFacade {
         return spawner;
     }
 
-    private decodeShip(data: Ship) {
-        const ship = new Ship(Model.byId[data.model]);
+    private decodeShip(data: Ship, config?: Config) {
+        const ship = new Ship(Model.byId[data.model], config);
         Object.assign(ship, data);
         return ship;
     }
 
-    private decodeBullet(data: Bullet) {
-        const bullet = new Bullet(data.bulletType, data.parent);
+    private decodeBullet(data: Bullet, config?: Config) {
+        const bullet = new Bullet(data.bulletType, data.parent, config);
         Object.assign(bullet, data);
         return bullet;
     }
@@ -279,17 +295,17 @@ export class CodecFacade {
 
     private lightEncode(entity: any) {
         return {
-            newSector: false,
+            newSector: 0,
             id: entity.id,
             name: entity.name,
             x: entity.x,
             y: entity.y,
             vx: entity.vx,
             vy: entity.vy,
-            vmax: entity.vmax,
+            vmax: entity.vmax, // ship
             angle: entity.angle,
             vangle: entity.vangle,
-            control: entity.control,
+            control: entity.control, // ship
             damage: entity.damage,
         }
     }
@@ -297,7 +313,7 @@ export class CodecFacade {
     private fullEncode(entity: any) {
         return {
             // all
-            newSector: true,
+            newSector: 1,
             id: entity.id,
             name: entity.name,
             x: entity.x,
@@ -324,7 +340,9 @@ export class CodecFacade {
             //rock
             sides: entity.sides,
             // all
-            type: entity.type,
+            type: {
+                name: entity.type.name,
+            },
         };
     }
 }

@@ -1,10 +1,10 @@
-import { Room } from "../room";
-import { Bot } from "./bot";
-import { Ship } from "../../space/entities/ship";
-import { Stage } from "../../space/stage";
-import { EntityType, Entity } from "../../space/entities";
-import { BotsConfig } from "../../space/config_interfaces";
-import { BotNamePool } from "./bot_name_pool";
+import { Room } from "../room.js";
+import { Bot } from "./bot.js";
+import { Ship } from "../../space/entities/ship.js";
+import { Stage } from "../../space/stage.js";
+import { EntityType, Entity } from "../../space/entities.js";
+import { BotsConfig } from "../../space/config_interfaces.js";
+import { BotNamePool } from "./bot_name_pool.js";
 
 const INPUT_TPS = 16;
 const TARGET_LOOKUP_INTERVAL = 5000;

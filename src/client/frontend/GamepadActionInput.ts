@@ -1,10 +1,9 @@
-import { defineComponent } from 'vue';
-import { AxisInfo, ButtonInfo, GamepadListener } from '../gamepad_listener';
-import InputStore from '../input_store';
-import GamepadLabels from './gamepad_labels';
-import { PadMapper } from './pad_mapper';
+import { AxisInfo, ButtonInfo, GamepadListener } from '../gamepad_listener.js';
+import InputStore from '../input_store.js';
+import GamepadLabels from './GamepadLabels.js';
+import { PadMapper } from './PadMapper.js';
 
-export default defineComponent({
+export default {
     name: 'GamepadActionInput',
     template: `
         <div class="controller-input input">
@@ -69,4 +68,4 @@ export default defineComponent({
             return GamepadLabels.find(k => key.endsWith(k.id)).name || 'Invalid';
         },
     },
-});
+};

@@ -1,7 +1,7 @@
-// import { JoinForm } from "./frontend/join_form";
-// import { KeysForm } from "./frontend/keys_form";
+// import { JoinForm } from "./frontend/join_form.js";
+// import { KeysForm } from "./frontend/keys_form.js";
 
-// import { AssetManager } from './assets';
+// import { AssetManager } from './assets.js';
 // import e = require("express");
 
 // const assman = new AssetManager();

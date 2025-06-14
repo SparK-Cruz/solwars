@@ -1,4 +1,4 @@
-import InputStore from "./input_store";
+import InputStore from "./input_store.js";
 
 export interface Inputable {
     enable(): void;

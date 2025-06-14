@@ -1,7 +1,7 @@
-import { Renderable } from "../game_renderers/renderable";
+import { Renderable } from "../game_renderers/renderable.js";
 import { EventEmitter } from 'events';
 
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 
 const PADDING = 30;
 const RADIUS = 32;
@@ -16,7 +16,7 @@ export class ActionsRenderer extends EventEmitter implements Renderable {
         this.container.interactiveChildren = true;
         this.container.interactive = true;
         this.container.position.set(0);
-        this.container.view = parent.view;
+        this.container.view = parent.canvas;
         parent.addChild(this.container);
 
         const afterburner = this.buildButton(this.drawAfterburnerIcon());

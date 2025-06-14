@@ -1,16 +1,15 @@
-import * as json from 'jsonfile';
-import { ShipsConfig, BulletConfig, BotsConfig, Config as Base } from './config_interfaces';
-// export * from './config_interfaces';
+import { ShipsConfig, BulletConfig, BotsConfig, Config as Base } from './config_interfaces.js';
+import fs from 'fs';
 
-class Class implements Base {
+class ConfigSingleton implements Base {
     private static instance: Base;
 
     constructor() {
-        if (Class.instance) {
-            return Class.instance;
+        if (ConfigSingleton.instance) {
+            return ConfigSingleton.instance;
         }
 
-        Class.instance = this;
+        ConfigSingleton.instance = this;
     }
 
     public serverPort: number;
@@ -21,18 +20,23 @@ class Class implements Base {
     public bots: BotsConfig[];
 
     public read(callback: Function) {
-        json.readFile('./config.json', (err: any, contents: any) => {
+        fs.readFile('./config.json', 'utf-8', (err: any, raw: any) => {
             if (err) {
                 console.log(err);
                 return;
             }
+
+            const contents = JSON.parse(raw);
+
             for (let i in contents) {
-                (<any>Config)[i] = contents[i];
+                (<any>this)[i] = contents[i];
             }
+
+            console.log("Config", this);
 
             callback();
         });
     }
 }
 
-export const Config = new Class();
+export const Config = new ConfigSingleton();

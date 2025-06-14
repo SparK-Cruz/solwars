@@ -1,15 +1,21 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "../game_renderers/renderable";
-import { Camera } from "../camera";
-import { Stage } from ".././stage";
-import { ClientInfo } from "../client";
-import { EntityType } from "../../space/entities";
-import { IS_MOBILE } from "../environment";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "../game_renderers/renderable.js";
+import { Camera } from "../camera.js";
+import { Stage } from ".././stage.js";
+import { ClientInfo } from "../client.js";
+import { EntityType } from "../../space/entities.js";
+import { IS_MOBILE } from "../environment.js";
 
-const style = {
+const style: PIXI.TextStyleOptions = {
     fontFamily: 'monospace',
     fontSize: 10,
     fill: 0xff9933,
+    align: 'center',
+};
+const playerStyle: PIXI.TextStyleOptions = {
+    fontFamily: 'monospace',
+    fontSize: 14,
+    fill: 0x3399ff,
     align: 'center',
 };
 
@@ -21,11 +27,8 @@ export class NameRenderer implements Renderable {
 
     public constructor(private parent: any, private camera: Camera, private stage: Stage) {
         this.container = new PIXI.Container();
-        this.playerName = new PIXI.Text('', {
-            fontFamily: 'monospace',
-            fontSize: 14,
-            fill: 0x3399ff,
-            align: 'center',
+        this.playerName = new PIXI.Text({
+            style: playerStyle
         });
 
         this.playerName.position.set(20);
@@ -86,7 +89,7 @@ export class NameRenderer implements Renderable {
             return this.pool[index];
         }
 
-        const text = new PIXI.Text('', style);
+        const text = new PIXI.Text({style});
         text.anchor.set(0.5, 0);
         this.pool.push(text);
         this.container.addChild(text);

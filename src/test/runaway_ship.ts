@@ -1,8 +1,8 @@
-import { Ship } from '../space/entities/ship';
-import { Mapping } from '../space/entities/ships/mapping';
-import { Model as ShipModel } from '../space/entities/ships/model';
-import { Stage } from '../space/stage';
-import { Config } from '../space/config';
+import { Ship } from '../space/entities/ship.js';
+import { Mapping } from '../space/entities/ships/mapping.js';
+import { Model as ShipModel } from '../space/entities/ships/model.js';
+import { Stage } from '../space/stage.js';
+import { Config } from '../space/config.js';
 
 const Collisions = require('collisions').Collisions;
 

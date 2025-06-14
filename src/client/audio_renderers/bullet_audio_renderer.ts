@@ -1,6 +1,6 @@
-import { EntityEvent } from "../../space/entities";
-import { Bullet } from "../../space/entities/bullet";
-import { SfxRenderer } from "./sfx_renderer";
+import { EntityEvent } from "../../space/entities.js";
+import { Bullet } from "../../space/entities/bullet.js";
+import { SfxRenderer } from "./sfx_renderer.js";
 
 export class BulletAudioRenderer {
     private bulletShot0Audio: SfxRenderer = null;

@@ -1,20 +1,21 @@
 import { Socket, Server as SocketServer } from 'socket.io';
 import { Server } from 'http';
 
-import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade';
-import { Stage } from '../space/stage';
-import { Player, PlayerEvents } from './player';
-import { EntityEvent, Entity } from '../space/entities';
-import { Config } from '../space/config';
-import { Ship } from '../space/entities/ship';
+import { CodecFacade, CodecEvents, PlayerDeath } from '../space/codec_facade.js';
+import { Stage } from '../space/stage.js';
+import { Player, PlayerEvents } from './player.js';
+import { EntityEvent, Entity } from '../space/entities.js';
+import { Config } from '../space/config.js';
+import { Ship } from '../space/entities/ship.js';
 
-const Collisions = require('collisions').Collisions;
+// @ts-ignore
+import { Collisions } from 'collisions';
 
 const UPDATE_SKIP = 3;
-const TPS_TARGET = 64;
 let TPS = 64;
+let TPS_TARGET = (1000 / TPS);
 
-const playerSkipFactor = Math.ceil(TPS / (TPS_TARGET / UPDATE_SKIP));
+const playerSkipFactor = UPDATE_SKIP;
 
 export class Room {
     public codec: CodecFacade;
@@ -26,6 +27,7 @@ export class Room {
     private ranking: Player[] = null;
 
     private deltaTick: number = 1;
+    private timer: bigint;
 
     private lastId = 0;
 
@@ -40,7 +42,7 @@ export class Room {
         this.codec = new CodecFacade();
 
         TPS = Config.TPS;
-        this.deltaTick = TPS_TARGET / TPS;
+        TPS_TARGET = 1000 / TPS;
 
         this.setupListeners();
     }
@@ -51,7 +53,13 @@ export class Room {
 
     public open() {
         setTimeout(() => {
-            this.tick();
+            let delta = 1;
+            const currentTime = process.hrtime.bigint() / 1000000n;
+            if (this.timer) {
+                delta = Number(currentTime - this.timer) / (1000 / TPS);
+            }
+            this.timer = currentTime;
+            this.tick(delta);
             this.open();
         }, 1000 / TPS);
     }
@@ -169,8 +177,8 @@ export class Room {
         });
     }
 
-    private tick() {
-        this.stage.step(this.deltaTick);
+    private tick(delta: number) {
+        this.stage.step(delta);
         this.broadcastState();
     }
 

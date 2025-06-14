@@ -1,4 +1,4 @@
-import { AxisInfo, ButtonInfo } from "../gamepad_listener";
+import { AxisInfo, ButtonInfo } from "../gamepad_listener.js";
 
 export function readAxis(key: string) {
     const axis = key.match(/^(\d+)axis(\d+)(high|low)$/i);

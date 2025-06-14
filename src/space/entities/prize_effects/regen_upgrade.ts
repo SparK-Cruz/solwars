@@ -1,5 +1,5 @@
-import { PrizeEffect } from "../prize";
-import { Ship } from "../ship";
+import { PrizeEffect } from "../prize.js";
+import { Ship } from "../ship.js";
 
 export class RegenUpgrade implements PrizeEffect {
   public name = 'Better generator!';

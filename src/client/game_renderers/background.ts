@@ -1,7 +1,7 @@
-const PIXI = require('pixi.js');
-import { RNG } from '../../space/rng';
-import { Camera } from '../camera';
-import { Renderable } from './renderable';
+import * as PIXI from 'pixi.js';
+import { RNG } from '../../space/rng.js';
+import { Camera } from '../camera.js';
+import { Renderable } from './renderable.js';
 
 const SIZE = 4096;
 const STAR_COUNT = [2000, 1700, 1400];
@@ -21,7 +21,7 @@ export class Background implements Renderable {
 
         for (let i = this.buffers.length - 1; i >= 0; i--) {
             this.generate(this.buffers[i], STAR_COUNT[i]);
-            this.layers[i] = new PIXI.TilingSprite(PIXI.Texture.from(this.buffers[i]), this.buffers[i].width, this.buffers[i].height);
+            this.layers[i] = new PIXI.TilingSprite({texture: PIXI.Texture.from(this.buffers[i]), width: this.buffers[i].width, height: this.buffers[i].height});
             parent.addChild(this.layers[i]);
         }
     }

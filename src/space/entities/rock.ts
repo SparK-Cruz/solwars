@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Entity, EntityType } from '../entities';
+import { Entity, EntityType } from '../entities.js';
 
 const FRICTION = 0.995;
 

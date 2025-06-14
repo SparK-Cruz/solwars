@@ -1,13 +1,13 @@
 import { EventEmitter } from 'events';
-import { Player } from '../player';
-import { Room } from '../room';
-import { CodecEvents } from '../../space/codec_facade';
-import { Ship } from '../../space/entities/ship';
-import { Model } from '../../space/entities/ships/model';
-import { Mapping } from '../../space/entities/ships/mapping';
-import { Control } from '../../space/entities/ships/control';
-import { Config } from '../../space/config';
-import { BotsConfig } from '../../space/config_interfaces';
+import { Player } from '../player.js';
+import { Room } from '../room.js';
+import { CodecEvents } from '../../space/codec_facade.js';
+import { Ship } from '../../space/entities/ship.js';
+import { Model } from '../../space/entities/ships/model.js';
+import { Mapping } from '../../space/entities/ships/mapping.js';
+import { Control } from '../../space/entities/ships/control.js';
+import { Config } from '../../space/config.js';
+import { BotsConfig } from '../../space/config_interfaces.js';
 
 const MIN_DISTANCE = 150;
 const MAX_DISTANCE = 400;
@@ -76,7 +76,7 @@ export class Bot extends Player {
         let onSuccess = (ship: Ship) => { };
         setTimeout(() => {
             const ship = new Ship(Model.byId[this.fetchShipModel()], Config);
-            ship.decals.push(...this.config.ship.decals);
+            ship.decals.push(...this.config.ship.decals ?? []);
             if (this.config.ship.color)
                 ship.color = this.config.ship.color;
             (<any>ship).aiFaction = this.config.faction;

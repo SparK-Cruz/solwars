@@ -1,8 +1,8 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "../game_renderers/renderable";
-import { ClientInfo } from "../client";
-import { Camera } from "../camera";
-import { Mapping } from "../../space/entities/ships/mapping";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "../game_renderers/renderable.js";
+import { ClientInfo } from "../client.js";
+import { Camera } from "../camera.js";
+import { Mapping } from "../../space/entities/ships/mapping.js";
 
 export class SpeedIndicator implements Renderable {
     private info: ClientInfo;
@@ -66,7 +66,6 @@ export class SpeedIndicator implements Renderable {
 
     private drawChevron(color: number) {
         const chevron = new PIXI.Graphics();
-        chevron.beginFill(color);
         chevron.moveTo(0, 0);
         chevron.lineTo(6, 6);
         chevron.lineTo(6, 9);
@@ -74,6 +73,7 @@ export class SpeedIndicator implements Renderable {
         chevron.lineTo(-6, 9);
         chevron.lineTo(-6, 6);
         chevron.lineTo(0, 0);
+        chevron.fill(color);
 
         return chevron;
     }

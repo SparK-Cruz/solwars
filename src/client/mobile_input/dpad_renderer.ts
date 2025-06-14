@@ -1,9 +1,9 @@
-import { Renderable } from "../game_renderers/renderable";
+import { Renderable } from "../game_renderers/renderable.js";
 import { EventEmitter } from 'events';
-import { ClientInfo } from "../client";
+import { ClientInfo } from "../client.js";
 import { Joystick } from "pixi-virtual-joystick";
 
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 
 const TPS = 32;
 const RADIUS = 0.2;
@@ -31,7 +31,7 @@ export class DPadRenderer extends EventEmitter implements Renderable {
         this.container.interactiveChildren = true;
         this.container.interactive = true;
         this.container.position.set(0);
-        this.container.view = parent.view;
+        this.container.view = parent.canvas;
         parent.addChild(this.container);
 
         const outer = new PIXI.Graphics();

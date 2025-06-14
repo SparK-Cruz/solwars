@@ -1,22 +1,22 @@
-const PIXI = require('pixi.js');
+import * as PIXI from 'pixi.js';
 
 import { EventEmitter } from "events";
-import { Renderable } from "./renderable";
-import { Camera } from "../camera";
-import { Stage } from ".././stage";
-import { Entity, EntityType } from "../../space/entities";
-import { ShipRenderer } from "./entities/ship_renderer";
-import { Ship } from "../../space/entities/ship";
-import { BulletRenderer } from "./entities/bullet_renderer";
-import { Bullet } from "../../space/entities/bullet";
-import { ShipDebrisRenderer } from "./entities/ship_debris_renderer";
-import { ShipDebris } from "../../space/entities/ship_debris";
-import { RockRenderer } from "./entities/rock_renderer";
-import { Rock } from "../../space/entities/rock";
-import { PrizeRenderer } from "./entities/prize_renderer";
-import { Prize } from "../../space/entities/prize";
-import { GravityWell } from "../../space/entities/gravity_well";
-import { GravityWellRenderer } from "./entities/gravity_well_renderer";
+import { Renderable } from "./renderable.js";
+import { Camera } from "../camera.js";
+import { Stage } from ".././stage.js";
+import { Entity, EntityType } from "../../space/entities.js";
+import { ShipRenderer } from "./entities/ship_renderer.js";
+import { Ship } from "../../space/entities/ship.js";
+import { BulletRenderer } from "./entities/bullet_renderer.js";
+import { Bullet } from "../../space/entities/bullet.js";
+import { ShipDebrisRenderer } from "./entities/ship_debris_renderer.js";
+import { ShipDebris } from "../../space/entities/ship_debris.js";
+import { RockRenderer } from "./entities/rock_renderer.js";
+import { Rock } from "../../space/entities/rock.js";
+import { PrizeRenderer } from "./entities/prize_renderer.js";
+import { Prize } from "../../space/entities/prize.js";
+import { GravityWell } from "../../space/entities/gravity_well.js";
+import { GravityWellRenderer } from "./entities/gravity_well_renderer.js";
 
 export class EntityRenderer extends EventEmitter implements Renderable {
     private cache: any = {};

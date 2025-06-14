@@ -1,7 +1,7 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "../game_renderers/renderable";
-import { ClientInfo } from "../client";
-import { IS_MOBILE } from "../environment";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "../game_renderers/renderable.js";
+import { ClientInfo } from "../client.js";
+import { IS_MOBILE } from "../environment.js";
 
 const props = {
     h: 8,
@@ -22,21 +22,21 @@ const inner = {
 props.d = props.h > props.v;
 
 export class EnergyIndicator implements Renderable {
-    private bar: any;
-    private container: any;
+    private bar: PIXI.Graphics;
+    private container: PIXI.Container;
     private info: ClientInfo;
 
     public constructor(private parent: any) {
         const container = new PIXI.Container();
 
         const frame = new PIXI.Graphics();
-        frame.lineStyle(1, 0x202020, 1, 1);
-        frame.drawRect(0, 0, props.h, props.v);
+        frame
+            .rect(0, 0, props.h, props.v)
+            .stroke({ color: 0x202020, width: 1 });
 
         const bar = new PIXI.Graphics();
-        bar.beginFill(0x3399ff);
-        bar.drawRect(2, 2, inner.h, inner.v);
-        bar.endFill();
+        bar.rect(2, 2, inner.h, inner.v)
+            .fill(0x3399ff);
 
         container.addChild(frame);
         container.addChild(bar);
@@ -67,15 +67,14 @@ export class EnergyIndicator implements Renderable {
         };
 
         this.bar.clear();
-        this.bar.beginFill(color);
-        this.bar.drawRect(2, props.d ? 2 : inner.v - sizes.v, sizes.h, sizes.v);
-        this.bar.endFill();
+        this.bar.rect(2, props.d ? 2 : inner.v - sizes.v, sizes.h, sizes.v)
+            .fill(color);
 
         if (IS_MOBILE) {
-            this.container.position.set(this.parent.view.width / 2 - props.h / 2, 20);
+            this.container.position.set(this.parent.canvas.width / 2 - props.h / 2, 20);
             return;
         }
 
-        this.container.position.set(20, this.parent.view.height - 250);
+        this.container.position.set(20, this.parent.canvas.height - 250);
     }
 }

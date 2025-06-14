@@ -1,9 +1,9 @@
-import { Camera } from "../camera";
-import { Stage } from "../stage";
-import { Entity, EntityType } from "../../space/entities";
-import { ShipAudioRenderer } from "./ship_audio_renderer";
-import { BulletAudioRenderer } from "./bullet_audio_renderer";
-import { Renderable } from "../game_renderers/renderable";
+import { Camera } from "../camera.js";
+import { Stage } from "../stage.js";
+import { Entity, EntityType } from "../../space/entities.js";
+import { ShipAudioRenderer } from "./ship_audio_renderer.js";
+import { BulletAudioRenderer } from "./bullet_audio_renderer.js";
+import { Renderable } from "../game_renderers/renderable.js";
 
 export class AudioRenderer implements Renderable {
     private context: AudioContext;

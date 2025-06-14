@@ -1,7 +1,7 @@
-const PIXI = require('pixi.js');
-import { Ship } from '../../../space/entities/ship';
-import { Renderable } from '../renderable';
-import { Assets } from '../../assets';
+import * as PIXI from 'pixi.js';
+import { Ship } from '../../../space/entities/ship.js';
+import { Renderable } from '../renderable.js';
+import { Assets } from '../../assets.js';
 
 export class ShipRenderer implements Renderable {
     private container: any;
@@ -11,8 +11,8 @@ export class ShipRenderer implements Renderable {
     constructor(parent: any, public ship :Ship) {
         this.container = new PIXI.Container();
 
-        const bodySprite = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model].texture);
-        this.mask = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_mask'].texture);
+        const bodySprite = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model]);
+        this.mask = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_mask']);
 
         const sprites = [bodySprite];
 
@@ -21,7 +21,7 @@ export class ShipRenderer implements Renderable {
         ];
 
         for (let i = 0; i < this.ship.decals.length; i++) {
-            sprites.push(new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_'+this.ship.decals[i].name].texture));
+            sprites.push(new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_'+this.ship.decals[i].name]));
             colors.push(parseInt(this.ship.decals[i].color.replace('#', '0x')));
         }
 

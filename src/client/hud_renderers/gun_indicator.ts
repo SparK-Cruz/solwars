@@ -1,7 +1,7 @@
-const PIXI = require('pixi.js');
-import { Renderable } from "../game_renderers/renderable";
-import { Camera } from "../camera";
-import { ClientInfo } from "../client";
+import * as PIXI from 'pixi.js';
+import { Renderable } from "../game_renderers/renderable.js";
+import { Camera } from "../camera.js";
+import { ClientInfo } from "../client.js";
 
 const PAD = 70;
 
@@ -11,7 +11,8 @@ export class GunIndicator implements Renderable {
 
     public constructor(parent: any, private camera: Camera) {
         const line = new PIXI.Graphics();
-        line.lineStyle(3, 0x3399ff, 0.5);
+        line.alpha = 0.5;
+        line.setStrokeStyle({ width: 3, color: 0x3399ff});
         line.moveTo(0, PAD + 0);
         line.lineTo(0, PAD + 3);
         line.moveTo(0, PAD + 6);
