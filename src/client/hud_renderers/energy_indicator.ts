@@ -24,7 +24,7 @@ props.d = props.h > props.v;
 export class EnergyIndicator implements Renderable {
     private bar: PIXI.Graphics;
     private container: PIXI.Container;
-    private info: ClientInfo;
+    private info: ClientInfo | null = null;
 
     public constructor(private parent: any) {
         const container = new PIXI.Container();

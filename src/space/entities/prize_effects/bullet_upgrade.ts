@@ -3,7 +3,7 @@ import { Ship } from "../ship.js";
 import { Config } from "../../config_interfaces.js";
 
 export class BulletUpgrade implements PrizeEffect {
-    public config: Config;
+    public config: Config | undefined;
     public name = 'Better bullets!';
     public apply(entity: Ship): void {
         if (!this.config?.bullets)

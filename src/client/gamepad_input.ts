@@ -4,12 +4,12 @@ import { Mapping } from '../space/entities/ships/mapping.js';
 import InputStore from './input_store.js';
 
 export class GamepadInput implements Inputable {
-    private gamepadListener: GamepadListener = null;
+    private gamepadListener: GamepadListener;
     private onChange = function (state: number): void { };
     protected mapping: Mapping = new Mapping();
 
     private enabler: Function;
-    private disabler: Function;
+    private disabler: Function | null = null;
 
     private map: any = null;
 
@@ -17,7 +17,7 @@ export class GamepadInput implements Inputable {
     private buttonChangeListener: any = null;
 
     public constructor(emmiter: any) {
-        this.gamepadListener = GamepadListener.getInstance(emmiter);
+        this.gamepadListener = new GamepadListener(emmiter);
         this.axisMoveListener = this.axisMove.bind(this);
         this.buttonChangeListener = this.buttonChange.bind(this);
 

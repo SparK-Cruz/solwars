@@ -28,20 +28,20 @@ export class Bot extends Player {
         return true;
     }
 
-    private target: Ship = null;
+    private target: Ship | null = null;
 
     private mapping: Mapping = new Mapping();
     private lastInput: number = 0;
     private respawnListener = () => { this.onRespawn(); };
 
-    public constructor(name: string, room: Room, private config: BotsConfig) {
+    public constructor(name: string, room: Room, private config?: BotsConfig) {
         super(<any>new FakeSocket(), room);
         this.socket.on(CodecEvents.RESPAWN, this.respawnListener);
 
         this.socket.emit(CodecEvents.JOIN_GAME, { name: name });
     }
 
-    public setTarget(ship: Ship) {
+    public setTarget(ship: Ship | null) {
         this.target = ship;
     }
 
@@ -72,9 +72,15 @@ export class Bot extends Player {
         }, 0);
     }
 
-    protected fetchPlayerShip(name: string, cache: Ship = null) {
+    protected fetchPlayerShip(name: string, cache?: Ship) {
         let onSuccess = (ship: Ship) => { };
+        let onError = (reason: string) => { };
         setTimeout(() => {
+            if (!this.config) {
+                onError("Missing configuration!");
+                return;
+            }
+
             const ship = new Ship(Model.byId[this.fetchShipModel()], Config);
             ship.decals.push(...this.config.ship.decals ?? []);
             if (this.config.ship.color)
@@ -89,6 +95,7 @@ export class Bot extends Player {
                 return callbacks;
             },
             error: (callback: (reason: string) => void) => {
+                onError = callback;
                 return callbacks;
             }
         };
@@ -97,7 +104,7 @@ export class Bot extends Player {
 
     private fetchShipModel() {
         const randomizedIds = shipModelIds.sort((a, b) => Math.round(Math.random() * 2 - 1));
-        return this.config.ship.model || randomizedIds[0];
+        return this.config?.ship.model || randomizedIds[0];
     }
 
     private onRespawn() {
@@ -140,6 +147,11 @@ export class Bot extends Player {
     }
 
     private calculateAngleDiff(distance: number): number {
+        if (
+            !this.target
+            || !this.ship
+        ) return 0;
+
         let heading = Math.atan2(this.ship.vy, this.ship.vx) / Math.PI * 180 + 90;
         if (heading < 0) heading += 360;
 

@@ -5,7 +5,7 @@ import { Camera } from "../camera.js";
 import { Mapping } from "../../space/entities/ships/mapping.js";
 
 export class SpeedIndicator implements Renderable {
-    private info: ClientInfo;
+    private info: ClientInfo | null = null;
     private container: any;
     private slowChevron: any;
     private fastChevron: any;

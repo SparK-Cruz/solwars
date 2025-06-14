@@ -8,12 +8,10 @@ import { ClientInfo } from "./client.js";
 import * as PIXI from 'pixi.js';
 
 export class MobileInputRenderer extends EventEmitter implements Renderable {
-    private container: any;
+    private container: PIXI.Container | null = null;
     private index: number = 0;
-    private dpad: DPadRenderer;
-    private actions: ActionsRenderer;
-
-    private info: ClientInfo = null;
+    private dpad: DPadRenderer | null = null;
+    private actions: ActionsRenderer | null = null;
 
     constructor(private parent: any) {
         super();
@@ -24,11 +22,12 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
         this.container = new PIXI.Container();
         this.container.interactiveChildren = true;
         this.container.position.set(0);
-        this.container.view = parent.canvas;
-        parent.addChild(this.container);
+        (<any>this.container).canvas = parent.canvas;
 
         this.dpad = new DPadRenderer(this.container);
         this.actions = new ActionsRenderer(this.container);
+
+        parent.addChild(this.container);
 
         this.dpad.on('press', (direction: string) => {
             this.emit('press', direction);
@@ -49,7 +48,7 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
         if (!IS_MOBILE)
             return;
 
-        this.dpad.update(info);
+        this.dpad!.update(info);
     }
 
     public render() {
@@ -63,7 +62,7 @@ export class MobileInputRenderer extends EventEmitter implements Renderable {
             this.index--;
         }
 
-        this.dpad.render();
-        this.actions.render();
+        this.dpad!.render();
+        this.actions!.render();
     }
 }

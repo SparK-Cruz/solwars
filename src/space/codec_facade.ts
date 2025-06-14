@@ -8,110 +8,8 @@ import { EntitySpawner } from './entity_spawner.js';
 import { Prize } from './entities/prize.js';
 import { GravityWell } from './entities/gravity_well.js';
 
-import { sjs, attr } from 'slow-json-stringify';
 import { json } from 'typescript-json';
 import { Config } from './config_interfaces.js';
-
-const PAYLOAD_TEMPLATE = {
-    "tick": 0,
-    "radius": 0,
-    "ranking": [{"name": "", "bounty": 0}],
-    "entities": [{
-        "newSector": 0,
-        "id": 0,
-        "name": "",
-        "x": 0,
-        "y": 0,
-        "vx": 0,
-        "vy": 0,
-        "vmax": 0,
-        "angle": 0,
-        "vangle": 0,
-        "control": 0,
-        "damage": 0,
-        "health": 0,
-        "color": "",
-        "model": "",
-        "decals": [{
-            "name": "decal0",
-            "color": "#000000",
-        }],
-        "parent": {
-            "type": {
-                "name": "",
-            }
-        },
-        "bulletType": 0,
-        "options": {
-            "size": 0,
-            "angle": 0,
-        },
-        "size": 0,
-        "energy": 0,
-        "sides": 0,
-        "type": {
-            "name": "",
-        },
-
-    }]
-};
-
-const recursiveSchemaCopy = (obj: any, template: any, init: any = null) => {
-    const isArray = Array.isArray(obj) && Array.isArray(template);
-    const result: any = init ?? isArray ? [] : {};
-    const keys = (() => {
-        if (isArray) {
-            return Object.keys(obj).map(k => parseInt(k));
-        }
-        return Object.keys(template);
-    })();
-
-    keys.forEach(key => {
-        // undefined
-        if (
-            !obj.hasOwnProperty(key)
-            || typeof obj[key] === 'undefined'
-        ) {
-            return;
-        }
-
-        // array
-        if (
-            isArray
-            && typeof template[0] === 'object'
-        ) {
-            result[key] = recursiveSchemaCopy(
-                obj[key as number],
-                template[0],
-                init?.[key] ?? null
-            );
-            return;
-        }
-
-        // object
-        if (
-            !isArray
-            && typeof obj[key] === 'object'
-            && obj[key] !== null
-        ) {
-            result[key] = recursiveSchemaCopy(
-                obj[key],
-                template[key],
-                init?.[key] ?? null
-            );
-            return;
-        }
-
-        // simple value and null
-        result[key] = obj[key];
-    });
-
-    if (isArray) {
-        return result.filter((e: any) => e);
-    }
-
-    return result;
-}
 
 interface SavedState {
     tick: number,
@@ -136,58 +34,8 @@ export interface PlayerDeath {
 
 const flatstr = (s: string) => s;
 
-const entityStringify = sjs({
-    newSector: attr('number'),
-    id: attr('number'),
-    name: attr('string', (raw: any) => raw ?? undefined),
-    x: attr('number'),
-    y: attr('number'),
-    vx: attr('number', (raw: any) => raw ?? undefined),
-    vy: attr('number', (raw: any) => raw ?? undefined),
-    vmax: attr('number', (raw: any) => raw ?? undefined),
-    angle: attr('number', (raw: any) => raw ?? undefined),
-    vangle: attr('number', (raw: any) => raw ?? undefined),
-    control: attr('number', (raw: any) => raw ?? undefined),
-    damage: attr('number', (raw: any) => raw ?? undefined),
-    health: attr('number', (raw: any) => raw ?? undefined),
-    color: attr('string', (raw: any) => raw ?? undefined),
-    model: attr('string', (raw: any) => raw ?? undefined),
-    decals: attr('array', sjs({
-        name: attr('string'),
-        color: attr('string'),
-    })),
-    bulletType: attr('number', (raw: any) => raw ?? undefined),
-    options: (raw: any) => (raw ? sjs({
-        size: attr('number'),
-        angle: attr('number'),
-    })(raw) : undefined),
-    size: attr('number', (raw: any) => raw ?? undefined),
-    energy: attr('number', (raw: any) => raw ?? undefined),
-    sides: attr('number', (raw: any) => raw ?? undefined),
-    type: {
-        name: attr('string'),
-    },
-});
-
 const stringify = (obj: any) => {
-    // const internal = sjs({
-    //     tick: attr('number'),
-    //     radius: attr('number'),
-    //     ranking: attr('array', sjs({
-    //         name: attr('string'),
-    //         bounty: attr('number'),
-    //     })),
-    //     entities: attr('array', entityStringify),
-    // });
-
-    // const result = internal(obj);
-
-    // const init = JSON.parse(JSON.stringify(PAYLOAD_TEMPLATE));
-    // const result = JSON.stringify(recursiveSchemaCopy(obj, PAYLOAD_TEMPLATE));
-    // const result = JSON.stringify(obj);
-    const result = json.stringify(obj);
-
-    return result;
+    return json.stringify(obj);
 };
 
 export class CodecFacade {
@@ -198,7 +46,7 @@ export class CodecFacade {
             tick: state.tick,
             radius: state.radius,
             ranking: state.ranking.map(p => { return { name: p.name, bounty: p.bounty } }),
-            entities: [].concat(...state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e)))
+            entities: [...state.entities.map(p => Object.values(p).map(e => this.encodeEntity(e, force)).filter(e => e))].flat(),
         };
 
         // TODO PSON / binary
@@ -228,7 +76,7 @@ export class CodecFacade {
         return this.lightEncode(entity);
     }
 
-    public decodeEntity(data: Entity, config?: Config): Entity {
+    public decodeEntity(data: Entity, config?: Config): Entity | null {
 
         if ((<any>data).spawner)
             return this.decodeSpawner(data, config);
@@ -249,6 +97,8 @@ export class CodecFacade {
             default:
                 console.warn("Incomplete entity data.");
         }
+
+        return null;
     }
 
     public decodeSpawner(data: Entity, config?: Config) {
@@ -282,7 +132,7 @@ export class CodecFacade {
     }
 
     private decodePrize(data: Prize) {
-        const prize = new Prize();
+        const prize = new Prize(data.effect, data.parent);
         Object.assign(prize, data);
         return prize;
     }

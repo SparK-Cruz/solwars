@@ -3,8 +3,8 @@ import { Ship, ShipEvents } from "../../space/entities/ship.js";
 import { SfxRenderer } from "./sfx_renderer.js";
 
 export class ShipAudioRenderer {
-    private shipDeathAudio: SfxRenderer = null;
-    private pickItemAudio: SfxRenderer = null;
+    private shipDeathAudio: SfxRenderer;
+    private pickItemAudio: SfxRenderer;
 
     public constructor(private context: AudioContext) {
         this.shipDeathAudio = new SfxRenderer(this.context, 'sfx/ship_death.mp3');

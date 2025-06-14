@@ -7,9 +7,9 @@ export class GravityWell extends EventEmitter implements Entity {
 
     name = 'a backhole';
 
-    id: number;
-    sectorKey: string;
-    newSector: number;
+    id: number = 0;
+    sectorKey: string | null = null;
+    newSector: number = 1;
     collisionMap: number[][] = [
         [-2, -2],
         [-2, 2],
@@ -17,18 +17,18 @@ export class GravityWell extends EventEmitter implements Entity {
         [2, -2],
     ];
     mass: number = 1000;
-    x: number;
-    y: number;
+    x: number = 0;
+    y: number = 0;
 
-    radius: number;
+    radius: number = 0;
     teleport: {
         x: number,
         y: number,
         radius: number,
-    };
-    pull: number;
+    } = {x:0, y:0, radius: 0};
+    pull: number = 0;
 
-    stage: Stage = null;
+    stage: Stage | null = null;
 
     step(delta: number): void {
         // console.log(this);
@@ -69,8 +69,8 @@ export class GravityWell extends EventEmitter implements Entity {
                 const alpha = Math.atan2(this.y - e.y, this.x - e.x) - Math.PI / 2;
                 const pull = this.mass / d * this.pull;
 
-                e.vx -= pull * Math.sin(alpha);
-                e.vy += pull * Math.cos(alpha);
+                e.vx! -= pull * Math.sin(alpha);
+                e.vy! += pull * Math.cos(alpha);
             });
     }
 }

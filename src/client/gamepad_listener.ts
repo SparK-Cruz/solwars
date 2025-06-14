@@ -24,35 +24,29 @@ function translatePad(pad: Gamepad): SimplePad {
     };
 }
 
-let instance: GamepadListener = null;
-
 export class GamepadListener extends EventEmitter {
+    private static instance: GamepadListener;
+
     private last: SimplePad[] = [];
 
     private enabler: Function;
-    private disabler: Function;
+    private disabler: Function | null = null;
 
     private pads: Gamepad[] = [];
 
     private interval: any = null;
 
-    public static getInstance(emitter: any) {
-        if (!instance) instance = new GamepadListener(emitter);
-        return instance;
-    }
-
-    private constructor(emmiter: any) {
+    public constructor(emmiter: any) {
         super();
+        if (GamepadListener.instance) {
+            this.enabler = () => {};
+            return GamepadListener.instance;
+        }
 
         const changeCheck = () => {
-            this.pads = navigator.getGamepads();
-            if (typeof this.pads.forEach !== 'function') return;
+            this.pads = navigator.getGamepads().filter(p => p) as Gamepad[] ?? [];
 
             this.pads.forEach((pad, i) => {
-                if (!pad) {
-                    return;
-                }
-
                 const state = translatePad(pad);
 
                 if (this.last[i]) {
@@ -96,6 +90,8 @@ export class GamepadListener extends EventEmitter {
                 clearInterval(this.interval);
             };
         };
+
+        GamepadListener.instance = this;
     }
 
     public enable() {

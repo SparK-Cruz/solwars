@@ -8,8 +8,8 @@ import { Renderable } from "../game_renderers/renderable.js";
 export class AudioRenderer implements Renderable {
     private context: AudioContext;
 
-    private shipAudioRenderer: ShipAudioRenderer = null;
-    private bulletAudioRenderer: BulletAudioRenderer = null;
+    private shipAudioRenderer: ShipAudioRenderer;
+    private bulletAudioRenderer: BulletAudioRenderer;
 
     constructor(private camera: Camera, private stage: Stage) {
         this.context = new AudioContext();

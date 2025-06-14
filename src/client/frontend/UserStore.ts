@@ -11,19 +11,19 @@ const prepareColor = (c: string) => (c.charAt(0) === '#' ? c : '');
 
 export default {
     data: {
-        name: <string>null,
+        name: "",
         defaultName: defaultName,
-        shipIndex: <number>null,
-        decalIndex: <number>null,
-        primaryColor: <string>null,
-        secondaryColor: <string>null,
+        shipIndex: -1,
+        decalIndex: -1,
+        primaryColor: "#000000",
+        secondaryColor: "#000000",
     },
     load() {
         this.data.name = localStorage.getItem('name') || "";
         this.data.shipIndex = validStoredShip();
         this.data.primaryColor = localStorage.getItem('color') || 'default';
         this.data.secondaryColor = localStorage.getItem('decal') || 'default';
-        this.data.decalIndex = parseInt(localStorage.getItem('decalIndex')) || 0;
+        this.data.decalIndex = parseInt(localStorage.getItem('decalIndex') ?? '0' ) || 0;
     },
     dump() {
         return {

@@ -3,11 +3,11 @@ import { Entity, EntityType, EntityEvent } from '../entities.js';
 import { Ship } from './ship.js';
 
 export class ShipDebris extends EventEmitter implements Entity {
-    public id: number;
+    public id: number = 0;
     public type = EntityType.ShipDebris;
 
     public sectorKey: string = "";
-    public newSector: number = 0;
+    public newSector: number = 1;
     public collisionMap: number[][] = [];
     public mass = 10;
 

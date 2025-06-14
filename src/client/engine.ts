@@ -109,7 +109,7 @@ export class Engine extends EventEmitter {
         return this.client.connected;
     }
 
-    public start(options: ClientOptions, callback: Function = null) {
+    public start(options: ClientOptions, callback?: Function) {
         setTimeout(() => {
             if (this.client.connected) return;
 
@@ -155,9 +155,9 @@ export class Engine extends EventEmitter {
     }
 
     private hideCanvas() {
-        this.game.parentElement.style.display = 'none';
+        this.game.parentElement!.style.display = 'none';
     }
     private showCanvas() {
-        this.game.parentElement.style.display = 'block';
+        this.game.parentElement!.style.display = 'block';
     }
 }

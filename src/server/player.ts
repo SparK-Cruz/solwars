@@ -22,8 +22,8 @@ export class Player extends EventEmitter {
 
     public name: string = "Nemo";
     public bounty: number = 1;
-    public ship: Ship = null;
-    public id: number = null;
+    public ship: Ship | null = null;
+    public id: number | null = null;
 
     public constructor(public socket: Socket, public room: Room) {
         super();
@@ -51,7 +51,7 @@ export class Player extends EventEmitter {
     }
 
     public updateShipName() {
-        this.ship.name = this.name + ' (' + this.bounty + ')';
+        this.ship!.name = this.name + ' (' + this.bounty + ')';
     }
 
     private setupListeners() {
@@ -80,7 +80,7 @@ export class Player extends EventEmitter {
             this.updateShipName();
             this.socket.emit(CodecEvents.UPGRADE, name);
         };
-        this.fetchPlayerShip(data, this.ship)
+        this.fetchPlayerShip(data, this.ship!)
             .then(ship => {
                 this.emit(PlayerEvents.Ship, ship);
                 ship.on(ShipEvents.Upgrade, upgradeListener);
@@ -159,7 +159,7 @@ export class Player extends EventEmitter {
     private onDie(killer: Entity) {
         const death: PlayerDeath = {
             name: this.name,
-            ship: this.ship.id,
+            ship: this.ship!.id,
             cause: DeathCauses.Collision,
             bounty: this.bounty,
             killer: this.room.codec.encodeEntity(killer, true),
@@ -177,6 +177,6 @@ export class Player extends EventEmitter {
 
         this.socket.emit(CodecEvents.DIE, death);
         this.emit(PlayerEvents.Die, death);
-        this.ship.emit(EntityEvent.Despawn, this.ship);
+        this.ship!.emit(EntityEvent.Despawn, this.ship);
     }
 }

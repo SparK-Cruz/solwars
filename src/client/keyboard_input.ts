@@ -7,7 +7,7 @@ export class KeyboardInput implements Inputable {
     protected mapping: Mapping = new Mapping();
 
     private enabler: Function;
-    private disabler: Function;
+    private disabler: Function | null = null;
 
     private map: any = null;
 

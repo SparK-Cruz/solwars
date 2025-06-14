@@ -3,11 +3,11 @@ import { Bullet } from "../../space/entities/bullet.js";
 import { SfxRenderer } from "./sfx_renderer.js";
 
 export class BulletAudioRenderer {
-    private bulletShot0Audio: SfxRenderer = null;
-    private bulletShot1Audio: SfxRenderer = null;
-    private bulletShot2Audio: SfxRenderer = null;
-    private bulletShot3Audio: SfxRenderer = null;
-    private bulletImpactAudio: SfxRenderer = null;
+    private bulletShot0Audio: SfxRenderer;
+    private bulletShot1Audio: SfxRenderer;
+    private bulletShot2Audio: SfxRenderer;
+    private bulletShot3Audio: SfxRenderer;
+    private bulletImpactAudio: SfxRenderer;
 
     public constructor(private context: AudioContext) {
         this.bulletShot0Audio = new SfxRenderer(this.context, 'sfx/bullet_0.mp3');

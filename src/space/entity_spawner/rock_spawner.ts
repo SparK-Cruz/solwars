@@ -5,10 +5,10 @@ export class RockSpawner extends EventEmitter implements Entity {
     public spawner = true;
     public type: EntityType = EntityType.Rock;
 
-    public id: number;
-    public sectorKey: string;
-    public newSector: number = 0;
-    public collisionMap: number[][];
+    public id: number = 0;
+    public sectorKey: string | null = null;
+    public newSector: number = 1;
+    public collisionMap: number[][] = [];
     public mass = 0;
     public x: number = 0;
     public y: number = 0;
@@ -16,12 +16,12 @@ export class RockSpawner extends EventEmitter implements Entity {
     public vy: number = 0;
     public angle: number = 0;
 
-    public size: number;
-    public sides: number;
-    public count: number;
-    public radius: number;
-    public spread: number;
-    public minRadius: number;
+    public size: number = 0;
+    public sides: number = 0;
+    public count: number = 0;
+    public radius: number = 0;
+    public spread: number = 0;
+    public minRadius: number = 0;
 
     public done: boolean = false;
 

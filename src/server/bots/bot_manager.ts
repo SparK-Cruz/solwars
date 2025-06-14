@@ -16,7 +16,7 @@ export class BotManager {
 
     private playerCap = 0;
 
-    public constructor(private room: Room, private config: BotsConfig = null) {
+    public constructor(private room: Room, private config?: BotsConfig) {
         if (config)
             this.prefix = config.prefix;
 
@@ -24,15 +24,17 @@ export class BotManager {
         this.setupLoops();
     }
 
-    public add(number: number, config: BotsConfig = null) {
+    public add(number: number, config?: BotsConfig) {
         if (number < 0)
             return;
 
         if (!config && !this.config)
             return;
 
+        config ??= this.config;
+
         for (let i = 0; i < number; i++) {
-            const name = ((config && config.prefix) || this.prefix) + (config.anon ? BotNamePool.getAnon() : BotNamePool.get());
+            const name = `${config?.prefix}${config?.anon ? BotNamePool.getAnon() : BotNamePool.get()}`;
             const bot = new Bot(name, this.room, config || this.config);
             this.room.setupPlayer(bot);
             this.bots.push(bot);

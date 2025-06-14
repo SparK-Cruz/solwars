@@ -9,7 +9,7 @@ export class ShipRenderer implements Renderable {
     private mask: any = null;
     private body: any = new PIXI.Container();
 
-    public ship :Ship = null;
+    public ship :Ship;
 
     constructor(parent: any, ship: Entity) {
         this.ship = ship as Ship;
@@ -45,14 +45,14 @@ export class ShipRenderer implements Renderable {
     }
 
     private draw(sprites :any[], colors :number[]) {
-        const main = sprites.shift();
+        const main = sprites.shift()!;
 
         this.body.addChild(main);
-        this.paint(main, colors.shift(), this.mask);
+        this.paint(main, colors.shift()!, this.mask);
 
         while (sprites.length > 0) {
-            const decal = sprites.shift();
-            const color = colors.shift();
+            const decal = sprites.shift()!;
+            const color = colors.shift()!;
             this.paint(main, color, decal);
             this.body.addChild(decal);
         }

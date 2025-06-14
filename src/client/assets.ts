@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { EventEmitter } from 'events';
 
 export class AssetManager extends EventEmitter {
-    private static instance: AssetManager = null;
+    private static instance: AssetManager;
     public static getInstance() {
         if (this.instance)
             return this.instance;
@@ -94,14 +94,4 @@ export class AssetManager extends EventEmitter {
 
 export class Assets {
     public static pool: any = {};
-
-    public static fetch(url: string) {
-        return { once: (evt: string, cb: any) => { } };
-    }
-    public static fetchAll(list: string[], cb: any) {
-        return { once: (evt: string, cb: any) => { } };
-    }
-}
-export class Asset {
-    public content: HTMLImageElement;
 }

@@ -113,7 +113,7 @@ const draw = (canvas: HTMLCanvasElement) => {
     bkp.drawImage(canvas, 0, 0);
 }
 
-const drawCursor = (canvas: HTMLCanvasElement, mouse: { x: number, y: number }, color: number[]) => {
+const drawCursor = (canvas: HTMLCanvasElement, mouse: { x: number, y: number }, color?: number[]) => {
     const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(colors, 0, 0);
@@ -189,14 +189,14 @@ export default defineComponent({
             const ctx = canvas.getContext('2d', { willReadFrequently: true }) as CanvasRenderingContext2D;
 
             const color = [].slice.call(ctx.getImageData(mouse.x, mouse.y, 1, 1).data, 0, 4);
-            const alpha = color.pop();
+            const alpha = color.pop()!;
 
             if (alpha < 200) {
                 canvas.style.cursor = 'default';
             }
 
             if (alpha < 255) {
-                drawCursor(canvas, mouse, null);
+                drawCursor(canvas, mouse, undefined);
                 return;
             }
 

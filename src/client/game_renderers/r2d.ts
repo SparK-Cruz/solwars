@@ -62,7 +62,7 @@ export namespace R2d {
         return buffer;
     }
 
-    export function buffer(source :HTMLCanvasElement | HTMLImageElement = null) :{buffer :HTMLCanvasElement, bfr :CanvasRenderingContext2D} {
+    export function buffer(source :HTMLCanvasElement | HTMLImageElement | null = null) :{buffer :HTMLCanvasElement, bfr :CanvasRenderingContext2D} {
         const buffer = document.createElement('canvas');
 
         if (source) {
@@ -70,7 +70,7 @@ export namespace R2d {
             buffer.height = source.height;
         }
 
-        const bfr = buffer.getContext('2d');
+        const bfr = buffer.getContext('2d')!;
 
         return {buffer, bfr};
     }

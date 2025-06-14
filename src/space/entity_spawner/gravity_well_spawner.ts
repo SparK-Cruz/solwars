@@ -8,24 +8,24 @@ export class GravityWellSpawner extends EventEmitter implements Entity {
     public spawner = true;
 
     public type = EntityType.GravityWell;
-    public id: number;
-    public sectorKey: string;
-    public newSector: number = 0;
-    public collisionMap: number[][];
-    public mass: number;
+    public id: number = 0;
+    public sectorKey: string | null = null;
+    public newSector: number = 1;
+    public collisionMap: number[][] = [];
+    public mass: number = 0;
 
-    public stage: Stage = null;
+    public stage: Stage | null = null;
 
-    public x: number;
-    public y: number;
+    public x: number = 0;
+    public y: number = 0;
 
-    public radius: number;
+    public radius: number = 0;
     public teleport: {
         x: number,
         y: number,
         radius: number,
-    };
-    public pull: number;
+    } = {x:0, y:0, radius:0};
+    public pull: number = 0;
     public startSectorRadius: number = 8;
     public intervalSectors: number = 2;
     public maxSectorRadius: number = 5;

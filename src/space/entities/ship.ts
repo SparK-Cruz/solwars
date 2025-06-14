@@ -18,12 +18,12 @@ const DUMP_CORRECTION = 0.00635;
 
 export class Ship extends EventEmitter implements entities.Entity {
     type = entities.EntityType.Ship;
-    id :number;
+    id :number = 0;
     model :string;
-    name: string;
+    name: string = "Nemo";
 
     sectorKey: string = "";
-    newSector: number = 0;
+    newSector: number = 1;
 
     collisionMap :number[][] = [];
     mass = 100;
@@ -81,7 +81,7 @@ export class Ship extends EventEmitter implements entities.Entity {
             }
         }
 
-        if (config && config.ships) {
+        if (this.config && this.config.ships) {
             // server only
 
             const traits = (<any> this.config.ships)[model.id] as ShipConfig;
@@ -110,7 +110,7 @@ export class Ship extends EventEmitter implements entities.Entity {
         entities.Entity.defaultCollide.call(this, other, result);
     }
 
-    addDamage(damage: number, origin: entities.Entity = null) {
+    addDamage(damage: number, origin?: entities.Entity) {
         const wasAlive = this.alive;
 
         this.damage += damage;

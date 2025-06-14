@@ -41,7 +41,7 @@ export class Background implements Renderable {
         buffer.width = SIZE;
         buffer.height = SIZE;
 
-        const ctx = buffer.getContext('2d');
+        const ctx = buffer.getContext('2d')!;
 
         for(let i = 0; i < starCount; i++) {
             let x = RNG.random() * SIZE | 0;

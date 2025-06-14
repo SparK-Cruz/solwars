@@ -4,7 +4,7 @@ const FRESHNESS = 4;
 export interface Entity {
     type: EntityType;
     id: number;
-    sectorKey: string;
+    sectorKey: string | null;
     newSector: number;
     collisionMap: number[][];
     mass: number;
@@ -43,7 +43,7 @@ export namespace Entity {
         self.vx -= push.x * (other.mass / mass);
         self.vy -= push.y * (other.mass / mass);
 
-        self.vangle += angleDiff(other.vx, other.vy, push.x, push.y) * (other.mass / mass) % 4;
+        self.vangle += angleDiff(other.vx ?? 0, other.vy ?? 0, push.x, push.y) * (other.mass / mass) % 4;
 
         if (typeof (<any>other).addDamage !== 'undefined') {
             (<any>other).addDamage(result.overlap * 100 * (self.mass / mass), other);
@@ -182,7 +182,7 @@ class EntityPool {
         this.pool[entity.id] = entity;
     }
 
-    public find(id: number): Entity {
+    public find(id: number): Entity | null {
         if (!this.pool.hasOwnProperty(id))
             return null;
 
@@ -191,7 +191,7 @@ class EntityPool {
 
     public remove(id: number): number {
         if (!this.pool.hasOwnProperty(id))
-            return;
+            return this.count;
 
         this.pool[id] = null;
         delete this.pool[id];

@@ -19,12 +19,12 @@ export default defineComponent({
     data: () => ({
         idle: true,
         mapper: <any>null,
-        listener: <GamepadListener>null,
+        listener: <any>null,
         axisMoveListener: <any>null,
         changeButtonListener: <any>null,
     }),
     created() {
-        this.listener = GamepadListener.getInstance(window);
+        this.listener = new GamepadListener(window);
         this.mapper = new PadMapper(InputStore.data.padMapping);
 
         this.axisMoveListener = this.axisMove.bind(this);
@@ -66,7 +66,7 @@ export default defineComponent({
             this.$emit('change');
         },
         keyLabel(key: string) {
-            return GamepadLabels.find(k => key.endsWith(k.id)).name || 'Invalid';
+            return GamepadLabels.find(k => key.endsWith(k.id))?.name || 'Invalid';
         },
     },
 });

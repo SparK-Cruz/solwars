@@ -14,9 +14,9 @@ export interface PrizeEffect {
 
 export class Prize extends EventEmitter implements Entity {
     public type = EntityType.Prize;
-    public id: number;
+    public id: number = 0;
     public sectorKey: string = '';
-    public newSector: number = 0;
+    public newSector: number = 1;
     public collisionMap: number[][] = [
         [-8, -8],
         [-8, 7],
@@ -25,16 +25,16 @@ export class Prize extends EventEmitter implements Entity {
     ];
     public mass: number = 0;
 
-    public x: number;
-    public y: number;
+    public x: number = 0;
+    public y: number = 0;
     public vx: number = 0;
     public vy: number = 0;
     public angle: number = 0;
     public vangle: number = 2;
 
-    public constructor(private effect: PrizeEffect = null, private parent: PrizeSpawner = null) {
+    public constructor(public effect: PrizeEffect, public parent: PrizeSpawner) {
         super();
-        if (!parent) return;
+        if (!parent || !effect) return;
         effect.config = parent.config;
         parent.onPrizeSpawn(this);
     }

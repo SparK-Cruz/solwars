@@ -22,7 +22,7 @@ const playerStyle: PIXI.TextStyleOptions = {
 export class NameRenderer implements Renderable {
     private container: any;
     private playerName: any;
-    private info: ClientInfo;
+    private info: ClientInfo | null = null;
     private pool: any[] = [];
 
     public constructor(private parent: any, private camera: Camera, private stage: Stage) {

@@ -21,8 +21,8 @@ export class DPadRenderer extends EventEmitter implements Renderable {
     private container: any;
 
     private info: any;
-    private angle: number;
-    private dist: number;
+    private angle: number = 0;
+    private dist: number = 0;
 
     constructor(parent: any) {
         super();
@@ -35,13 +35,13 @@ export class DPadRenderer extends EventEmitter implements Renderable {
         parent.addChild(this.container);
 
         const outer = new PIXI.Graphics();
-        outer.beginFill(0x202020);
-        outer.drawCircle(0, 0, 50);
+        outer.circle(0, 0, 50)
+            .fill(0x202020);
         outer.alpha = 1;
 
         const inner = new PIXI.Graphics();
-        inner.beginFill(0x3399ff);
-        inner.drawCircle(0, 0, 30);
+        inner.circle(0, 0, 30)
+            .fill(0x3399ff);
         inner.alpha = 0.5;
 
         const joystick = new Joystick({

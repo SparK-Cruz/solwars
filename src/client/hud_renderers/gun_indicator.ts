@@ -6,7 +6,7 @@ import { ClientInfo } from "../client.js";
 const PAD = 70;
 
 export class GunIndicator implements Renderable {
-    private info: ClientInfo;
+    private info: ClientInfo | null = null;
     private sprite: any;
 
     public constructor(parent: any, private camera: Camera) {

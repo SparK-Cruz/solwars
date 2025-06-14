@@ -4,19 +4,19 @@ import { Entity, EntityType } from '../entities.js';
 const FRICTION = 0.995;
 
 export class Rock extends EventEmitter implements Entity {
-    public id: number;
+    public id: number = 0;
     public type = EntityType.Rock;
 
     public sectorKey: string = "";
-    public newSector: number = 0;
+    public newSector: number = 1;
     public collisionMap: number[][] = [];
     public mass = 100000;
 
-    public x :number;
-    public y :number;
-    public vx :number;
-    public vy :number;
-    public angle :number;
+    public x :number = 0;
+    public y :number = 0;
+    public vx :number = 0;
+    public vy :number = 0;
+    public angle :number = 0;
     public vangle :number = 0;
 
     public color: string = '#474747';

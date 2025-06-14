@@ -16,19 +16,21 @@ const BLINKER_FRAMES = 32;
 export class Radar implements Renderable {
     private container: PIXI.Container;
 
-    private coordText: PIXI.Text;
-    private blips: PIXI.Graphics;
-    private radius: PIXI.Graphics;
+    private coordText?: PIXI.Text;
+    private blips?: PIXI.Graphics;
+    private radius?: PIXI.Graphics;
     private lastRadius: number = 0;
 
-    private info: ClientInfo;
+    private info: ClientInfo | null = null;
 
     private blinker: number = 0;
     private isBlinkerOn: boolean = true;
     private isFastBlinkerOn: boolean = true;
 
     public constructor(private parent: any, private camera: Camera, private stage: Stage) {
+        this.container = new PIXI.Container();
         this.initialize();
+        this.parent.addChild(this.container);
     }
 
     public update(info: ClientInfo) {
@@ -36,14 +38,10 @@ export class Radar implements Renderable {
     }
 
     private initialize() {
-        this.container = new PIXI.Container();
-
         this.initializeCoord();
         this.initializeFrame();
         this.initializeBlips();
         this.initializeDeathRadius();
-
-        this.parent.addChild(this.container);
     }
 
     private initializeCoord() {
@@ -116,11 +114,11 @@ export class Radar implements Renderable {
         this.isBlinkerOn = this.blinker < BLINKER_FRAMES;
         this.isFastBlinkerOn = this.blinker % BLINKER_FRAMES > BLINKER_FRAMES / 2;
 
-        this.drawCoordinates();
-        this.drawBlips();
+        this.drawCoordinates(this.info);
+        this.drawBlips(this.info);
 
         if (this.stage.radius) {
-            this.drawDeathRadius();
+            this.drawDeathRadius(this.info);
         }
 
         if (IS_MOBILE) {
@@ -137,13 +135,15 @@ export class Radar implements Renderable {
         );
     }
 
-    private drawCoordinates() {
+    private drawCoordinates(info: ClientInfo) {
+        if (!this.coordText) return;
+
         const positionText = [
-            this.info.position.x >= 0 ? 'E' : 'W',
-            Math.abs(Math.floor(this.info.position.x * REGION_SCALE)),
+            info.position.x >= 0 ? 'E' : 'W',
+            Math.abs(Math.floor(info.position.x * REGION_SCALE)),
             ' ',
-            this.info.position.y >= 0 ? 'S' : 'N',
-            Math.abs(Math.floor(this.info.position.y * REGION_SCALE)),
+            info.position.y >= 0 ? 'S' : 'N',
+            Math.abs(Math.floor(info.position.y * REGION_SCALE)),
         ].join('');
 
         this.coordText.anchor.set(0.5, 0);
@@ -151,7 +151,9 @@ export class Radar implements Renderable {
         this.coordText.text = positionText;
     }
 
-    private drawBlips() {
+    private drawBlips(info: ClientInfo) {
+        if (!this.blips) return;
+
         this.blips.clear();
 
         const entities = this.stage.fetchAllEntities();
@@ -163,7 +165,7 @@ export class Radar implements Renderable {
             let alpha = 1;
             let style = 0xff9933;
 
-            if (entity.id == this.info.id) {
+            if (entity.id == info.id) {
                 style = 0xffffff;
                 size = 5;
                 alpha = this.isFastBlinkerOn ? 1 : 0;
@@ -202,12 +204,14 @@ export class Radar implements Renderable {
         }
     }
 
-    private drawDeathRadius() {
+    private drawDeathRadius(info: ClientInfo) {
+        if (!this.radius) return;
+
         const pos = this.camera.translate({x: 0, y: 0});
         let alpha = 0.5;
 
         if (this.stage.radius) {
-            const distance = Math.sqrt(Math.pow(this.info.position.x, 2) + Math.pow(this.info.position.y, 2));
+            const distance = Math.sqrt(Math.pow(info.position.x, 2) + Math.pow(info.position.y, 2));
             alpha = distance > this.stage.radius && this.isBlinkerOn ? 0.6 : 0.5;
 
             if (this.lastRadius !== this.stage.radius) {

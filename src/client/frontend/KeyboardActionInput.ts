@@ -44,7 +44,7 @@ export default defineComponent({
             if (!found.length)
                 return key;
 
-            return found.pop().name;
+            return found.pop()!.name;
         },
     },
 });

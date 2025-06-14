@@ -11,8 +11,8 @@ function validOrDefault(value: any, defaultValue: any): any {
 }
 
 export class Stage extends EventEmitter implements Base {
-    public tick: number;
-    public radius: number;
+    public tick: number = 0;
+    public radius: number = 0;
     public entities: any = {};
     private seen: number[] = [];
 
@@ -32,8 +32,8 @@ export class Stage extends EventEmitter implements Base {
         this.emit('clear');
     }
 
-    public add(entity: Entity, removable = true) {
-        if (!entity.id) return;
+    public add(entity: Entity | null, removable = true) {
+        if (!entity || !entity.id) return;
         (<any>entity).removable = removable;
 
         if (this.entities.hasOwnProperty(entity.id)) {

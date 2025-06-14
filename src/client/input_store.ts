@@ -47,7 +47,9 @@ const DEFAULT_PAD = [{
     ],
 }];
 
-const parse = (s: string, defaultValue: any): any => {
+const parse = (s: string | null, defaultValue: any): any => {
+    if (!s) return defaultValue;
+
     try {
         const result = JSON.parse(s);
         if (!result || Object.values(result).length == 0)
@@ -83,9 +85,10 @@ const serializeGamepadMapping = (mapping: Action[]): any => {
             result[info[0]].axes[info[1]][info[2] ? 'high' : 'low'] = a.code;
             return;
         }
-
-        result[info[0]].buttons = result[info[0]].buttons || Array(12).fill(null);
-        result[info[0]].buttons[info[1]] = a.code;
+        if (info = readButton(s)) {
+            result[info[0]].buttons = result[info[0]].buttons || Array(12).fill(null);
+            result[info[0]].buttons[info[1]] = a.code;
+        }
     }));
 
     return result;

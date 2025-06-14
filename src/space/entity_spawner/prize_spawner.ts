@@ -8,23 +8,23 @@ export class PrizeSpawner extends EventEmitter implements Entity {
     public spawner = true;
 
     public type = EntityType.Prize;
-    public id: number;
-    public sectorKey: string;
-    public newSector: number = 0;
-    public collisionMap: number[][];
-    public mass: number;
+    public id: number = 0;
+    public sectorKey: string | null = null;
+    public newSector: number = 1;
+    public collisionMap: number[][] = [];
+    public mass: number = 0;
 
-    public x: number;
-    public y: number;
+    public x: number = 0;
+    public y: number = 0;
 
-    public radius: number;
-    public delay: number;
+    public radius: number = 0;
+    public delay: number = 0;
     public maxPrizes: number = 0;
 
     private timer: number = 0;
     private prizeCount: number = 0;
 
-    public constructor(public config: Config = null) {
+    public constructor(public config?: Config) {
         super();
     }
 

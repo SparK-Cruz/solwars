@@ -24,10 +24,9 @@ export class Room {
     private stage: Stage;
 
     private players: Player[] = [];
-    private ranking: Player[] = null;
+    private ranking: Player[] | null = null;
 
-    private deltaTick: number = 1;
-    private timer: bigint;
+    private timer: bigint = 0n;
 
     private lastId = 0;
 
@@ -55,7 +54,7 @@ export class Room {
         setTimeout(() => {
             let delta = 1;
             const currentTime = process.hrtime.bigint() / 1000000n;
-            if (this.timer) {
+            if (this.timer && this.timer !== 0n) {
                 delta = Number(currentTime - this.timer) / (1000 / TPS);
             }
             this.timer = currentTime;
@@ -81,7 +80,7 @@ export class Room {
         player.on(PlayerEvents.SyncEntity, (id: number) => {
             console.log('Full sync requested by', id);
             let entity = null;
-            this.stage.fetchEntitiesAround(player.ship)
+            this.stage.fetchEntitiesAround(player.ship!)
                 .find((p: Entity[]) => p && typeof p.find === "function" && !!p.find((e: Entity) => e.id === id ? !!(entity = e) : false));
 
             player.sendEntity(JSON.stringify(this.codec.encodeEntity(entity, true)));
@@ -108,12 +107,12 @@ export class Room {
         this.stage.spawn(player.ship);
     }
     private onPlayerDie(player: Player, death: PlayerDeath) {
-        const killer: Player = this.players.find(p => p.ship && p.ship.id == death.killer.id);
+        const killer = this.players.find(p => p.ship && p.ship.id == death.killer.id);
 
-        if (typeof killer != 'undefined') {
+        if (killer) {
             killer.bounty += player.bounty;
-            killer.ship.name = killer.name + ' (' + killer.bounty + ')';
-            killer.ship.newSector = 1;
+            killer.ship!.name = killer.name + ' (' + killer.bounty + ')';
+            killer.ship!.newSector = 1;
         }
 
         player.bounty = 1;
@@ -140,16 +139,16 @@ export class Room {
             if ((this.stage.tick + index) % playerSkipFactor !== 0)
                 return;
 
-            // No ship no data...
-            if (!player.ship)
-                return;
-
             setTimeout(() => {
+                // No ship no data...
+                if (!player.ship)
+                    return;
+
                 player.sendState(this.codec.encode(
                     {
                         tick: this.stage.tick,
                         radius: this.stage.radius,
-                        entities: this.stage.fetchEntitiesAround(player.ship),
+                        entities: this.stage.fetchEntitiesAround(player.ship!),
                         ranking: ranking,
                     },
                     // if player ship is new to the sector, force full entity encoding

@@ -7,7 +7,7 @@ export class MobileInput implements Inputable {
     protected mapping: Mapping = new Mapping();
 
     private enabler: Function;
-    private disabler: Function;
+    private disabler: Function | null = null;
 
     private map: any = {
         'up': Mapping.FORWARD,
@@ -19,6 +19,7 @@ export class MobileInput implements Inputable {
     };
 
     constructor(emitter: any) {
+        this.enabler = () => {};
         if (!IS_MOBILE) return;
 
         const press = (key: string) => {

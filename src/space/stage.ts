@@ -81,7 +81,7 @@ export class Stage extends EventEmitter implements Base {
 
                     this.add(entity);
 
-                    if (entity.hasOwnProperty('stage')) {
+                    if (entity && entity.hasOwnProperty('stage')) {
                         (<any>entity).stage = this;
                     }
                 }
@@ -103,7 +103,7 @@ export class Stage extends EventEmitter implements Base {
                     const reduceRadius = () => {
                         this.targetRadius = Math.max(this.targetRadius * this.suddenDeathShrinkRate, 1);
                         this.spawnRadius = Math.min(Math.max(this.targetRadius - 100, 0), this.spawnRadius);
-                        console.log('Target', this.targetRadius, 'Spawn', this.spawnRadius);
+                        console.log('Restricting safe area to', this.targetRadius, 'and spawn to', this.spawnRadius);
 
                         if (this.targetRadius < SUDDENT_DEATH_MIN_RADIUS) {
                             this.suddenDeath = 0;
@@ -125,14 +125,16 @@ export class Stage extends EventEmitter implements Base {
         this.sectors.updateGrid(entity);
     }
 
-    public add(entity: Entity) {
+    public add(entity: Entity | null) {
+        if (!entity) return;
+
         this.sectors.add(entity);
 
         const shape = this.addOrFetchCollisionShape(entity);
         if (shape) {
             shape.x = entity.x;
             shape.y = entity.y;
-            shape.angle = entity.angle * Math.PI / 180;
+            shape.angle = (entity.angle ?? 0) * Math.PI / 180;
         }
 
         (<any>entity).on(EntityEvent.Spawn, this.onSpawnChildEntity);
@@ -251,8 +253,8 @@ export class Stage extends EventEmitter implements Base {
         }
     }
 
-    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity, offset: { x: number, y: number } = null) => {
-        let entity: Entity = null;
+    private onSpawnChildEntity = (entityType: EntityType, entityModel: any, parent: Entity, offset?: { x: number, y: number }) => {
+        let entity: Entity | null = null;
         switch (entityType.name) {
             case EntityType.Bullet.name:
                 entity = new Bullet(entityModel, parent, Config);
@@ -276,7 +278,7 @@ export class Stage extends EventEmitter implements Base {
             // ships aren't child entities yet... we still don't have carriers nor turrets...
         }
 
-        if (offset) {
+        if (entity && offset) {
             entity.x += offset.x;
             entity.y += offset.y;
         }

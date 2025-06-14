@@ -57,7 +57,7 @@ export class EntityRenderer extends EventEmitter implements Renderable {
         }
     }
 
-    private renderEntity(entity: Entity, pair: RenderPair, offset: { x: number, y: number }) {
+    private renderEntity(entity: Entity, pair: RenderPair | null, offset: { x: number, y: number }) {
         if (!pair) return;
 
         pair.renderer.render();
@@ -66,7 +66,7 @@ export class EntityRenderer extends EventEmitter implements Renderable {
         pair.container.position.set(entity.x - offset.x, entity.y - offset.y);
     }
 
-    private fetchPair(entity: Entity): RenderPair {
+    private fetchPair(entity: Entity): RenderPair | null {
         if (this.cache.hasOwnProperty(entity.id)
             && this.cache[entity.id]) {
             return this.cache[entity.id];
@@ -82,7 +82,7 @@ export class EntityRenderer extends EventEmitter implements Renderable {
         }
     }
 
-    private createPair(entity: Entity): RenderPair {
+    private createPair(entity: Entity): RenderPair | null {
         if (typeof entity.type == 'undefined') {
             console.log(entity);
             return null;

@@ -13,7 +13,7 @@ export class RockRenderer implements Renderable {
         const mask = new PIXI.Graphics();
 
         const geometry = this.rock.collisionMap.slice(0);
-        const start = geometry.shift();
+        const start = geometry.shift()!;
         mask.moveTo(start[0], start[1]);
         geometry.forEach(point => {
             mask.lineTo(point[0], point[1]);

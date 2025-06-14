@@ -66,7 +66,7 @@ export class ToastRenderer implements Renderable {
         this.container.addChild(element);
     }
 
-    public render(): HTMLCanvasElement {
+    public render() {
         if (this.timer <= 0) {
             this.container.alpha = 0;
             return;

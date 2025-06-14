@@ -3,24 +3,24 @@ import { Entity, EntityType, EntityEvent } from '../entities.js';
 import { Config } from '../config_interfaces.js';
 
 export class Bullet extends EventEmitter implements Entity {
-    public id :number;
+    public id :number = 0;
     public type = EntityType.Bullet;
 
     public sectorKey: string = "";
-    public newSector: number = 0;
+    public newSector: number = 1;
     public collisionMap = [[-2, -2], [-2, 2], [2, 2], [2, -2]];
     public mass = 5;
 
-    public x: number;
-    public y: number;
-    public vx: number;
-    public vy: number;
-    public angle: number;
+    public x: number = 0;
+    public y: number = 0;
+    public vx: number = 0;
+    public vy: number = 0;
+    public angle: number = 0;
 
-    public color: string;
+    public color: string = "#000000";
 
-    private energy: number;
-    private damage: number;
+    private energy: number = 1000;
+    private damage: number = 0;
 
     private immune: EntityType[] = [
         EntityType.ShipDebris,
@@ -37,9 +37,9 @@ export class Bullet extends EventEmitter implements Entity {
 
         this.x = parent.x;
         this.y = parent.y;
-        this.vx = parent.vx;
-        this.vy = parent.vy;
-        this.angle = parent.angle;
+        this.vx = parent.vx ?? 0;
+        this.vy = parent.vy ?? 0;
+        this.angle = parent.angle ?? 0;
         this.energy = trait.energy;
         this.damage = trait.energy;
         this.color = trait.color;
