@@ -1,10 +1,10 @@
 {
     "serverPort": 80,
     "TPS": 64,
-    "maxPlayers": 100,
+    "maxPlayers": 16,
     "bots": [
         {
-            "count": 2,
+            "count": 1,
             "ship": {
                 "model": "warbird"
             },
@@ -12,7 +12,7 @@
             "faction": "bot_warbird"
         },
         {
-            "count": 2,
+            "count": 1,
             "ship": {
                 "model": "javelin"
             },
@@ -20,7 +20,7 @@
             "faction": "bot_javelin"
         },
         {
-            "count": 2,
+            "count": 1,
             "ship": {
                 "model": "spider"
             },
@@ -28,7 +28,7 @@
             "faction": "bot_spider"
         },
         {
-            "count": 2,
+            "count": 1,
             "ship": {
                 "model": "leviathan"
             },
@@ -36,7 +36,7 @@
             "faction": "bot_leviathan"
         },
         {
-            "count": 2,
+            "count": 1,
             "ship": {
                 "model": "terrier"
             },

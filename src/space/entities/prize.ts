@@ -4,6 +4,8 @@ import { Ship, ShipEvents } from "./ship.js";
 import { PrizeSpawner } from "../entity_spawner/prize_spawner.js";
 import { Config } from '../config_interfaces.js';
 
+const REFRESH = 4; // don't import from Stage
+
 export interface PrizeEffect {
     name: string;
     apply(entity: Ship): void;
@@ -16,10 +18,10 @@ export class Prize extends EventEmitter implements Entity {
     public sectorKey: string = '';
     public newSector: number = 0;
     public collisionMap: number[][] = [
-        [-7, -7],
-        [-7, 7],
+        [-8, -8],
+        [-8, 7],
         [7, 7],
-        [7, -7],
+        [7, -8],
     ];
     public mass: number = 0;
 
@@ -38,14 +40,15 @@ export class Prize extends EventEmitter implements Entity {
     }
 
     public step(delta: number): void {
-        this.angle += this.vangle;
+        this.angle += this.vangle * delta;
     }
     public collide(entity: Entity, result: any): void {
         if (entity.type.name !== EntityType.Ship.name)
             return;
 
-        (<Ship>entity).emit(ShipEvents.Upgrade, this.effect.name);
         this.effect.apply(<Ship>entity);
+        entity.newSector = REFRESH;
+        (<Ship>entity).emit(ShipEvents.Upgrade, this.effect.name);
         this.parent.onPrizeDespawn(this);
         this.emit(EntityEvent.Despawn, this);
     }

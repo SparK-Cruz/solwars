@@ -1,4 +1,7 @@
-export default {
+import { defineComponent } from "vue";
+import type Modal from "./Modal.js";
+
+export default defineComponent({
     name: 'ColorInput',
     template: `
         <div class="color-input" :style="{ backgroundColor: safeColor }" @click="openPicker">
@@ -22,11 +25,11 @@ export default {
     methods: {
         openPicker(e: MouseEvent) {
             Object.assign(this.modalPosition, { x: e.clientX + 50, y: e.clientY - 50 });
-            this.$refs.modal.open();
+            (this.$refs.modal as typeof Modal).open();
         },
         change(color: string) {
             this.$emit('change', color);
-            this.$refs.modal.close();
+            (this.$refs.modal as typeof Modal).close();
         }
     }
-};
+});

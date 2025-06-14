@@ -1,4 +1,6 @@
-export default {
+import { defineComponent } from "vue";
+
+export default defineComponent({
     name: 'InputEditor',
     template: `
         <section id="input-editor">
@@ -13,4 +15,4 @@ export default {
     data: () => ({
         tab: 0,
     }),
-};
+});

@@ -21,7 +21,7 @@
       }
     ],
     "strictNullChecks": false,
-    "strict": false
+    "strict": true
   },
   "include": [
     "src"

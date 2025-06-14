@@ -37,7 +37,13 @@ const botNames = [
     'Yanni',
     'Yogi',
     'Yuri',
-].sort((a, b) => Math.round(Math.random() * 2 - 1));
+];
+
+[...botNames].forEach((n, i, a) => {
+    const targetIndex = Math.min(Math.floor(Math.random() * a.length), a.length - 1);
+    botNames.splice(i, 1);
+    botNames.splice(targetIndex, 0, n);
+});
 
 export class BotNamePool {
     private static index = 0;

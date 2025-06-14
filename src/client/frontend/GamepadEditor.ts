@@ -1,7 +1,8 @@
 import GamepadActionInput from './GamepadActionInput.js';
 import InputStore from '../input_store.js';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'GamepadEditor',
     template: `
         <section id="gamepad-editor">
@@ -38,4 +39,4 @@ export default {
             this.refresh();
         }
     }
-};
+});

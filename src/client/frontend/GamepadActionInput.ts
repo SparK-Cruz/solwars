@@ -1,9 +1,10 @@
+import { defineComponent } from 'vue';
 import { AxisInfo, ButtonInfo, GamepadListener } from '../gamepad_listener.js';
 import InputStore from '../input_store.js';
 import GamepadLabels from './GamepadLabels.js';
 import { PadMapper } from './PadMapper.js';
 
-export default {
+export default defineComponent({
     name: 'GamepadActionInput',
     template: `
         <div class="controller-input input">
@@ -44,7 +45,7 @@ export default {
         listenAndBind() {
             this.idle = false;
             this.$nextTick(() => {
-                this.$refs.input.focus();
+                (this.$refs.input as HTMLElement).focus();
                 this.listener.enable();
                 this.listener.on('axisMove', this.axisMoveListener);
                 this.listener.on('changeButton', this.changeButtonListener);
@@ -68,4 +69,4 @@ export default {
             return GamepadLabels.find(k => key.endsWith(k.id)).name || 'Invalid';
         },
     },
-};
+});

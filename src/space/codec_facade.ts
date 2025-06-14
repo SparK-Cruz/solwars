@@ -231,7 +231,7 @@ export class CodecFacade {
     public decodeEntity(data: Entity, config?: Config): Entity {
 
         if ((<any>data).spawner)
-            return this.decodeSpawner(data);
+            return this.decodeSpawner(data, config);
 
         switch (data.type.name) {
             case EntityType.Ship.name:
@@ -251,9 +251,9 @@ export class CodecFacade {
         }
     }
 
-    public decodeSpawner(data: Entity) {
+    public decodeSpawner(data: Entity, config?: Config) {
         const spawner: Entity = new (<any>EntitySpawner)[data.type.name];
-        Object.assign(spawner, data);
+        Object.assign(spawner, data, {config});
         return spawner;
     }
 

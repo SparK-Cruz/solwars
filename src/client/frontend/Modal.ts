@@ -26,10 +26,10 @@ export default defineComponent({
                 this.offset.x = 0;
 
                 if (~this.anchor.indexOf('bottom'))
-                    this.offset.y = -this.$refs.content.offsetHeight;
+                    this.offset.y = -(this.$refs.content as HTMLElement).offsetHeight;
 
                 if (~this.anchor.indexOf('right'))
-                    this.offset.x = -this.$refs.content.offsetwidth;
+                    this.offset.x = -(this.$refs.content as HTMLElement).offsetWidth;
             });
         },
         close() {

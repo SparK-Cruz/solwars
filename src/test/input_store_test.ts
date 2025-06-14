@@ -16,21 +16,22 @@ subject.data.keyMapping = {
 };
 const mapper = new KeyMapper(subject.data.keyMapping);
 
-const oldExport = subject.export;
-subject.export = (function () { return JSON.stringify(oldExport.call(this), null, 4); }).bind(subject);
+const showResult = () => {
+    return JSON.stringify(subject.export(), null, 4);
+};
 
 console.log('Defaults');
-console.log(subject.export());
+console.log(showResult());
 mapper.unmap('KeyA');
 mapper.unmap('KeyD');
 mapper.unmap('ShiftLeft');
 mapper.map('KeyW', Mapping.FORWARD);
 mapper.map('KeyS', Mapping.BACKWARD);
 console.log('WASDish');
-console.log(subject.export());
+console.log(showResult());
 mapper.toggle('CtrlLeft', Mapping.SHOOT);
 console.log('Toggle ctrl');
-console.log(subject.export());
+console.log(showResult());
 mapper.toggle('CtrlLeft', Mapping.SHOOT);
 console.log('Toggle ctrl');
-console.log(subject.export());
+console.log(showResult());

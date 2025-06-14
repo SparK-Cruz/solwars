@@ -28,22 +28,25 @@ export namespace Entity {
     }
 
     export function defaultCollide(other: Entity, result: any): void {
+        // @ts-ignore
+        const self = this;
+
         const push = {
             x: result.overlap * result.overlap_x,
             y: result.overlap * result.overlap_y
         };
-        this.x -= push.x;
-        this.y -= push.y;
+        self.x -= push.x;
+        self.y -= push.y;
 
-        const mass = this.mass + other.mass;
+        const mass = self.mass + other.mass;
 
-        this.vx -= push.x * (other.mass / mass);
-        this.vy -= push.y * (other.mass / mass);
+        self.vx -= push.x * (other.mass / mass);
+        self.vy -= push.y * (other.mass / mass);
 
-        this.vangle += angleDiff(other.vx, other.vy, push.x, push.y) * (other.mass / mass) % 4;
+        self.vangle += angleDiff(other.vx, other.vy, push.x, push.y) * (other.mass / mass) % 4;
 
         if (typeof (<any>other).addDamage !== 'undefined') {
-            (<any>other).addDamage(result.overlap * 100 * (this.mass / mass), other);
+            (<any>other).addDamage(result.overlap * 100 * (self.mass / mass), other);
         }
     }
 }
@@ -117,7 +120,7 @@ export class EntityPoolGrid {
 
     public allEntities(): Entity[] {
         const entities: Entity[] = [];
-        Object.values(this.grid).forEach((cell: EntityPool) => {
+        (Object.values(this.grid) as EntityPool[]).forEach((cell: EntityPool) => {
             [].push.apply(entities, Object.values(cell.entities));
         });
         return entities;

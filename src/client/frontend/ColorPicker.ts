@@ -79,8 +79,8 @@ const draw = (canvas: HTMLCanvasElement) => {
     ctx.fillStyle = '#ffffff45';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    const offsets = [0, widths[5], widths.slice(4).reduce((a, b) => a + b)].map((w, i) => ({ x: size.x + rad + w - stage.width, y: size.y * 4 - size.y / 2 * (2 - i) }));
-    [].push.apply(offsets, range(3, 6).map(d => {
+    const offsets: {x: number, y: number}[] = [0, widths[5], widths.slice(4).reduce((a, b) => a + b)].map((w, i) => ({ x: size.x + rad + w - stage.width, y: size.y * 4 - size.y / 2 * (2 - i) }));
+    offsets.push(...range(3, 6).map(d => {
         const widthSet = widths.slice(Math.ceil(res / 2), d + 1);
         return {
             x: -widthSet.reduce((a, w, i) => a + (w / 2) + (i > 0 ? widthSet[i - 1] : 0) / 2, size.x),
@@ -166,7 +166,7 @@ export default defineComponent({
     props: ['start'],
     created() {
         this.$nextTick(() => {
-            draw(this.$refs.selector);
+            draw(this.$refs.selector as HTMLCanvasElement);
             this.color = this.start || '#000000';
         });
     },

@@ -1,10 +1,12 @@
+import { defineComponent } from 'vue';
 import UserStore from './UserStore.js';
+import type Modal from './Modal.js';
 
 const customEvent = (name: string, data: any) => {
     return Object.assign(new Event(name), { data });
 }
 
-export default {
+export default defineComponent({
     name: 'JoinForm',
     template: `
         <form @submit.prevent="submit" id="join-form">
@@ -33,20 +35,20 @@ export default {
     created() {
         UserStore.load();
         this.name = UserStore.data.name;
-        this.$nextTick(() => { this.$refs.name.select(); });
+        this.$nextTick(() => { (this.$refs.name as HTMLInputElement).select(); });
     },
     methods: {
         submit() {
-            this.$refs.name.blur();
+            (this.$refs.name as HTMLInputElement).blur();
             UserStore.data.name = this.name;
             UserStore.save();
             window.dispatchEvent(customEvent('joingame', UserStore.dump()));
         },
         toggleInputEditor() {
             Object.assign(this.editorModalPosition, { x: this.$el.offsetLeft, y: this.$el.offsetTop });
-            this.$refs.inputEditorModal.open();
+            (this.$refs.inputEditorModal as typeof Modal).open();
             this.$nextTick(() => {
-                this.$refs.editorContainer.style.width = this.$el.offsetWidth + 'px';
+                (this.$refs.editorContainer as HTMLElement).style.width = this.$el.offsetWidth + 'px';
             });
         }
     },
@@ -55,4 +57,4 @@ export default {
             return UserStore.data.defaultName;
         }
     }
-};
+});

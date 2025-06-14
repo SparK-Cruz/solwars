@@ -2,13 +2,17 @@ import * as PIXI from 'pixi.js';
 import { Ship } from '../../../space/entities/ship.js';
 import { Renderable } from '../renderable.js';
 import { Assets } from '../../assets.js';
+import { Entity } from '../../../space/entities.js';
 
 export class ShipRenderer implements Renderable {
     private container: any;
     private mask: any = null;
     private body: any = new PIXI.Container();
 
-    constructor(parent: any, public ship :Ship) {
+    public ship :Ship = null;
+
+    constructor(parent: any, ship: Entity) {
+        this.ship = ship as Ship;
         this.container = new PIXI.Container();
 
         const bodySprite = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model]);

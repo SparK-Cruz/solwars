@@ -18,14 +18,7 @@ import { GamepadInput } from './gamepad_input.js';
 import { MobileInputRenderer } from './mobile_input_renderer.js';
 import { MobileInput } from './mobile_input.js';
 
-const ASPECT = 16/9;
-
 const assman = AssetManager.getInstance();
-const adjustGameSize = function (original: {width: number, height: number}, resolution: number = 1) {
-    const ratio = ASPECT;
-    this.height = original.height * resolution;
-    this.width = original.height * ratio * resolution;
-};
 
 export class Engine extends EventEmitter {
     private app: PIXI.Application;

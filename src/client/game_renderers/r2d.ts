@@ -1,8 +1,11 @@
 export namespace R2d {
     export function multiplyImage(source :HTMLCanvasElement, multiplier :HTMLCanvasElement | HTMLImageElement, angle :number) :HTMLCanvasElement {
-        const {buffer, bfr} = this.buffer(source);
-        const light = this.buffer(multiplier);
-        const mask = this.buffer(source);
+        // @ts-ignore
+        const self = this;
+
+        const {buffer, bfr} = self.buffer(source);
+        const light = self.buffer(multiplier);
+        const mask = self.buffer(source);
 
         const lightCenter = {
           x: light.buffer.width / 2,
@@ -22,14 +25,17 @@ export namespace R2d {
         mask.bfr.restore();
 
         bfr.save();
-        bfr.drawImage(this.applyMask(mask.buffer, source), 0, 0);
+        bfr.drawImage(self.applyMask(mask.buffer, source), 0, 0);
         bfr.restore();
 
         return buffer;
     }
 
     export function multiplyColor(source :HTMLImageElement, color :string) :HTMLCanvasElement {
-        const {buffer, bfr} = this.buffer(source);
+        // @ts-ignore
+        const self = this;
+
+        const {buffer, bfr} = self.buffer(source);
 
         bfr.save();
         bfr.drawImage(source, 0, 0);
@@ -42,7 +48,10 @@ export namespace R2d {
     }
 
     export function applyMask(source :HTMLCanvasElement | HTMLImageElement, maskImage :HTMLCanvasElement | HTMLImageElement) :HTMLCanvasElement {
-        const {buffer, bfr} = this.buffer(source);
+        // @ts-ignore
+        const self = this;
+
+        const {buffer, bfr} = self.buffer(source);
 
         bfr.save();
         bfr.drawImage(source, 0, 0);

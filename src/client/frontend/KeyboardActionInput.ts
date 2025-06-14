@@ -1,8 +1,9 @@
+import { defineComponent } from 'vue';
 import InputStore from '../input_store.js';
 import KeyboardLabels from './KeyboardLabels.js';
 import { KeyMapper } from './KeyMapper.js';
 
-export default {
+export default defineComponent({
     name: 'KeyboardActionInput',
     template: `
         <div class="controller-input input">
@@ -26,7 +27,7 @@ export default {
         listenAndBind() {
             this.idle = false;
             this.$nextTick(() => {
-                this.$refs.input.focus();
+                (this.$refs.input as HTMLInputElement).focus();
             });
         },
         remove(key: string) {
@@ -46,4 +47,4 @@ export default {
             return found.pop().name;
         },
     },
-};
+});

@@ -1,10 +1,10 @@
 import { AxisInfo, ButtonInfo } from "../gamepad_listener.js";
 
-export function readAxis(key: string) {
+export function readAxis(key: string): [number, number, boolean] | null {
     const axis = key.match(/^(\d+)axis(\d+)(high|low)$/i);
 
     if (axis.length === 0) {
-        return [];
+        return null;
     }
 
     axis.shift();
@@ -12,10 +12,10 @@ export function readAxis(key: string) {
     return [
         parseInt(axis[0]),
         parseInt(axis[1]),
-        (axis[2] === 'high') ? 1 : 0,
+        (axis[2] === 'high'),
     ];
 }
-export function readButton(key: string) {
+export function readButton(key: string): [number, number] {
     const button = key.match(/^(\d+)btn(\d+)/i);
 
     if (button.length === 0) {
@@ -41,28 +41,28 @@ export class PadMapper {
     public toggle(key: string, action: number) {
         let info;
         if (info = readAxis(key)) {
-            return this.toggleAxis.apply(this, [].concat(info).concat([action]));
+            return this.toggleAxis(...info, action);
         }
         info = readButton(key);
-        this.toggleButton.apply(this, [].concat(info).concat([action]));
+        this.toggleButton(...info, action);
     }
 
     public map(key: string, action: number) {
         let info;
         if (info = readAxis(key)) {
-            return this.mapAxis.apply(this, [].concat(info).concat([action]));
+            return this.mapAxis(...info, action);
         }
         info = readButton(key);
-        this.mapButton.apply(this, [].concat(info).concat([action]));
+        this.mapButton(...info, action);
     }
 
     public unmap(key: string) {
         let info;
         if (info = readAxis(key)) {
-            return this.unmapAxis.apply(this, [].concat(info));
+            return this.unmapAxis(...info);
         }
         info = readButton(key);
-        this.unmapButton.apply(this, [].concat(info));
+        this.unmapButton(...info);
     }
 
     public toggleButton(pad: number, button: number, action: number) {

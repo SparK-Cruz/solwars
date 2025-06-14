@@ -1,7 +1,8 @@
 import KeyboardActionInput from './KeyboardActionInput.js';
 import InputStore from '../input_store.js';
+import { defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
     name: 'KeyboardEditor',
     template: `
         <section id="keyboard-editor">
@@ -38,4 +39,4 @@ export default {
             this.refresh();
         }
     }
-};
+});

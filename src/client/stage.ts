@@ -19,7 +19,7 @@ export class Stage extends EventEmitter implements Base {
     public step(factor: number = 1): number {
         this.tick++;
         this.tick = this.tick % (Number.MAX_SAFE_INTEGER - 1);
-        Object.values(this.entities).forEach((e: Entity) => {
+        (Object.values(this.entities) as Entity[]).forEach((e: Entity) => {
             if (e.step) e.step(factor);
         });
 
@@ -122,7 +122,7 @@ export class Stage extends EventEmitter implements Base {
     }
 
     public fetchAllEntities(): Entity[] {
-        return <Entity[]>Object.values(this.entities).filter((e: Entity) => e.type);
+        return (Object.values(this.entities) as Entity[]).filter((e: Entity) => e.type);
     }
 
     public moveEntity(entity: Entity, position: { x: number; y: number; }): void {
