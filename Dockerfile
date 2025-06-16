@@ -8,9 +8,10 @@ RUN mkdir -p /app
 WORKDIR /app
 COPY ./ ./
 
-RUN npm install
+RUN npm install -g yarn
+RUN yarn install
 
-CMD npm run build && \
-	npm start
+CMD yarn build && \
+	yarn start
 
 EXPOSE 80
