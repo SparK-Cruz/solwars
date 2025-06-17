@@ -9,6 +9,7 @@ export interface ToastTime {
     time: number;
 }
 export namespace ToastTime {
+    export const IMMEDIATE: ToastTime = { time: SECOND / 2 };
     export const SHORT: ToastTime = { time: 2 * SECOND };
     export const LONG: ToastTime = { time: 3 * SECOND };
 }
@@ -16,7 +17,8 @@ export namespace ToastTime {
 const DEFAULT_COLOR = 0x3399ff;
 
 export class ToastRenderer implements Renderable {
-    private container: any;
+    private container: PIXI.Container;
+    private resolution: number = 1;
     private timer = 0;
 
     private position = {x: 0, y: 0};
@@ -27,16 +29,21 @@ export class ToastRenderer implements Renderable {
         fill: 0x3399ff,
     };
 
-    public constructor(private parent: any, {position, color}: {position?: {x: number, y: number}, color?: number} = {}) {
+    public constructor(private parent: PIXI.Container, {position, color, resolution = 1}: {position?: {x?: number, y?: number}, color?: number, resolution?: number} = {}) {
         this.container = new PIXI.Container();
         parent.addChild(this.container);
 
-        this.position = position ?? {
-            x: this.parent.canvas.width / 2,
-            y: this.parent.canvas.height - 100,
+        this.position = {
+            x: (<any>this.parent).canvas.width / 2 * (1 / resolution),
+            y: (<any>this.parent).canvas.height - 100,
         };
 
+        if (position) {
+            this.position = Object.assign({}, this.position, position);
+        }
+
         this.textStyle.fill = color ?? DEFAULT_COLOR;
+        this.resolution = resolution;
     }
 
     public toast(text: string, time: ToastTime): void {
@@ -46,6 +53,7 @@ export class ToastRenderer implements Renderable {
         this.timer = time.time;
         const element = new PIXI.Text({ text, style: this.textStyle });
         element.anchor.set(0.5);
+        element.cacheAsTexture(false);
 
         const rect = {
             width: element.width + PADDING * 2,

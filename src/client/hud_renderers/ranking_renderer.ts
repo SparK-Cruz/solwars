@@ -27,6 +27,7 @@ export class RankingRenderer implements Renderable {
             text.anchor.set(1, 0);
             text.visible = false;
             text.position.set(0, (i + 1) * SLOT_SIZE);
+            text.cacheAsTexture(false);
             container.addChild(text);
 
             this.pool.push(text);

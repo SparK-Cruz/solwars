@@ -1,5 +1,6 @@
 {
     "stage": {
+        "radius": 8000,
         "spawnRadius": 5000
     },
     "npe": [

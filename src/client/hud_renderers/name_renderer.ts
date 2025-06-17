@@ -20,8 +20,8 @@ const playerStyle: PIXI.TextStyleOptions = {
 };
 
 export class NameRenderer implements Renderable {
-    private container: any;
-    private playerName: any;
+    private container: PIXI.Container;
+    private playerName: PIXI.Text;
     private info: ClientInfo | null = null;
     private pool: any[] = [];
 
@@ -34,10 +34,12 @@ export class NameRenderer implements Renderable {
         this.playerName.position.set(20);
         this.container.position.set(0);
 
-        if (!IS_MOBILE)
-            this.container.addChild(this.playerName);
+        this.playerName.cacheAsTexture(false);
 
-        this.parent.addChild(this.container);
+        this.container.addChild(this.playerName);
+
+        if (!IS_MOBILE)
+            this.parent.addChild(this.container);
     }
 
     public update(info: ClientInfo) {

@@ -17,6 +17,7 @@ import { Input, Inputable } from './input.js';
 import { GamepadInput } from './gamepad_input.js';
 import { MobileInputRenderer } from './mobile_input_renderer.js';
 import { MobileInput } from './mobile_input.js';
+import { WarningRenderer } from './warning_renderer.js';
 
 const assman = AssetManager.getInstance();
 
@@ -29,6 +30,7 @@ export class Engine extends EventEmitter {
     private gameRenderer: GameRenderer;
     private hudRenderer: HudRenderer;
     private toastRenderer: ToastRenderer;
+    private warningRenderer: WarningRenderer;
     private fpsRenderer: FpsRenderer;
     private audioRenderer: AudioRenderer;
     private mobileInputRenderer: MobileInputRenderer;
@@ -36,7 +38,13 @@ export class Engine extends EventEmitter {
     public constructor(private game: HTMLCanvasElement) {
         super();
 
-        const resolution = 0.95;
+        const resolution = 1;
+        const viewport = document.createElement('div');
+        viewport.style.position = 'absolute';
+        viewport.style.width = '75%';
+        viewport.style.height = '75%';
+        viewport.style.zIndex = '-1';
+        document.body.appendChild(viewport);
 
         this.app = new PIXI.Application();
         this.app.init({
@@ -44,11 +52,18 @@ export class Engine extends EventEmitter {
             resolution,
             autoDensity: true,
             canvas: game,
-            resizeTo: window,
+            resizeTo: viewport,
             autoStart: true,
             antialias: true,
             powerPreference: 'high-performance',
         });
+
+        const onResizeHandler = () => {
+            game.width = viewport.clientWidth;
+            game.height = viewport.clientHeight;
+        };
+        window.addEventListener('resize', onResizeHandler);
+        onResizeHandler();
 
         this.app.ticker = new PIXI.Ticker();
         this.app.ticker.autoStart = true;
@@ -71,7 +86,8 @@ export class Engine extends EventEmitter {
         this.gameRenderer = new GameRenderer(container, this.camera, this.client.getStage());
         this.hudRenderer = new HudRenderer(container, this.camera, this.client.getStage());
         this.fpsRenderer = new FpsRenderer(container);
-        this.toastRenderer = new ToastRenderer(container);
+        this.toastRenderer = new ToastRenderer(container, { resolution });
+        this.warningRenderer = new WarningRenderer(container, this.client.getStage(), resolution);
 
         this.audioRenderer = new AudioRenderer(this.camera, this.client.getStage());
 
@@ -95,6 +111,9 @@ export class Engine extends EventEmitter {
 
             this.mobileInputRenderer.update(info);
             this.mobileInputRenderer.render();
+
+            this.warningRenderer.update(info);
+            this.warningRenderer.render();
         });
 
         this.listenClient(this.client);

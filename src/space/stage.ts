@@ -19,7 +19,7 @@ export class Stage extends EventEmitter implements Base {
     public radius: number = 0;
 
     private targetRadius: number = 0;
-    private radiusSurvivalSeconds: number = 0;
+    private radiusSurvivalSeconds: number = 10;
     private suddenDeath: number = 0;
     private suddenDeathShrinkRate: number = 0.75;
     private spawnRadius: number = 5000;
@@ -55,6 +55,7 @@ export class Stage extends EventEmitter implements Base {
                         stepper.addDamage(
                             stepper.health
                             / (delta * (1000 / Config.TPS * 2) * this.radiusSurvivalSeconds)
+                            + (stepper.regen ?? 0)
                         );
                     }
                 }

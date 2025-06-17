@@ -29,10 +29,8 @@ canvas#game {
     z-index: 100;
     margin: 0px;
     padding: 0px;
-    width: 100vw !important;
-    height: 100vh !important;
-    transform: scale(1.05);
     transform-origin: top left;
+    transform: scale(1.33);
     top: 0;
     left: 0;
     cursor: none !important;

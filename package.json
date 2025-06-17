@@ -6,8 +6,8 @@
   "main": "",
   "scripts": {
     "start": "node dist/start.js",
-    "build": "tsc\nnpm run build-frontend&\nnpm run build-engine-loader&\nnpm run build-assets&\nwait",
-    "build-debug": "tsc && npm run build-frontend-debug && npm run build-engine-loader-debug && npm run build-assets",
+    "build": "rm -rf ./dist && tsc\nnpm run build-frontend&\nnpm run build-engine-loader&\nnpm run build-assets&\nwait",
+    "build-debug": "rm -rf ./dist && tsc && npm run build-frontend-debug && npm run build-engine-loader-debug && npm run build-assets",
     "build-frontend": "node ./builder --minify",
     "build-engine-loader": "esbuild dist/client/engine_loader.js --bundle --minify --outfile=dist/client/dist_engine_loader.js",
     "build-frontend-debug": "esbuild dist/client/frontend.js --bundle --outfile=dist/client/dist_frontend.js",

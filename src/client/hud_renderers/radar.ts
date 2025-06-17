@@ -54,6 +54,9 @@ export class Radar implements Renderable {
                 align: 'center'
             }
         });
+
+        this.coordText.cacheAsTexture(false);
+
         this.container.addChild(this.coordText);
     }
 
