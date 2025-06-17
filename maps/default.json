@@ -1,6 +1,6 @@
 {
     "stage": {
-        "radius": 8000,
+        "radius": 7000,
         "spawnRadius": 5000
     },
     "npe": [
@@ -40,16 +40,16 @@
             },
             "x": 0,
             "y": 0,
-            "radius": 1000,
-            "delay": 20,
-            "maxPrizes": 15
+            "radius": 2200,
+            "delay": 64,
+            "maxPrizes": 30
         },
         {
             "type": {
                 "name": "ship"
             },
             "model": "football",
-            "name": "BOTNIP \"Esquie\"",
+            "name": "Welcome to Sol Wars!",
             "x": 0,
             "y": 0,
             "vx": 0,
