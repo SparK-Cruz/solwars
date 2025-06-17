@@ -38,7 +38,7 @@ export class Engine extends EventEmitter {
     public constructor(private game: HTMLCanvasElement) {
         super();
 
-        const resolution = 1;
+        const resolution = 0.75;
         const viewport = document.createElement('div');
         viewport.style.position = 'absolute';
         viewport.style.width = '75%';
@@ -49,7 +49,7 @@ export class Engine extends EventEmitter {
         this.app = new PIXI.Application();
         this.app.init({
             backgroundColor: 0x000000,
-            resolution,
+            resolution: 1,
             autoDensity: true,
             canvas: game,
             resizeTo: viewport,

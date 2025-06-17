@@ -34,8 +34,8 @@ export class ToastRenderer implements Renderable {
         parent.addChild(this.container);
 
         this.position = {
-            x: (<any>this.parent).canvas.width / 2 * (1 / resolution),
-            y: (<any>this.parent).canvas.height - 100,
+            x: window.innerWidth * resolution / 2,
+            y: window.innerHeight * resolution * 0.66,
         };
 
         if (position) {

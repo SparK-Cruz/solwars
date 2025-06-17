@@ -227,6 +227,7 @@ export class Client extends EventEmitter {
     private onDie(death: PlayerDeath) {
         console.log(`You died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
         this.ship!.alive = false;
+        this.ship!.damage = this.ship!.health;
         this.ship!.emit(EntityEvent.Die);
     }
 

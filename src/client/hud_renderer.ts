@@ -34,6 +34,7 @@ export class HudRenderer implements Renderable {
         this.gunIndicator = new GunIndicator(this.container, camera);
         this.radar = new Radar(this.container, camera, stage);
         this.nameRenderer = new NameRenderer(this.container, camera, stage);
+
         this.rankingRenderer = new RankingRenderer(parent);
     }
 
@@ -49,8 +50,9 @@ export class HudRenderer implements Renderable {
     }
 
     public render() {
-        this.container.visible = this.alive;
         this.rankingRenderer.render();
+
+        this.container.visible = this.alive;
 
         if (!this.alive) {
             return;
