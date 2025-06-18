@@ -1,6 +1,6 @@
-<span>**SubSpace**</span><h1 style="margin-top: -20px;">Sol Wars</h1>
+<h1 style="line-height: 1.2rem"><sup style="font-size: 1rem">SubSpace</sup><br/>Sol Wars</h1>
 
-An "arena IO" physics based web version fan game of **SubSpace**: the multiplayer online game released in 1997 by Virgin Interactive Entertainment (VIE) and continued by the community to this day with project [continuum](https://getcontinuum.com/). <sup>([steam page](https://store.steampowered.com/app/352700/Subspace_Continuum/))</sup>
+An "arena IO" physics based web version fan game of **SubSpace**: the multiplayer online game released in 1997 by Virgin Interactive Entertainment (VIE) and continued by the community to this day with project [continuum](https://getcontinuum.com/). <sup>([continuum steam page](https://store.steampowered.com/app/352700/Subspace_Continuum/))</sup>
 
 ## Requirements:
 
