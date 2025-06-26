@@ -51,6 +51,6 @@ PORT=8080 yarn start no-bots
 
 ## Configuration:
 
-You can edit the file `config.json` to your heart's content then restart the server.
+You can edit the file `config.json` to your heart's contempt then restart the server.
 
 You can also edit or add any map file in the `maps` folder and use the `-map` option when starting the server.
