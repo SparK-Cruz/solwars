@@ -55,4 +55,7 @@ window.addEventListener('gamestart', () => {
 
 window.addEventListener('gamestop', () => {
     binder.value.isGameRunning = false;
+    setTimeout(() => {
+        (document.querySelector('#name.input input') as HTMLInputElement).focus();
+    }, 100);
 });

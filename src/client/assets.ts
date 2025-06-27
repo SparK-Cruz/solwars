@@ -18,19 +18,20 @@ export class AssetManager extends EventEmitter {
 
         this.loaded = true;
 
-        this.preloadAudio(() => {
-            this.preloadImages(() => {
-                this.emit('load');
-            });
+        Promise.all([
+            this.preloadAudio(),
+            this.preloadImages(),
+        ]).then(() => {
+            this.emit('load');
         });
 
         return true;
     }
 
-    private preloadImages(callback: Function) {
+    private async preloadImages() {
         const loader = PIXI.Assets;
 
-        Promise.all([
+        await Promise.all([
             Assets.pool['light'] = loader.load('img/light.png'),
             Assets.pool['rock'] = loader.load('img/rock.png'),
             Assets.pool['prize'] = loader.load('img/prize.png'),
@@ -63,19 +64,15 @@ export class AssetManager extends EventEmitter {
             Assets.pool['ship_football_mask'] = loader.load('img/ships/football_mask.png'),
             Assets.pool['ship_football_decal0'] = loader.load('img/ships/football_decal0.png'),
             Assets.pool['ship_football_decal1'] = loader.load('img/ships/football_decal1.png'),
-        ]).then(async () => {
-            await Promise.all(Object.keys(Assets.pool).map(async key => {
-                Assets.pool[key] = await Assets.pool[key];
-                return true;
-            }));
+        ]);
 
-            callback();
-        });
+        await Promise.all(Object.keys(Assets.pool).map(async key => {
+            Assets.pool[key] = await Assets.pool[key];
+        }));
     }
 
-    private preloadAudio(callback: Function) {
-        const audio = new Audio();
-        [
+    private preloadAudio() {
+        return Promise.all([
             'sfx/bullet_0.mp3',
             'sfx/bullet_1.mp3',
             'sfx/bullet_2.mp3',
@@ -83,12 +80,14 @@ export class AssetManager extends EventEmitter {
             'sfx/bullet_impact.mp3',
             'sfx/ship_death.mp3',
             'sfx/pick_item.mp3',
-        ].forEach((file) => {
-            audio.src = file;
-            audio.load();
-        });
-
-        callback();
+        ].map((file) => {
+            return new Promise((resolve, reject) => {
+                const audio = new Audio();
+                audio.src = file;
+                audio.load();
+                resolve(file);
+            });
+        }));
     }
 }
 

@@ -31,7 +31,7 @@ export default {
             model: Model.all[this.data.shipIndex].id,
             color: prepareColor(this.filterColor(this.data.primaryColor)),
             decal: prepareColor(this.filterColor(this.data.secondaryColor)),
-            decalIndex: this.data.decalIndex,
+            decalIndex: this.data.decalIndex.toFixed(0),
         };
     },
     save() {
@@ -39,7 +39,7 @@ export default {
         localStorage.setItem('model', this.data.shipIndex.toString());
         localStorage.setItem('color', prepareColor(this.data.primaryColor));
         localStorage.setItem('decal', prepareColor(this.data.secondaryColor));
-        localStorage.setItem('decalIndex', this.data.decalIndex.toString());
+        localStorage.setItem('decalIndex', this.data.decalIndex.toFixed(0));
     },
     filterColor(hexColor: string) {
         if (hexColor.charAt(0) !== '#')

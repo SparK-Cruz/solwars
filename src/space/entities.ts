@@ -114,7 +114,9 @@ export class EntityPoolGrid {
 
     public remove(id: number) {
         for (const coord in this.grid) {
-            this.grid[coord].remove(id);
+            if (Object.keys((this.grid[coord] as EntityPool).entities).includes(id.toFixed(0))) {
+                this.grid[coord].remove(id);
+            }
         }
     }
 

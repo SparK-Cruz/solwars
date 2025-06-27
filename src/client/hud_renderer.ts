@@ -22,7 +22,7 @@ export class HudRenderer implements Renderable {
 
     private alive = true;
 
-    public constructor(parent: any, private camera: Camera, stage: Stage) {
+    public constructor(parent: any, camera: Camera, stage: Stage) {
         this.container = new PIXI.Container();
         this.container.interactiveChildren = false;
         this.container.position.set(0);

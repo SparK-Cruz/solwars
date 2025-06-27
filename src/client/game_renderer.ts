@@ -1,3 +1,4 @@
+import * as PIXI from 'pixi.js';
 import { EventEmitter } from 'events';
 import { Camera } from './camera.js';
 import { Stage } from './stage.js';
@@ -9,7 +10,7 @@ export class GameRenderer extends EventEmitter implements Renderable {
     private bg: Background;
     private entities: EntityRenderer;
 
-    constructor(parent: any, camera: Camera, stage: Stage) {
+    constructor(private parent: PIXI.Container, camera: Camera, stage: Stage) {
         super();
 
         this.bg = new Background(parent, camera);

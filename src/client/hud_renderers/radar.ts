@@ -219,14 +219,15 @@ export class Radar implements Renderable {
 
             if (this.lastRadius !== this.stage.radius) {
                 const style = 0x770000;
+                const width = 800;
 
                 this.radius.clear();
                 this.radius.circle(
                     0,
                     0,
-                    this.stage.radius * SCALE + 200
+                    this.stage.radius * SCALE + (width/2)
                 )
-                .stroke({color: style, width: 400, alpha: 1});
+                .stroke({color: style, width, alpha: 1});
             }
         }
 

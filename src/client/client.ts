@@ -26,7 +26,6 @@ export class Client extends EventEmitter {
 
     private remoteId: number | null = null;
     private options: ClientOptions | null = null;
-    private ship: Ship | null = null;
 
     private socket?: Socket;
     private compensator?: NodeJS.Timeout;
@@ -88,23 +87,39 @@ export class Client extends EventEmitter {
         return this.stage;
     }
 
+    public getShip(): Ship {
+        return this.getStage().entities[this.staticInfo.id!.toFixed(0)];
+    }
+
     public fetchInfo(): ClientInfo {
+        const ship = this.getShip() ?? {
+            angle: 0,
+            maxEnergy: 0,
+            maxSpeed: 0,
+            acceleration: 0,
+            energy: 0,
+            alive: false,
+            speed: { x: 0, y: 0 },
+            position: { x: 0, y: 0 },
+            control: 0,
+        };
+
         return Object.assign({}, this.staticInfo, {
-            angle: this.ship!.angle,
-            maxEnergy: this.ship!.health,
-            maxSpeed: this.ship!.vmax,
-            acceleration: this.ship!.power,
-            energy: this.ship!.health - this.ship!.damage,
-            alive: this.ship!.alive,
+            angle: ship.angle,
+            maxEnergy: ship.health,
+            maxSpeed: ship.vmax,
+            acceleration: ship.power,
+            energy: ship.health - ship.damage,
+            alive: ship.alive,
             speed: {
-                x: this.ship!.vx,
-                y: this.ship!.vy,
+                x: ship.vx,
+                y: ship.vy,
             },
             position: {
-                x: this.ship!.x,
-                y: this.ship!.y,
+                x: ship.x,
+                y: ship.y,
             },
-            control: this.ship!.control,
+            control: ship.control,
             ranking: this.ranking,
             updates: this.updateTimes,
         });
@@ -170,7 +185,7 @@ export class Client extends EventEmitter {
 
         socket.on(CodecEvents.UPGRADE, (name: string) => {
             this.emit(ClientEvents.UPGRADE, name);
-            this.ship!.emit(ShipEvents.Upgrade);
+            this.getShip().emit(ShipEvents.Upgrade);
         });
 
         socket.on(CodecEvents.ENTITY, (entity: any) => {
@@ -185,12 +200,11 @@ export class Client extends EventEmitter {
 
     private onConnect(data: any) {
         this.remoteId = data.id;
-        this.ship = <Ship>this.codec.decodeEntity(data.ship);
         this.stage.clear();
-        this.stage.add(this.ship, false);
+        this.stage.add(this.codec.decodeEntity(data.ship), false);
 
-        this.emit(ClientEvents.SHIP, this.ship);
         this.cacheStaticInfo(data);
+        this.emit(ClientEvents.SHIP, this.stage.entities[data.ship.id]);
     }
 
     private onServerUpdate(data: any) {
@@ -226,13 +240,13 @@ export class Client extends EventEmitter {
 
     private onDie(death: PlayerDeath) {
         console.log(`You died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);
-        this.ship!.alive = false;
-        this.ship!.damage = this.ship!.health;
-        this.ship!.emit(EntityEvent.Die);
+        this.getShip().alive = false;
+        this.getShip().damage = this.getShip().health;
+        this.getShip().emit(EntityEvent.Die);
     }
 
     private onDeath(death: PlayerDeath) {
-        if (death.ship == this.ship!.id)
+        if (this.getShip() && death.ship == this.getShip().id)
             return;
 
         console.log(`${death.name} died to ${(<any>death.killer).name} by ${death.cause} for ${death.bounty} points`);

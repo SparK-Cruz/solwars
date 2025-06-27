@@ -14,9 +14,6 @@ export namespace A2d {
         source.connect(gain);
         gain.connect(context.destination);
 
-        // Chrome is a bitch
-        context.resume();
-
         return source;
     }
 
@@ -25,11 +22,6 @@ export namespace A2d {
         const media = (<AudioContext>source.context).createMediaElementSource(audio);
 
         media.connect(source);
-        // audio.addEventListener('ended', () => {
-        //     media.disconnect(source);
-        //     audio.remove();
-        //     audio.srcObject = null;
-        // }, {once: true});
 
         return audio;
     }

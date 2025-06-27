@@ -12,7 +12,7 @@ export default defineComponent({
         <form @submit.prevent="submit" id="join-form">
             <div class="top-row">
                 <div id="name" class="input">
-                    <input ref="name" v-model="name" :placeholder="placeholder" />
+                    <input ref="name" v-model="name" @click="focus" :placeholder="placeholder" />
                     <label>Name</label>
                 </div>
                 <div>
@@ -35,7 +35,6 @@ export default defineComponent({
     created() {
         UserStore.load();
         this.name = UserStore.data.name;
-        this.$nextTick(() => { (this.$refs.name as HTMLInputElement).select(); });
     },
     methods: {
         submit() {
@@ -50,11 +49,14 @@ export default defineComponent({
             this.$nextTick(() => {
                 (this.$refs.editorContainer as HTMLElement).style.width = this.$el.offsetWidth + 'px';
             });
+        },
+        focus() {
+            this.$nextTick(() => { (this.$refs.name as HTMLInputElement).select(); });
         }
     },
     computed: {
         placeholder() {
             return UserStore.data.defaultName;
         }
-    }
+    },
 });

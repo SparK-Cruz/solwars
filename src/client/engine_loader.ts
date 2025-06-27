@@ -34,3 +34,17 @@ engine.on("stop", () => {
 window.addEventListener('joingame', (e: any) => {
     engine.start(e.data);
 });
+
+const hideCursor = () => {
+    game.classList.add('hide-cursor');
+};
+const showCursor = () => {
+    game.classList.remove('hide-cursor');
+};
+let cursorTimeout = setTimeout(hideCursor, 0);
+
+window.addEventListener('mousemove', () => {
+    showCursor();
+    clearTimeout(cursorTimeout);
+    cursorTimeout = setTimeout(hideCursor, 2000);
+});

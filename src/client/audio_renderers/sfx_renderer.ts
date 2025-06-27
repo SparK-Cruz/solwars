@@ -12,6 +12,10 @@ export class SfxRenderer {
         audio: A2d.audio(source, filename),
       };
     });
+
+    window.addEventListener('gamestart', () => {
+      this.context.resume();
+    });
   }
 
   public playAt(x: number, y: number, z: number = 10) {
@@ -26,6 +30,8 @@ export class SfxRenderer {
     pair.source.positionZ.value = z;
     pair.audio.pause();
     pair.audio.currentTime = 0;
-    pair.audio.play();
+    try {
+      pair.audio.play();
+    } catch {}
   }
 }

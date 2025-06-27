@@ -157,6 +157,7 @@ export class CodecFacade {
             vangle: entity.vangle,
             control: entity.control, // ship
             damage: entity.damage,
+            alive: entity.alive, // ship
         }
     }
 

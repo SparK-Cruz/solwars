@@ -24,7 +24,7 @@ export class FpsRenderer implements Renderable {
     private fpsText: any;
     private tickText: any;
 
-    public constructor(parent: any) {
+    public constructor(private parent: PIXI.Container) {
         this.lastRender = Date.now();
 
         this.fpsText = new PIXI.Text();
@@ -57,17 +57,7 @@ export class FpsRenderer implements Renderable {
     }
 
     private calculateFramerate() {
-        const now = window.performance.now();
-        const timeDiff = now - this.lastRender;
-        this.lastRender = now;
-        this.framesLog.push(1000 / timeDiff);
-
-        while (this.framesLog.length > CURVE) {
-            this.framesLog.shift();
-        }
-
-        const count = Math.min(this.framesLog.length, CURVE);
-        return this.framesLog.reduce((result, fps) => result + fps / count, 0);
+        return ((<any>this.parent).app as PIXI.Application).ticker.FPS;
     }
 
     private calculateTickrate() {

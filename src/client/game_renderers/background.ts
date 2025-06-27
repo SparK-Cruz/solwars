@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { RNG } from '../../space/rng.js';
 import { Camera } from '../camera.js';
 import { Renderable } from './renderable.js';
+import { MotionBlurFilter } from 'pixi-filters';
 
 const SIZE = 4096;
 const STAR_COUNT = [2000, 1700, 1400];
@@ -13,7 +14,7 @@ export class Background implements Renderable {
         document.createElement('canvas'),
         document.createElement('canvas')
     ];
-    private layers: any[] = [];
+    private layers: PIXI.TilingSprite[] = [];
 
     constructor(parent: any, private camera: Camera) {
         let seed = 9876543210;
@@ -23,6 +24,10 @@ export class Background implements Renderable {
             this.generate(this.buffers[i], STAR_COUNT[i]);
             this.layers[i] = new PIXI.TilingSprite({texture: PIXI.Texture.from(this.buffers[i]), width: this.buffers[i].width, height: this.buffers[i].height});
             parent.addChild(this.layers[i]);
+
+            this.layers[i].filters = new MotionBlurFilter({
+                velocity: {x: 0, y: 0}
+            });
         }
     }
 
@@ -34,6 +39,11 @@ export class Background implements Renderable {
             const factor = SCROLL_FACTOR[i];
 
             layer.tilePosition.set(-ref.x * factor, -ref.y * factor);
+
+            (layer.filters[0] as MotionBlurFilter).velocity = {
+                x: this.camera.trackable.vx * factor * 10,
+                y: this.camera.trackable.vy * factor * 10,
+            };
         }
     }
 

@@ -12,13 +12,13 @@ export class GunIndicator implements Renderable {
     public constructor(parent: any, private camera: Camera) {
         const line = new PIXI.Graphics();
         line.alpha = 0.5;
-        line.setStrokeStyle({ width: 3, color: 0x3399ff});
         line.moveTo(0, PAD + 0);
         line.lineTo(0, PAD + 3);
         line.moveTo(0, PAD + 6);
         line.lineTo(0, PAD + 10);
         line.moveTo(0, PAD + 13);
         line.lineTo(0, PAD + 17);
+        line.stroke({ width: 3, color: 0x3399ff});
 
         this.sprite = line;
 

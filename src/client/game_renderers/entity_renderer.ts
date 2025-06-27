@@ -17,12 +17,13 @@ import { PrizeRenderer } from "./entities/prize_renderer.js";
 import { Prize } from "../../space/entities/prize.js";
 import { GravityWell } from "../../space/entities/gravity_well.js";
 import { GravityWellRenderer } from "./entities/gravity_well_renderer.js";
+import { MotionBlurFilter } from 'pixi-filters';
 
 export class EntityRenderer extends EventEmitter implements Renderable {
     private cache: any = {};
-    private container: any;
+    private container: PIXI.Container;
 
-    public constructor(parent: any, private camera: Camera, private stage: Stage) {
+    public constructor(private parent: any, private camera: Camera, private stage: Stage) {
         super();
 
         this.container = new PIXI.Container();
@@ -30,12 +31,7 @@ export class EntityRenderer extends EventEmitter implements Renderable {
         this.container.interactiveChildren = false;
 
         this.stage.on('despawn', (id: number) => {
-            if (!this.cache.hasOwnProperty(id)) {
-                return;
-            }
-
-            this.container.removeChild(this.cache[id].container);
-            delete this.cache[id];
+            this.removeEntity(id);
         });
         this.stage.on('clear', (id: number) => {
             this.container.removeChildren();
@@ -49,21 +45,44 @@ export class EntityRenderer extends EventEmitter implements Renderable {
         const entities = this.stage.fetchAllEntities();
         const offset = this.camera.getOffsetPosition();
 
+        const seen: number[] = [];
+
         for (const i in entities) {
             const entity = entities[i];
 
             const pair = this.fetchPair(entity);
             this.renderEntity(entity, pair, offset);
+            seen.push(entity.id);
         }
+
+        Object.keys(this.cache).map(id => parseInt(id)).forEach(id => {
+            if (seen.includes(id)) return;
+            console.log('REMOVING RENDERER', id);
+            this.removeEntity(id);
+        });
     }
 
     private renderEntity(entity: Entity, pair: RenderPair | null, offset: { x: number, y: number }) {
         if (!pair) return;
 
+        if (!(<any>entity).hasStage) {
+            this.removeEntity(entity.id);
+            return;
+        }
+
         pair.renderer.render();
         pair.container.visible = true;
         pair.container.angle = entity.angle || 0;
         pair.container.position.set(entity.x - offset.x, entity.y - offset.y);
+    }
+
+    private removeEntity(id: number) {
+        if (!this.cache.hasOwnProperty(id))
+            return;
+
+        this.container.removeChild(this.cache[id].container);
+
+        delete this.cache[id];
     }
 
     private fetchPair(entity: Entity): RenderPair | null {
@@ -84,16 +103,31 @@ export class EntityRenderer extends EventEmitter implements Renderable {
 
     private createPair(entity: Entity): RenderPair | null {
         if (typeof entity.type == 'undefined') {
-            console.log(entity);
+            console.error('unknown entity type', entity);
             return null;
         }
 
         const container = new PIXI.Container();
         this.container.addChild(container);
+        (<any>container).app = this.parent.app;
+
+        const applyFilter = (renderer: Renderable): Renderable => {
+            container.filters = new MotionBlurFilter({ velocity: {x: 0, y: 0} });
+
+            return {
+                render: () => {
+                    renderer.render();
+                    (container.filters[0] as MotionBlurFilter).velocity = {
+                        x: ((entity.vx ?? 0) - this.camera.trackable.vx),
+                        y: ((entity.vy ?? 0) - this.camera.trackable.vy),
+                    };
+                }
+            };
+        };
 
         const pair = (renderer: Renderable) => ({
             container,
-            renderer,
+            renderer: applyFilter(renderer),
         });
 
         try {

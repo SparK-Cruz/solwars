@@ -18,6 +18,7 @@ import { GamepadInput } from './gamepad_input.js';
 import { MobileInputRenderer } from './mobile_input_renderer.js';
 import { MobileInput } from './mobile_input.js';
 import { WarningRenderer } from './warning_renderer.js';
+import { IS_MOBILE } from './environment.js';
 
 const assman = AssetManager.getInstance();
 
@@ -38,13 +39,19 @@ export class Engine extends EventEmitter {
     public constructor(private game: HTMLCanvasElement) {
         super();
 
-        const resolution = 0.75;
-        const viewport = document.createElement('div');
+        const resolution = IS_MOBILE ? 1 : 0.75;
+        let viewport = document.getElementById('viewport');
+        if (!viewport) {
+            viewport = document.createElement('div');
+            viewport.id = 'viewport';
+            document.body.appendChild(viewport);
+        }
         viewport.style.position = 'absolute';
-        viewport.style.width = '75%';
-        viewport.style.height = '75%';
+        viewport.style.top = '0';
+        viewport.style.left = '0';
+        viewport.style.width = `${resolution * 100}%`;
+        viewport.style.height = `${resolution * 100}%`;
         viewport.style.zIndex = '-1';
-        document.body.appendChild(viewport);
 
         this.app = new PIXI.Application();
         this.app.init({
@@ -71,6 +78,7 @@ export class Engine extends EventEmitter {
         const container = new PIXI.Container();
         container.interactiveChildren = true;
         (<any>container).canvas = game;
+        (<any>container).app = this.app;
         this.app.stage.interactiveChildren = true;
         this.app.stage.addChild(container);
 

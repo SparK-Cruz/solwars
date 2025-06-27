@@ -229,6 +229,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/gradient-parser@^0.1.2":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@types/gradient-parser/-/gradient-parser-0.1.5.tgz#7b25d5f080f41f0d713207894c3f2f490155462a"
+  integrity sha512-r7K3NkJz3A95WkVVmjs0NcchhHstC2C/VIYNX4JC6tieviUNo774FFeOHjThr3Vw/WCeMP9kAT77MKbIRlO/4w==
+
 "@types/http-errors@*":
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/@types/http-errors/-/http-errors-2.0.5.tgz#5b749ab2b16ba113423feb1a64a95dcd30398472"
@@ -1456,6 +1461,13 @@ picocolors@^1.1.1:
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.1.1.tgz#3d321af3eab939b083c8f929a1d12cda81c26b6b"
   integrity sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==
 
+pixi-filters@^6.1.3:
+  version "6.1.3"
+  resolved "https://registry.yarnpkg.com/pixi-filters/-/pixi-filters-6.1.3.tgz#5436f803b821095178a46a2366646e7914d59363"
+  integrity sha512-bmdI2Ytz+z/NcADkjew2phKq300aQ9p9nVx9OfkMNuoYEl4gW99ZDNQZfsF834V/jj3CKTsIV4jxA+BI45UYOQ==
+  dependencies:
+    "@types/gradient-parser" "^0.1.2"
+
 pixi-virtual-joystick@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/pixi-virtual-joystick/-/pixi-virtual-joystick-0.4.1.tgz#277e88ab95aebb47c5170069a17e7965588bf6e2"
@@ -1696,11 +1708,6 @@ signal-exit@^3.0.2:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.7.tgz#a9a1767f8af84155114eaabd73f99273c8f59ad9"
   integrity sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==
-
-slow-json-stringify@^2.0.1:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/slow-json-stringify/-/slow-json-stringify-2.0.1.tgz#234e346eaef4a21f50967e306f2ddf0c1e5b0fbd"
-  integrity sha512-jqyzIqTaSkRGcWdWqjmOLKHZgOGUT71ZCTsvQu1xGu9Mqaod7O26y5FJJEmaUQhaTWh0bkXv2qqN0i+EQsD1jQ==
 
 socket.io-adapter@~2.5.2:
   version "2.5.5"

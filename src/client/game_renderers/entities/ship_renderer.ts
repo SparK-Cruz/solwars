@@ -2,67 +2,75 @@ import * as PIXI from 'pixi.js';
 import { Ship } from '../../../space/entities/ship.js';
 import { Renderable } from '../renderable.js';
 import { Assets } from '../../assets.js';
-import { Entity } from '../../../space/entities.js';
 
 export class ShipRenderer implements Renderable {
-    private container: any;
-    private mask: any = null;
-    private body: any = new PIXI.Container();
+    private container: PIXI.Container;
+    private isDrawn: boolean = false;
 
-    public ship :Ship;
-
-    constructor(parent: any, ship: Entity) {
-        this.ship = ship as Ship;
+    constructor(private parent: PIXI.Container, public ship: Ship) {
         this.container = new PIXI.Container();
+        parent.addChild(this.container);
+        this.loadAndDraw();
+    }
 
+    public render() :any {
+        // TODO: global light
+
+        if (!this.isDrawn) {
+            this.loadAndDraw();
+        }
+    }
+
+    private loadAndDraw() {
         const bodySprite = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model]);
-        this.mask = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_mask']);
 
-        const sprites = [bodySprite];
+        const mask = new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_mask']);
 
-        const colors = [
-            parseInt(this.ship.color.replace('#', '0x'))
-        ];
+        const sprites = [mask];
+        const colors = [parseInt(this.ship.color.replace('#', '0x'))];
 
         for (let i = 0; i < this.ship.decals.length; i++) {
             sprites.push(new PIXI.Sprite(Assets.pool['ship_'+this.ship.model+'_'+this.ship.decals[i].name]));
             colors.push(parseInt(this.ship.decals[i].color.replace('#', '0x')));
         }
 
-        this.draw(sprites, colors);
-        this.container.addChild(this.body);
-        this.container.addChild(this.mask);
+        const drawing = this.draw(bodySprite, sprites, colors);
+
+        this.container.addChild(drawing);
         this.container.position.set(
-            -bodySprite.width / 2,
-            -bodySprite.height / 2,
+            -drawing.width / 2,
+            -drawing.height / 2,
         );
 
-        parent.addChild(this.container);
+        this.container.cacheAsTexture(false);
+        this.isDrawn = true;
     }
 
-    public render() :any {
-        // global light
-    }
+    private draw(bodySprite: PIXI.Sprite, sprites :PIXI.Sprite[], colors :number[]): PIXI.Container {
+        const body = new PIXI.Container();
+        const main = new PIXI.Sprite(bodySprite);
 
-    private draw(sprites :any[], colors :number[]) {
-        const main = sprites.shift()!;
-
-        this.body.addChild(main);
-        this.paint(main, colors.shift()!, this.mask);
+        body.addChild(main);
 
         while (sprites.length > 0) {
+            const layer = new PIXI.Container();
+            const sprite = new PIXI.Sprite(bodySprite);
             const decal = sprites.shift()!;
             const color = colors.shift()!;
-            this.paint(main, color, decal);
-            this.body.addChild(decal);
+
+            sprite.tint = color;
+            sprite.mask = decal;
+            layer.addChild(sprite);
+            layer.addChild(decal);
+            body.addChild(layer);
         }
-    }
 
-    private paint(sprite: any, color: number, mask: any) {
-        const paint = new PIXI.Sprite(sprite.texture);
-        paint.tint = color;
-        paint.mask = mask;
+        const texture = PIXI.RenderTexture.create({ width: 32, height: 32 });
+        ((<any>this.parent).app as PIXI.Application).renderer.render({
+            container: body,
+            target: texture
+        });
 
-        this.body.addChild(paint);
+        return new PIXI.Sprite(texture);
     }
 }
